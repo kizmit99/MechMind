@@ -1,0 +1,46 @@
+#include <Arduino.h>
+#include "droid/services/System.h"
+#include "droid/motor/DRV8871Driver.h"
+
+#define DOME_PIN1 14
+#define DOME_PIN2 13
+
+droid::services::System sys("R2D2", &Serial);
+droid::motor::DRV8871Driver domeMotor("Dome Motor", &sys, DOME_PIN1, DOME_PIN2);
+
+void setup() {
+  Serial.begin(115200);
+}
+
+unsigned long lastSecondMs = 0;
+unsigned long lastUpdateMs = 0;
+int8_t lastMotorSpeed = 0;
+int8_t motorSpeedDelta = 30;
+int8_t motorDirection = 1;
+
+int8_t getNextMotorSpeed(int lastMotorSpeed) {
+  if (abs(lastMotorSpeed + motorSpeedDelta) >= 127) {
+    motorSpeedDelta = -motorSpeedDelta;
+    if (motorSpeedDelta > 0) {
+      return -127;
+    } else {
+      return 127;
+    }
+  } else {
+    return (int8_t) lastMotorSpeed + motorSpeedDelta;
+  }
+}
+
+void loop() {
+  domeMotor.task();
+  unsigned long now = millis();
+  if (now > lastUpdateMs + 75) {
+    lastUpdateMs = now;
+    domeMotor.drive(lastMotorSpeed);
+  }
+  if (now > lastSecondMs + 500) {
+    lastSecondMs = now;
+    lastMotorSpeed = getNextMotorSpeed(lastMotorSpeed);
+    domeMotor.drive(lastMotorSpeed);
+  }
+}
