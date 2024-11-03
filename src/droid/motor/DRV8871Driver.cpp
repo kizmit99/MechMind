@@ -4,24 +4,28 @@ namespace droid::motor {
     DRV8871Driver::DRV8871Driver(const char* name, droid::services::System* sys, uint8_t pwm1, uint8_t pwm2) :
         name(name),
         pwmPin1(pwm1),
-        pwmPin2(pwm2),
-        sysServices(sys) {
+        pwmPin2(pwm2) {
 
+        logger = sys->getLogger();
         pinMode(pwmPin1, OUTPUT);
         pinMode(pwmPin2, OUTPUT);
         stop();
     }
 
+    void DRV8871Driver::factoryReset() {
+        //TODO No config values yet
+    }
+
     void DRV8871Driver::drive(int8_t speed) {
-        sysServices->getLog().printf(name, "drive - requested speed = %d\n", speed);
+        logger->log(name, DEBUG, "drive - requested speed = %d\n", speed);
         lastCommandMs = millis();
         if (abs(speed) <= deadband) {
             speed = 0;
             requestedPWM = 0;
         } else {
-            requestedPWM = (int16_t) (((float) speed) * 512.0 / 256.0);
+            requestedPWM = (int16_t) (((float) speed) * 2.0);
         }
-        sysServices->getLog().printf(name, "drive - requestedPWM = %d\n", requestedPWM);
+        logger->log(name, DEBUG, "drive - requestedPWM = %d\n", requestedPWM);
         task();
     }
     
@@ -49,7 +53,7 @@ namespace droid::motor {
     void DRV8871Driver::task() {
         ulong now = millis();
         if ((requestedPWM != 0) && (now > (lastCommandMs + timeoutMs))) {
-            sysServices->getLog().printf(name, "task - timeout happened now=%d, lastCmd=%d, timeout=%d\n", now, lastCommandMs, timeoutMs);
+            logger->log(name, WARN, "task - timeout happened now=%d, lastCmd=%d, timeout=%d\n", now, lastCommandMs, timeoutMs);
             requestedPWM = 0;
             lastCommandMs = now;
         }
@@ -57,13 +61,13 @@ namespace droid::motor {
             lastUpdateMs = now;
         }
         if (requestedPWM != currentPWM) {
-            sysServices->getLog().printf(name, "task - requestPWM=%d, currentPWM=%d\n", requestedPWM, currentPWM);
+            logger->log(name, DEBUG, "task - requestPWM=%d, currentPWM=%d\n", requestedPWM, currentPWM);
             int16_t delta = abs(currentPWM - requestedPWM);
             int16_t maxDelta = (int16_t) ((now - lastUpdateMs) * rampPowerPerMs);
             if (delta > maxDelta) {
                 delta = maxDelta;
             }
-            sysServices->getLog().printf(name, "task - delta=%d\n", delta);
+            logger->log(name, DEBUG, "task - delta=%d\n", delta);
             if (delta > 0) {
                 if (currentPWM > requestedPWM) {
                     currentPWM = max(-255, currentPWM - delta);
@@ -77,7 +81,7 @@ namespace droid::motor {
     }
 
     void DRV8871Driver::setMotorSpeed(int16_t speed) {
-        sysServices->getLog().printf(name, "setMotorSpeed %d\n", speed);
+        logger->log(name, DEBUG, "setMotorSpeed %d\n", speed);
         if (speed == 0) {
             analogWrite(pwmPin1, 0);
             analogWrite(pwmPin2, 0);

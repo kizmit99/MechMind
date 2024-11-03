@@ -3,21 +3,18 @@
 namespace droid::services {
     System::System(const char* name, Stream* out) :
         name(name),
-        log(out)
-    {
-        this->config = config;
-        this->log = log;
+        logger(out) {
     }
 
     const char* System::getName() {
         return name;
     }
 
-    Config System::getConfig() {
-        return config;
+    Config* System::getConfig() {
+        return &config;
     }
 
-    Log System::getLog() {
-        return log;
+    Logger* System::getLogger() {
+        return &logger;
     }
 }
