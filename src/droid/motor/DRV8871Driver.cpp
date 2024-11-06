@@ -12,26 +12,37 @@ namespace droid::motor {
         stop();
     }
 
+    void DRV8871Driver::init() {
+        analogWrite(pwmPin1, 1);
+        analogWrite(pwmPin2, 1);
+    }
+
     void DRV8871Driver::factoryReset() {
         //TODO No config values yet
     }
 
+    void DRV8871Driver::logConfig() {
+        //No config defined yet
+    }
+
+    void DRV8871Driver::failsafe() {
+        stop();
+    }
+
     void DRV8871Driver::drive(int8_t speed) {
-        logger->log(name, DEBUG, "drive - requested speed = %d\n", speed);
         lastCommandMs = millis();
-        if (abs(speed) <= deadband) {
-            speed = 0;
+        if (speed == 0) {
             requestedPWM = 0;
         } else {
-            requestedPWM = (int16_t) (((float) speed) * 2.0);
+            requestedPWM = map(speed, -128, 127, -255, 255);
         }
-        logger->log(name, DEBUG, "drive - requestedPWM = %d\n", requestedPWM);
+        //logger->log(name, DEBUG, "drive - speed = %d, requestedPWM = %d\n", speed, requestedPWM);
         task();
     }
     
     void DRV8871Driver::turn(int8_t speed) {
         //Single motor driver
-        stop();
+        //Noop
     }
     
     void DRV8871Driver::stop() {
@@ -40,10 +51,6 @@ namespace droid::motor {
 
     void DRV8871Driver::setTimeout(uint16_t milliSeconds) {
         timeoutMs = milliSeconds;
-    }
-
-    void DRV8871Driver::setDeadband(uint8_t deadband) {
-        this->deadband = min((int) deadband, 127);
     }
 
     void DRV8871Driver::setPowerRamp(float_t rampPowerPerMs) {
@@ -67,7 +74,7 @@ namespace droid::motor {
             if (delta > maxDelta) {
                 delta = maxDelta;
             }
-            logger->log(name, DEBUG, "task - delta=%d\n", delta);
+            logger->log(name, DEBUG, "task - delta=%d, maxDelta=%d\n", delta, maxDelta);
             if (delta > 0) {
                 if (currentPWM > requestedPWM) {
                     currentPWM = max(-255, currentPWM - delta);
@@ -83,13 +90,13 @@ namespace droid::motor {
     void DRV8871Driver::setMotorSpeed(int16_t speed) {
         logger->log(name, DEBUG, "setMotorSpeed %d\n", speed);
         if (speed == 0) {
-            analogWrite(pwmPin1, 0);
-            analogWrite(pwmPin2, 0);
+            analogWrite(pwmPin1, 1);
+            analogWrite(pwmPin2, 1);
         } else if (speed > 0) {
-            analogWrite(pwmPin2, 0);
+            analogWrite(pwmPin2, 1);
             analogWrite(pwmPin1, (abs(speed)));
         } else {
-            analogWrite(pwmPin1, 0);
+            analogWrite(pwmPin1, 1);
             analogWrite(pwmPin2, (abs(speed)));
         }
     }

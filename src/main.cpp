@@ -1,11 +1,16 @@
-#include "../test/DRV8871Driver.test"
+//#include "../test/DRV8871Driver.test"
 
-// #include <Arduino.h>
+#include <Arduino.h>
+#include "droid/brain/Brain.h"
 
-// void setup() {
+droid::brain::Brain brain("R2D2");
 
-// }
+void setup() {
+    Serial.begin(115200);
+    brain.init();
+    brain.logConfig();
+}
 
-// void loop() {
-
-// }
+void loop() {
+    brain.task();
+}

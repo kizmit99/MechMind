@@ -2,7 +2,6 @@
 #include "droid/services/Config.h"
 #include "droid/services/Logger.h"
 
-constexpr droid::services::Logger::Level NONE = droid::services::Logger::Level::NONE; 
 constexpr droid::services::Logger::Level DEBUG = droid::services::Logger::Level::DEBUG; 
 constexpr droid::services::Logger::Level INFO = droid::services::Logger::Level::INFO; 
 constexpr droid::services::Logger::Level WARN = droid::services::Logger::Level::WARN; 
@@ -12,7 +11,7 @@ constexpr droid::services::Logger::Level FATAL = droid::services::Logger::Level:
 namespace droid::services {
     class System {
     public:
-        System(const char* name, Stream* out);
+        System(const char* name, Stream* out, Logger::Level defaultLogLevel);
         const char* getName();
         Config* getConfig();
         Logger* getLogger();

@@ -1,9 +1,9 @@
 #include "droid/services/System.h"
 
 namespace droid::services {
-    System::System(const char* name, Stream* out) :
+    System::System(const char* name, Stream* out, Logger::Level defaultLogLevel) :
         name(name),
-        logger(out) {
+        logger(out, defaultLogLevel) {
     }
 
     const char* System::getName() {
