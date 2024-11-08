@@ -12,6 +12,7 @@ namespace droid::brain {
         name(name),
         system(name, &Serial, DEBUG),
         controller("DualSony", &system),
+//        controller("StubCtrl", &system),
         motorDriver("DRV8871", &system, 14, 13),
         domeMgr("DomeMgr", &system, &controller, &motorDriver),
         actionMgr("ActionMgr", &system, &controller) {

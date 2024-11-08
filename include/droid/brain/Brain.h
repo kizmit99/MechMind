@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include "droid/services/System.h"
 #include "droid/controller/DualSonyMoveController.h"
+#include "droid/controller/StubController.h"
 #include "droid/motor/DRV8871Driver.h"
 #include "DomeMgr.h"
 #include "ActionMgr.h"
@@ -21,6 +22,7 @@ namespace droid::brain {
         droid::services::Config* config;
         droid::services::Logger* logger;
         droid::controller::DualSonyMoveController controller;
+//        droid::controller::StubController controller;
         droid::motor::DRV8871Driver motorDriver;
         DomeMgr domeMgr;
         ActionMgr actionMgr;

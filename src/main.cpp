@@ -1,4 +1,5 @@
 //#include "../test/DRV8871Driver.test"
+//#include "../test/CmdParser.test"
 
 #include <Arduino.h>
 #include "droid/brain/Brain.h"
