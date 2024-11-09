@@ -5,6 +5,7 @@ namespace droid::brain {
     ActionMgr::ActionMgr(const char* name, droid::services::System* system, droid::controller::Controller* controller) :
         name(name),
         logger(system->getLogger()),
+        config(system->getConfig()),
         controller(controller) {}
 
     void ActionMgr::init() {
@@ -15,10 +16,10 @@ namespace droid::brain {
             const char* trigger = mapEntry.first.c_str();
             const char* cmd = mapEntry.second.c_str();
             // TODO - put back in when debugger available
-            // String override = config->getString(name, trigger, cmd);
-            // if (override != cmd) {
-            //     cmdMap[trigger] = override;
-            // }
+            String override = config->getString(name, trigger, cmd);
+            if (override != cmd) {
+                cmdMap[trigger] = override;
+            }
         }
     }
 

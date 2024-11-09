@@ -14,6 +14,7 @@ namespace droid::brain {
         controller("DualSony", &system),
 //        controller("StubCtrl", &system),
         motorDriver("DRV8871", &system, 14, 13),
+//        motorDriver("DRV8871", &system, 34, 35),
         domeMgr("DomeMgr", &system, &controller, &motorDriver),
         actionMgr("ActionMgr", &system, &controller) {
             config = system.getConfig();
