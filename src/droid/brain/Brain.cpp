@@ -4,6 +4,10 @@
 #include "droid/brain/DomeMgr.h"
 #include "droid/controller/DualSonyMoveController.h"
 #include "droid/motor/DRV8871Driver.h"
+#include "droid/command/CmdHandler.h"
+#include "droid/command/StreamCmdHandler.h"
+#include "droid/command/CmdLogger.h"
+#include "droid/command/LocalCmdHandler.h"
 
 #define CONFIG_KEY_BRAIN_INITIALIZED    "initialized"
 
@@ -18,6 +22,12 @@ namespace droid::brain {
         actionMgr("ActionMgr", &system, &controller) {
             config = system.getConfig();
             logger = system.getLogger();
+            actionMgr.addCmdHandler(new droid::command::CmdLogger("CmdLogger", &system));
+            //TODO Implement configurable Serial ports
+            actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Dome", &system, &Serial));
+            actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Body", &system, &Serial));
+            actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("HCR", &system, &Serial));
+            actionMgr.addCmdHandler(new droid::command::LocalCmdHandler("Brain", &system));
         }
 
 #define deadband 20

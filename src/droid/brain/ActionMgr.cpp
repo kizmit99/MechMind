@@ -23,6 +23,12 @@ namespace droid::brain {
         }
     }
 
+    void ActionMgr::addCmdHandler(droid::command::CmdHandler* cmdHandler) {
+        if (cmdHandler) {
+            cmdHandlers.push_back(cmdHandler);
+        }
+    }
+
     void ActionMgr::factoryReset() {
         //init cmdMap with defaults then store default into config
         cmdMap.clear();
@@ -53,7 +59,7 @@ namespace droid::brain {
             lastTriggerTime = now;
             lastTrigger = trigger;
             if (trigger != "") {
-                logger->log(name, DEBUG, "Trigger: %s, Cmd: %s\n", trigger, cmdMap[trigger]);
+                logger->log(name, DEBUG, "Trigger: %s, Cmd: %s\n", trigger, cmdMap[trigger].c_str());
                 parseCommands(cmdMap[trigger].c_str());
             }
         }
@@ -62,6 +68,7 @@ namespace droid::brain {
 
     // Parse the command sequence and store commands with their execute times
     void ActionMgr::parseCommands(const char* sequence) {
+        // instructionList.dump("parseBegin", logger);
         char buf[MAX_SEQUENCE_LEN];
         strncpy(buf, sequence, sizeof(buf));  // Create a copy of the sequence to avoid modifying the original
         char* token = strtok(buf, ";");
@@ -89,9 +96,11 @@ namespace droid::brain {
                 strncpy(newInstruction->device, currentDevice, MAX_DEVICE_LEN);
                 strncpy(newInstruction->command, token, MAX_COMMAND_LEN);
                 newInstruction->executeTime = currentTime + cumulativeDelay;
+                logger->log(name, DEBUG, "parsed device: %s, cmd: %s\n",newInstruction->device, newInstruction->command);
             }
             token = strtok(NULL, ";");
         }
+        // instructionList.dump("parseEnd", logger);
     }
 
     // Execute commands at the proper times
@@ -100,6 +109,7 @@ namespace droid::brain {
         Instruction* instruction = instructionList.initLoop();
         while (instruction != NULL) {
             if (currentTime >= instruction->executeTime) {
+
                 Serial.print("Sending command to ");
                 Serial.print(instruction->device);
                 Serial.print(": ");
@@ -107,12 +117,30 @@ namespace droid::brain {
                 Serial.print(" at time: ");
                 Serial.println(currentTime);
 
-                //TODO Replace this with actual command sending logic
-                instructionList.deleteInstruction(instruction);
+                bool processed = false;
+                for (droid::command::CmdHandler* cmdHandler : cmdHandlers) {
+                    processed |= cmdHandler->process(instruction->device, instruction->command);
+                }
+                if (!processed) {
+                    logger->log(name, WARN, "Command was not handled.  Device: %s, cmd: %s\n", instruction->device, instruction->command);
+                }
+
+                instruction = instructionList.deleteInstruction(instruction);
+            } else {
+                instruction = instruction->next;
             }
-            instruction = instruction->next;
         }
     }
+
+    // void InstructionList::dump(const char* name, droid::services::Logger* logger) {
+    //     int i = 0;
+    //     Instruction* instruction = head;
+    //     while (instruction != NULL) {
+    //         logger->log(name, INFO, "InstructionList[%d] device: %s, cmd: %s\n", i, instruction->device, instruction->command);
+    //         i++;
+    //         instruction = instruction->next;
+    //     }
+    // }
 
     Instruction* InstructionList::addInstruction() {
         Instruction* freeRec = NULL;
@@ -126,6 +154,10 @@ namespace droid::brain {
         if (freeRec == NULL) {  //List is full
             return NULL;
         }
+        //link prev record to this one
+        if (tail != NULL) {
+            tail->next = freeRec;
+        }
         //Prepare record for reuse
         freeRec->isActive = true;
         freeRec->prev = tail;       //Always add to end of list
@@ -137,12 +169,12 @@ namespace droid::brain {
         return freeRec;
     }
 
-    void InstructionList::deleteInstruction(Instruction* entry) {
+    Instruction* InstructionList::deleteInstruction(Instruction* entry) {
         if (entry == NULL) {
-            return;
+            return NULL;
         }
         if (head == NULL) {
-            return;
+            return NULL;
         }
         if (entry->prev == NULL) {   //Was first entry in list
             head = entry->next;
@@ -152,6 +184,11 @@ namespace droid::brain {
         if (tail == entry) {    //Was last entry in list
             tail = entry->prev;
         }
+        Instruction* next = entry->next;
+        if (next != NULL) {
+            next->prev = entry->prev;
+        }
+
         //Clear record for reuse
         entry->command[0] = 0;
         entry->device[0] = 0;
@@ -159,25 +196,20 @@ namespace droid::brain {
         entry->isActive = false;
         entry->next = NULL;
         entry->prev = NULL;
+
+        return next;
     }
 
     Instruction* InstructionList::initLoop() {
         return head;
     }
 
-    bool InstructionList::hasNext(Instruction* entry) {
-        if (entry == NULL) {
-            return false;
-        }
-        return (entry->next != NULL);
-    }
-
-    Instruction* InstructionList::getNext(Instruction* entry) {
-        if (entry == NULL) {
-            return NULL;
-        }
-        return entry->next;
-    }
+    // Instruction* InstructionList::getNext(Instruction* entry) {
+    //     if (entry == NULL) {
+    //         return NULL;
+    //     }
+    //     return entry->next;
+    // }
 
 
 

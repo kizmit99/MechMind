@@ -2,7 +2,9 @@
 #include <Arduino.h>
 #include "droid/services/System.h"
 #include "droid/controller/Controller.h"
+#include "droid/command/CmdHandler.h"
 #include <map>
+#include <vector>
 
 #define MAX_DEVICE_LEN 20
 #define MAX_COMMAND_LEN 50
@@ -22,10 +24,10 @@ namespace droid::brain {
     class InstructionList {
     public:
         Instruction* addInstruction();
-        void deleteInstruction(Instruction*);
+        Instruction* deleteInstruction(Instruction*);  //Note, this method returns the NEXT Instruction* in the list
         Instruction* initLoop();
-        bool hasNext(Instruction*);
-        Instruction* getNext(Instruction*);
+        // Instruction* getNext(Instruction*);
+        // void dump(const char *name, droid::services::Logger* logger);
 
     private:
         Instruction list[INSTRUCTION_QUEUE_SIZE];
@@ -40,6 +42,7 @@ namespace droid::brain {
         void task();
         void factoryReset();
         void logConfig();
+        void addCmdHandler(droid::command::CmdHandler*);
 
     private:
         const char* name;
@@ -50,6 +53,7 @@ namespace droid::brain {
         unsigned long lastTriggerTime = 0;
         String lastTrigger;
         InstructionList instructionList;
+        std::vector<droid::command::CmdHandler*> cmdHandlers;
 
         void parseCommands(const char* command);
         void executeCommands();
