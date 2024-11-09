@@ -14,7 +14,6 @@ namespace droid::brain {
         controller("DualSony", &system),
 //        controller("StubCtrl", &system),
         motorDriver("DRV8871", &system, 14, 13),
-//        motorDriver("DRV8871", &system, 34, 35),
         domeMgr("DomeMgr", &system, &controller, &motorDriver),
         actionMgr("ActionMgr", &system, &controller) {
             config = system.getConfig();
@@ -39,6 +38,7 @@ namespace droid::brain {
         config->putBool(name, CONFIG_KEY_BRAIN_INITIALIZED, true);
         controller.factoryReset();
         motorDriver.factoryReset();
+        actionMgr.factoryReset();
     }
 
     void Brain::task() {
@@ -58,5 +58,6 @@ namespace droid::brain {
         logger->log(name, INFO, "Config %s = %d\n", CONFIG_KEY_BRAIN_INITIALIZED, config->getBool(name, CONFIG_KEY_BRAIN_INITIALIZED, false));
         controller.logConfig();
         motorDriver.logConfig();
+        actionMgr.logConfig();
     }
 }

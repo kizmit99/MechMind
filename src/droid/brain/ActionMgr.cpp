@@ -10,16 +10,36 @@ namespace droid::brain {
 
     void ActionMgr::init() {
         //init cmdMap with defaults then load overrides from config
+        cmdMap.clear();
         #include "droid/brain/Trigger.map"
         // Iterate through the map looking for overrides
         for (const auto& mapEntry : cmdMap) {
             const char* trigger = mapEntry.first.c_str();
             const char* cmd = mapEntry.second.c_str();
-            // TODO - put back in when debugger available
             String override = config->getString(name, trigger, cmd);
             if (override != cmd) {
                 cmdMap[trigger] = override;
             }
+        }
+    }
+
+    void ActionMgr::factoryReset() {
+        //init cmdMap with defaults then store default into config
+        cmdMap.clear();
+        #include "droid/brain/Trigger.map"
+        // Iterate through the map clearing all overrides
+        for (const auto& mapEntry : cmdMap) {
+            const char* trigger = mapEntry.first.c_str();
+            const char* cmd = mapEntry.second.c_str();
+            config->putString(name, trigger, cmd);
+        }
+    }
+
+    void ActionMgr::logConfig() {
+        // Iterate through the cmdMap for keys to log
+        for (const auto& mapEntry : cmdMap) {
+            const char* trigger = mapEntry.first.c_str();
+            logger->log(name, INFO, "Config %s = %s\n", trigger, config->getString(name, trigger, "").c_str());
         }
     }
 

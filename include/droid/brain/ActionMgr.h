@@ -38,6 +38,8 @@ namespace droid::brain {
         ActionMgr(const char* name, droid::services::System* system, droid::controller::Controller*);
         void init();
         void task();
+        void factoryReset();
+        void logConfig();
 
     private:
         const char* name;
