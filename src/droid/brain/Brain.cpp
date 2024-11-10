@@ -11,12 +11,20 @@
 
 #define CONFIG_KEY_BRAIN_INITIALIZED    "initialized"
 
+#define PCA9685_I2C_ADDRESS 0x40
+#define PCA9685_OUTPUT_ENABLE_PIN 15
+
 namespace droid::brain {
     Brain::Brain(const char* name) : 
         name(name),
-        system(name, &Serial, DEBUG),
+#ifdef BUILD_FOR_DEBUGGER
+        pwmService(),
+        controller("StubCtrl", &system),
+#else
+        pwmService(PCA9685_I2C_ADDRESS, PCA9685_OUTPUT_ENABLE_PIN),
         controller("DualSony", &system),
-//        controller("StubCtrl", &system),
+#endif
+        system(name, &Serial, DEBUG, &pwmService),
         motorDriver("DRV8871", &system, 14, 13),
         domeMgr("DomeMgr", &system, &controller, &motorDriver),
         actionMgr("ActionMgr", &system, &controller) {
@@ -37,6 +45,8 @@ namespace droid::brain {
         if (!initialized) {
             factoryReset();
         }
+        pwmService.init();
+        pwmService.setOscFreq(27000000);
         controller.init();
         controller.setDeadband(deadband);
         motorDriver.init();
@@ -57,7 +67,15 @@ namespace droid::brain {
         actionMgr.task();
         motorDriver.task();
 
+#ifdef BUILD_FOR_DEBUGGER
+        if (Serial.available()) {
+            Serial.read();
+            logger->log(name, ERROR, "Generating a fake ERROR\n");
+        }
+#endif
+
         if (logger->getMaxLevel() >= ERROR) {
+            pwmService.failsafe();
             controller.failsafe();
             motorDriver.failsafe();
             logger->clear();

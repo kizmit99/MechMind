@@ -1,6 +1,7 @@
 #pragma once
 #include "droid/services/Config.h"
 #include "droid/services/Logger.h"
+#include "droid/services/PWMService.h"
 
 constexpr droid::services::Logger::Level DEBUG = droid::services::Logger::Level::DEBUG; 
 constexpr droid::services::Logger::Level INFO = droid::services::Logger::Level::INFO; 
@@ -11,14 +12,16 @@ constexpr droid::services::Logger::Level FATAL = droid::services::Logger::Level:
 namespace droid::services {
     class System {
     public:
-        System(const char* name, Stream* out, Logger::Level defaultLogLevel);
+        System(const char* name, Stream* out, Logger::Level defaultLogLevel, PWMService* pwmService);
         const char* getName();
         Config* getConfig();
         Logger* getLogger();
+        PWMService* getPWMService();
 
     private:
         const char* name;
         Config config;
         Logger logger;
+        PWMService* pwmService;
     };
 }

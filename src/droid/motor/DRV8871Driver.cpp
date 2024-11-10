@@ -1,20 +1,19 @@
 #include "droid/motor/DRV8871Driver.h"
 
 namespace droid::motor {
-    DRV8871Driver::DRV8871Driver(const char* name, droid::services::System* sys, uint8_t pwm1, uint8_t pwm2) :
+    DRV8871Driver::DRV8871Driver(const char* name, droid::services::System* sys, uint8_t out1, uint8_t out2) :
         name(name),
-        pwmPin1(pwm1),
-        pwmPin2(pwm2) {
+        out1(out1),
+        out2(out2) {
 
         logger = sys->getLogger();
-        pinMode(pwmPin1, OUTPUT);
-        pinMode(pwmPin2, OUTPUT);
+        pwmService = sys->getPWMService();
         stop();
     }
 
     void DRV8871Driver::init() {
-        analogWrite(pwmPin1, 1);
-        analogWrite(pwmPin2, 1);
+        pwmService->setPWMpercent(out1, 0);
+        pwmService->setPWMpercent(out2, 0);
     }
 
     void DRV8871Driver::factoryReset() {
@@ -32,11 +31,11 @@ namespace droid::motor {
     void DRV8871Driver::drive(int8_t speed) {
         lastCommandMs = millis();
         if (speed == 0) {
-            requestedPWM = 0;
+            requestedDutyCycle = 0;
         } else {
-            requestedPWM = map(speed, -128, 127, -255, 255);
+            requestedDutyCycle = map(speed, -128, 127, -100, 100);
         }
-        //logger->log(name, DEBUG, "drive - speed = %d, requestedPWM = %d\n", speed, requestedPWM);
+        //logger->log(name, DEBUG, "drive - speed = %d, requestedDutyCycle = %d\n", speed, requestedDutyCycle);
         task();
     }
     
@@ -59,45 +58,46 @@ namespace droid::motor {
 
     void DRV8871Driver::task() {
         ulong now = millis();
-        if ((requestedPWM != 0) && (now > (lastCommandMs + timeoutMs))) {
+        if ((requestedDutyCycle != 0) && (now > (lastCommandMs + timeoutMs))) {
             logger->log(name, WARN, "task - timeout happened now=%d, lastCmd=%d, timeout=%d\n", now, lastCommandMs, timeoutMs);
-            requestedPWM = 0;
+            requestedDutyCycle = 0;
             lastCommandMs = now;
         }
         if (lastUpdateMs > now) {
             lastUpdateMs = now;
         }
-        if (requestedPWM != currentPWM) {
-            logger->log(name, DEBUG, "task - requestPWM=%d, currentPWM=%d\n", requestedPWM, currentPWM);
-            int16_t delta = abs(currentPWM - requestedPWM);
+        if (requestedDutyCycle != currentDutyCycle) {
+            logger->log(name, DEBUG, "task - requestedDutyCycle=%d, currentDutyCycle=%d\n", requestedDutyCycle, currentDutyCycle);
+            int16_t delta = abs(currentDutyCycle - requestedDutyCycle);
             int16_t maxDelta = (int16_t) ((now - lastUpdateMs) * rampPowerPerMs);
             if (delta > maxDelta) {
                 delta = maxDelta;
             }
             logger->log(name, DEBUG, "task - delta=%d, maxDelta=%d\n", delta, maxDelta);
             if (delta > 0) {
-                if (currentPWM > requestedPWM) {
-                    currentPWM = max(-255, currentPWM - delta);
+                if (currentDutyCycle > requestedDutyCycle) {
+                    currentDutyCycle = max(-100, currentDutyCycle - delta);
                 } else {
-                    currentPWM = min(255, currentPWM + delta);
+                    currentDutyCycle = min(100, currentDutyCycle + delta);
                 }
-                setMotorSpeed(currentPWM);
+                setMotorSpeed(currentDutyCycle);
             }
         }
         lastUpdateMs = now;
     }
 
-    void DRV8871Driver::setMotorSpeed(int16_t speed) {
-        logger->log(name, DEBUG, "setMotorSpeed %d\n", speed);
-        if (speed == 0) {
-            analogWrite(pwmPin1, 1);
-            analogWrite(pwmPin2, 1);
-        } else if (speed > 0) {
-            analogWrite(pwmPin2, 1);
-            analogWrite(pwmPin1, (abs(speed)));
+    void DRV8871Driver::setMotorSpeed(int16_t dutyCycle) {
+        logger->log(name, DEBUG, "setMotorSpeed %d\n", dutyCycle);
+        if (dutyCycle == 0) {
+            //Braking
+            pwmService->setPWMpercent(out1, 100);
+            pwmService->setPWMpercent(out2, 100);
+        } else if (dutyCycle > 0) {
+            analogWrite(out2, 0);
+            analogWrite(out1, (abs(dutyCycle)));
         } else {
-            analogWrite(pwmPin1, 1);
-            analogWrite(pwmPin2, (abs(speed)));
+            analogWrite(out1, 0);
+            analogWrite(out2, (abs(dutyCycle)));
         }
     }
 }

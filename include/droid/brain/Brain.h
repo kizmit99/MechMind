@@ -1,11 +1,15 @@
 #pragma once
 #include <Arduino.h>
 #include "droid/services/System.h"
+#include "droid/services/NoPWMService.h"
+#include "droid/services/PCA9685PWM.h"
 #include "droid/controller/DualSonyMoveController.h"
 #include "droid/controller/StubController.h"
 #include "droid/motor/DRV8871Driver.h"
 #include "DomeMgr.h"
 #include "ActionMgr.h"
+
+//#define BUILD_FOR_DEBUGGER
 
 namespace droid::brain {
     class Brain {
@@ -18,11 +22,19 @@ namespace droid::brain {
 
     private:
         const char* name;
+#ifdef BUILD_FOR_DEBUGGER
+        droid::services::NoPWMService pwmService;
+#else
+        droid::services::PCA9685PWM pwmService;
+#endif
         droid::services::System system;
         droid::services::Config* config;
         droid::services::Logger* logger;
+#ifdef BUILD_FOR_DEBUGGER
+        droid::controller::StubController controller;
+#else
         droid::controller::DualSonyMoveController controller;
-//        droid::controller::StubController controller;
+#endif
         droid::motor::DRV8871Driver motorDriver;
         DomeMgr domeMgr;
         ActionMgr actionMgr;

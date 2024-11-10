@@ -7,7 +7,7 @@
 namespace droid::motor {
     class DRV8871Driver : public MotorDriver {
     public:
-        DRV8871Driver(const char* name, droid::services::System* system, uint8_t pwm1, uint8_t pwm2);
+        DRV8871Driver(const char* name, droid::services::System* system, uint8_t out1, uint8_t out2);
         void init();
         void factoryReset();
         void task();
@@ -25,16 +25,17 @@ namespace droid::motor {
         //instance name
         const char* name;
         droid::services::Logger* logger;
+        droid::services::PWMService* pwmService;
 
         // Pin Numbers
-        uint8_t pwmPin1;  // PWM for OUT1
-        uint8_t pwmPin2;  // PWM for OUT2
+        uint8_t out1;  // PWM output used for OUT1
+        uint8_t out2;  // PWM output used for OUT2
 
         uint16_t timeoutMs = 100;
         ulong lastCommandMs = 0;
         ulong lastUpdateMs = 0;
         float_t rampPowerPerMs = 0.1;
-        int16_t requestedPWM = 0;
-        int16_t currentPWM = 0;
+        int16_t requestedDutyCycle = 0;
+        int16_t currentDutyCycle = 0;
     };
 }
