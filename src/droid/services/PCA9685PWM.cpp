@@ -11,15 +11,20 @@ namespace droid::services {
         pca9685Driver(I2CAddress, i2c) {}
 
     void PCA9685PWM::init() {
-        pca9685Driver.begin();
-        pca9685Driver.setOutputMode(true);
-        if (outputEnablePin != 0) {
-            pinMode(outputEnablePin, OUTPUT);
-            digitalWrite(outputEnablePin, LOW);
+        if (pca9685Driver.begin()) {
+            pca9685Driver.setOutputMode(true);
+            if (outputEnablePin != 0) {
+                pinMode(outputEnablePin, OUTPUT);
+                digitalWrite(outputEnablePin, LOW);
+            }
+            initialized = true;
+        } else {
+            initialized = false;
         }
     }
 
     void PCA9685PWM::task() {
+        if (!initialized) return;
         uint32_t now = millis();
         for (int i = 0; i < NUMBER_OF_PWM_OUTPUTS; i++) {
             if (outDetails[i].isActive &&
@@ -33,6 +38,7 @@ namespace droid::services {
     }
 
     void PCA9685PWM::failsafe() {
+        if (!initialized) return;
         for (int i = 0; i < NUMBER_OF_PWM_OUTPUTS; i++) {
             pca9685Driver.setPin(i, 0);
             outDetails[i].disableAt = 0;
@@ -44,10 +50,12 @@ namespace droid::services {
     }
 
     void PCA9685PWM::setOscFreq(uint32_t freq) {
+        if (!initialized) return;
         pca9685Driver.setOscillatorFrequency(freq);
     }
 
     void PCA9685PWM::setPWMuS(uint8_t outNum, uint16_t pulseMicroseconds, uint16_t durationMilliseconds) {
+        if (!initialized) return;
         if (outNum >= NUMBER_OF_PWM_OUTPUTS) {
             return;
         }
@@ -67,6 +75,7 @@ namespace droid::services {
     }
 
     void PCA9685PWM::setPWMpercent(uint8_t outNum, uint8_t percent, uint16_t durationMilliseconds) {
+        if (!initialized) return;
         if (outNum >= NUMBER_OF_PWM_OUTPUTS) {
             return;
         }

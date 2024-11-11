@@ -1,4 +1,5 @@
 #include "droid/controller/DualSonyMoveController.h"
+#include "droid/brain/hardware.h"
 
 #define CONFIG_KEY_SONY_RIGHT_MAC           "RightMAC"
 #define CONFIG_KEY_SONY_ALT_RIGHT_MAC       "RightAltMAC"
@@ -7,11 +8,6 @@
 #define CONFIG_KEY_SONY_ACTIVE_TIMEOUT      "activeTimeout"
 #define CONFIG_KEY_SONY_INACTIVE_TIMEOUT    "inactiveTimeout"
 #define CONFIG_KEY_SONY_BAD_DATA_WINDOW     "badDataWindow"
-#define CONFIG_DEFAULT_MAC                  "XX:XX:XX:XX:XX:XX"
-#define CONFIG_DEFAULT_SONY_RIGHT_MAC       CONFIG_DEFAULT_MAC
-#define CONFIG_DEFAULT_SONY_ALT_RIGHT_MAC   CONFIG_DEFAULT_MAC
-#define CONFIG_DEFAULT_SONY_LEFT_MAC        CONFIG_DEFAULT_MAC
-#define CONFIG_DEFAULT_SONY_ALT_LEFT_MAC    CONFIG_DEFAULT_MAC
 #define CONFIG_DEFAULT_SONY_ACTIVE_TIMEOUT  200
 #define CONFIG_DEFAULT_SONY_INACTIVE_TIMEOUT 10000
 #define CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW 50
@@ -94,10 +90,6 @@ namespace droid::controller {
         if (!controller->isConnected) {
             return;
         }
-
-        //TODO As written we do no fault checking if the device is reporting it's not connected
-        // but what it we think it's connected - seems this should be a fault and we should
-        // disconnect -- but! apparently the device reports PS3XXXConnected flags inconsistently???
 
         if (controller->ps3BT.PS3Connected || 
             controller->ps3BT.PS3NavigationConnected  || 

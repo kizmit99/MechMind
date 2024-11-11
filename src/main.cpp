@@ -3,11 +3,15 @@
 
 #include <Arduino.h>
 #include "droid/brain/Brain.h"
+#include "droid/brain/hardware.h"
 
 droid::brain::Brain brain("R2D2");
 
 void setup() {
-    Serial.begin(115200);
+    LOGGER_STREAM_SETUP;
+    DOME_STREAM_SETUP;
+    BODY_STREAM_SETUP;
+    HCR_STREAM_SETUP;
     brain.init();
     brain.logConfig();
 }

@@ -18,6 +18,7 @@ namespace droid::services {
 
     private:
         Adafruit_PWMServoDriver pca9685Driver;
+        bool initialized = false;
         uint8_t outputEnablePin;
         struct {
             bool isActive;

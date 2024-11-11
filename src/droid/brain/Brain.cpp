@@ -1,18 +1,10 @@
 #include <Arduino.h>
 #include "droid/brain/Brain.h"
-#include "droid/services/System.h"
-#include "droid/brain/DomeMgr.h"
-#include "droid/controller/DualSonyMoveController.h"
-#include "droid/motor/DRV8871Driver.h"
-#include "droid/command/CmdHandler.h"
 #include "droid/command/StreamCmdHandler.h"
 #include "droid/command/CmdLogger.h"
 #include "droid/command/LocalCmdHandler.h"
 
 #define CONFIG_KEY_BRAIN_INITIALIZED    "initialized"
-
-#define PCA9685_I2C_ADDRESS 0x40
-#define PCA9685_OUTPUT_ENABLE_PIN 15
 
 namespace droid::brain {
     Brain::Brain(const char* name) : 
@@ -24,21 +16,19 @@ namespace droid::brain {
         pwmService(PCA9685_I2C_ADDRESS, PCA9685_OUTPUT_ENABLE_PIN),
         controller("DualSony", &system),
 #endif
-        system(name, &Serial, DEBUG, &pwmService),
-        motorDriver("DRV8871", &system, 14, 13),
+        system(name, &LOGGER_STREAM, DEBUG, &pwmService),
+        motorDriver("DRV8871", &system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2),
         domeMgr("DomeMgr", &system, &controller, &motorDriver),
         actionMgr("ActionMgr", &system, &controller) {
             config = system.getConfig();
             logger = system.getLogger();
             actionMgr.addCmdHandler(new droid::command::CmdLogger("CmdLogger", &system));
             //TODO Implement configurable Serial ports
-            actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Dome", &system, &Serial));
-            actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Body", &system, &Serial));
-            actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("HCR", &system, &Serial));
+            actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Dome", &system, &DOME_STREAM));
+            actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Body", &system, &BODY_STREAM));
+            actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("HCR", &system, &HCR_STREAM));
             actionMgr.addCmdHandler(new droid::command::LocalCmdHandler("Brain", &system));
         }
-
-#define deadband 20
 
     void Brain::init() {
         bool initialized = config->getBool(name, CONFIG_KEY_BRAIN_INITIALIZED, false);
@@ -46,9 +36,9 @@ namespace droid::brain {
             factoryReset();
         }
         pwmService.init();
-        pwmService.setOscFreq(27000000);
+        pwmService.setOscFreq(PCA9685_OSC_FREQUENCY);
         controller.init();
-        controller.setDeadband(deadband);
+        controller.setDeadband(CONTROLLER_DEADBAND);
         motorDriver.init();
         domeMgr.init();
         actionMgr.init();

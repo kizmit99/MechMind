@@ -1,5 +1,6 @@
 #pragma once
 #include <Arduino.h>
+#include "droid/brain/hardware.h"
 #include "droid/services/System.h"
 #include "droid/services/NoPWMService.h"
 #include "droid/services/PCA9685PWM.h"
@@ -8,8 +9,6 @@
 #include "droid/motor/DRV8871Driver.h"
 #include "DomeMgr.h"
 #include "ActionMgr.h"
-
-//#define BUILD_FOR_DEBUGGER
 
 namespace droid::brain {
     class Brain {
