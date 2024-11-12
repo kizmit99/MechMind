@@ -3,43 +3,16 @@
 namespace droid::services {
     Config::Config() {}
 
-    void Config::putInt(const char* nspace, const char* key, int value) {
-        if (preferences.begin(nspace, false)) {
-            preferences.putInt(key, value);
-            preferences.end();
-        }
-    }
-
-    int Config::getInt(const char* nspace, const char* key, int defaultValue) {
-        int value = defaultValue;
-        if (preferences.begin(nspace, true)) {
-            value = preferences.getInt(key, defaultValue);
-            preferences.end();
-        }
-        return value;
-    }
-
-    void Config::putBool(const char* nspace, const char* key, bool value) {
-        if (preferences.begin(nspace, false)) {
-            preferences.putBool(key, value);
-            preferences.end();
-        }
-    }
-
-    bool Config::getBool(const char* nspace, const char* key, bool defaultValue) {
-        bool value = defaultValue;
-        if (preferences.begin(nspace, true)) {
-            value = preferences.getBool(key, defaultValue);
-            preferences.end();
-        }
-        return value;
-    }
-
     void Config::putString(const char* nspace, const char* key, const char* value) {
+        Serial.println("Debug 1");
         if (preferences.begin(nspace, false)) {
+            Serial.println("Debug 2");
             preferences.putString(key, value);
+            Serial.println("Debug 3");
             preferences.end();
+            Serial.println("Debug 4");
         }
+        Serial.println("Debug 5");
     }
 
     String Config::getString(const char* nspace, const char* key, const char* defaultValue) {

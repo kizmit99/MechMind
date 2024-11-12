@@ -18,6 +18,9 @@ namespace droid::brain {
         void factoryReset();
         void task();
         void logConfig();
+        void reboot();
+        void overrideCmdMap(const char* trigger, const char* cmd);
+        void trigger(const char* trigger);
 
     private:
         const char* name;
@@ -37,5 +40,8 @@ namespace droid::brain {
         droid::motor::DRV8871Driver motorDriver;
         DomeMgr domeMgr;
         ActionMgr actionMgr;
+
+        char inputBuf[100];
+        uint8_t bufIndex = 0;
     };
 }

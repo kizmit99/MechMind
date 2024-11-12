@@ -2,6 +2,7 @@
 #include "droid/services/Config.h"
 #include "droid/services/Logger.h"
 #include "droid/services/PWMService.h"
+#include "droid/services/DroidState.h"
 
 constexpr droid::services::Logger::Level DEBUG = droid::services::Logger::Level::DEBUG; 
 constexpr droid::services::Logger::Level INFO = droid::services::Logger::Level::INFO; 
@@ -17,11 +18,13 @@ namespace droid::services {
         Config* getConfig();
         Logger* getLogger();
         PWMService* getPWMService();
+        DroidState* getDroidState();
 
     private:
         const char* name;
         Config config;
         Logger logger;
         PWMService* pwmService;
+        DroidState droidState;
     };
 }

@@ -41,11 +41,38 @@ namespace droid::brain {
         }
     }
 
+    void ActionMgr::overrideCmdMap(const char* trigger, const char* cmd) {
+        if (trigger) {
+            if (cmd == NULL) {  //Revert to default
+                std::map<String, String> cmdMap;
+                //Load defaults into a temp map
+                #include "droid/brain/Trigger.map"
+                //override master map with the default value just loaded
+                this->cmdMap[trigger] = cmdMap[trigger];
+                //save the default back to config storage
+                config->putString(name, trigger, this->cmdMap[trigger].c_str());
+            } else {
+                //New cmd is specified, use it
+                cmdMap[trigger] = cmd;
+                config->putString(name, trigger, cmd);
+            }
+        }
+    }
+
     void ActionMgr::logConfig() {
         // Iterate through the cmdMap for keys to log
         for (const auto& mapEntry : cmdMap) {
             const char* trigger = mapEntry.first.c_str();
             logger->log(name, INFO, "Config %s = %s\n", trigger, config->getString(name, trigger, "").c_str());
+        }
+    }
+
+    void ActionMgr::fireTrigger(const char* trigger) {
+        if (cmdMap.count(trigger) > 0) {
+            parseCommands(cmdMap[trigger].c_str());
+        } else {
+            logger->log(name, DEBUG, "Trigger (%s) not recognized, trying to parse as a command\n", trigger);
+            parseCommands(trigger);
         }
     }
 
@@ -60,7 +87,7 @@ namespace droid::brain {
             lastTrigger = trigger;
             if (trigger != "") {
                 logger->log(name, DEBUG, "Trigger: %s, Cmd: %s\n", trigger, cmdMap[trigger].c_str());
-                parseCommands(cmdMap[trigger].c_str());
+                fireTrigger(trigger.c_str());
             }
         }
         executeCommands();
@@ -92,15 +119,19 @@ namespace droid::brain {
                 cumulativeDelay += delay;
             } else {
                 // It's a simple or panel instruction
-                Instruction* newInstruction = instructionList.addInstruction();
-                strncpy(newInstruction->device, currentDevice, MAX_DEVICE_LEN);
-                strncpy(newInstruction->command, token, MAX_COMMAND_LEN);
-                newInstruction->executeTime = currentTime + cumulativeDelay;
-                logger->log(name, DEBUG, "parsed device: %s, cmd: %s\n",newInstruction->device, newInstruction->command);
+                queueCommand(currentDevice, token, currentTime + cumulativeDelay);
+                logger->log(name, DEBUG, "parsed device: %s, cmd: %s\n",currentDevice, token);
             }
             token = strtok(NULL, ";");
         }
         // instructionList.dump("parseEnd", logger);
+    }
+
+    void ActionMgr::queueCommand(const char* device, const char* command, unsigned long executeTime) {
+        Instruction* newInstruction = instructionList.addInstruction();
+        strncpy(newInstruction->device, device, MAX_DEVICE_LEN);
+        strncpy(newInstruction->command, command, MAX_COMMAND_LEN);
+        newInstruction->executeTime = executeTime;
     }
 
     // Execute commands at the proper times

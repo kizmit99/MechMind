@@ -22,4 +22,8 @@ namespace droid::services {
     PWMService* System::getPWMService() {
         return pwmService;
     }
+
+    DroidState* System::getDroidState() {
+        return &droidState;
+    }
 }

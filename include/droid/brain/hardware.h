@@ -8,6 +8,7 @@
 //DomeMgr Motor config
 #define PWMSERVICE_DOME_MOTOR_OUT1 0
 #define PWMSERVICE_DOME_MOTOR_OUT2 1
+#define DOMEMOTOR_POWER_RAMP 10.0
 
 //Stream configurations
 #define LOGGER_STREAM Serial

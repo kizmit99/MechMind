@@ -43,6 +43,9 @@ namespace droid::brain {
         void factoryReset();
         void logConfig();
         void addCmdHandler(droid::command::CmdHandler*);
+        void fireTrigger(const char* trigger);
+        void queueCommand(const char* device, const char* command, unsigned long executeTime);
+        void overrideCmdMap(const char* trigger, const char* cmd);
 
     private:
         const char* name;

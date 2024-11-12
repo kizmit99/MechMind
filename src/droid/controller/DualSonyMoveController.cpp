@@ -1,5 +1,7 @@
 #include "droid/controller/DualSonyMoveController.h"
 #include "droid/brain/hardware.h"
+#include <string>
+#include <stdexcept>
 
 #define CONFIG_KEY_SONY_RIGHT_MAC           "RightMAC"
 #define CONFIG_KEY_SONY_ALT_RIGHT_MAC       "RightAltMAC"
@@ -8,9 +10,9 @@
 #define CONFIG_KEY_SONY_ACTIVE_TIMEOUT      "activeTimeout"
 #define CONFIG_KEY_SONY_INACTIVE_TIMEOUT    "inactiveTimeout"
 #define CONFIG_KEY_SONY_BAD_DATA_WINDOW     "badDataWindow"
-#define CONFIG_DEFAULT_SONY_ACTIVE_TIMEOUT  200
-#define CONFIG_DEFAULT_SONY_INACTIVE_TIMEOUT 10000
-#define CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW 50
+#define CONFIG_DEFAULT_SONY_ACTIVE_TIMEOUT  "200"
+#define CONFIG_DEFAULT_SONY_INACTIVE_TIMEOUT "10000"
+#define CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW "50"
 
 namespace droid::controller {
     DualSonyMoveController::DualSonyMoveController(const char* name, droid::services::System* sys) :
@@ -38,9 +40,9 @@ namespace droid::controller {
         config->putString(name, CONFIG_KEY_SONY_ALT_RIGHT_MAC, CONFIG_DEFAULT_SONY_ALT_RIGHT_MAC);
         config->putString(name, CONFIG_KEY_SONY_LEFT_MAC, CONFIG_DEFAULT_SONY_LEFT_MAC);
         config->putString(name, CONFIG_KEY_SONY_ALT_LEFT_MAC, CONFIG_DEFAULT_SONY_ALT_LEFT_MAC);
-        config->putInt(name, CONFIG_KEY_SONY_ACTIVE_TIMEOUT, CONFIG_DEFAULT_SONY_ACTIVE_TIMEOUT);
-        config->putInt(name, CONFIG_KEY_SONY_INACTIVE_TIMEOUT, CONFIG_DEFAULT_SONY_INACTIVE_TIMEOUT);
-        config->putInt(name, CONFIG_KEY_SONY_BAD_DATA_WINDOW, CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW);
+        config->putString(name, CONFIG_KEY_SONY_ACTIVE_TIMEOUT, CONFIG_DEFAULT_SONY_ACTIVE_TIMEOUT);
+        config->putString(name, CONFIG_KEY_SONY_INACTIVE_TIMEOUT, CONFIG_DEFAULT_SONY_INACTIVE_TIMEOUT);
+        config->putString(name, CONFIG_KEY_SONY_BAD_DATA_WINDOW, CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW);
     }
 
     void DualSonyMoveController::init() {
@@ -49,9 +51,18 @@ namespace droid::controller {
         strncpy(PS3Right.MACBackup, config->getString(name, CONFIG_KEY_SONY_ALT_RIGHT_MAC, CONFIG_DEFAULT_SONY_ALT_RIGHT_MAC).c_str(), sizeof(PS3Right.MACBackup));
         strncpy(PS3Left.MAC, config->getString(name, CONFIG_KEY_SONY_LEFT_MAC, CONFIG_DEFAULT_SONY_LEFT_MAC).c_str(), sizeof(PS3Left.MAC));
         strncpy(PS3Left.MACBackup, config->getString(name, CONFIG_KEY_SONY_ALT_LEFT_MAC, CONFIG_DEFAULT_SONY_ALT_LEFT_MAC).c_str(), sizeof(PS3Left.MACBackup));
-        activeTimeout = config->getInt(name, CONFIG_KEY_SONY_ACTIVE_TIMEOUT, CONFIG_DEFAULT_SONY_ACTIVE_TIMEOUT);
-        inactiveTimeout = config->getInt(name, CONFIG_KEY_SONY_INACTIVE_TIMEOUT, CONFIG_DEFAULT_SONY_INACTIVE_TIMEOUT);
-        badDataWindow = config->getInt(name, CONFIG_KEY_SONY_BAD_DATA_WINDOW, CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW);
+        activeTimeout = atoi(config->getString(name, CONFIG_KEY_SONY_ACTIVE_TIMEOUT, CONFIG_DEFAULT_SONY_ACTIVE_TIMEOUT).c_str());
+        if (activeTimeout == 0) {
+            activeTimeout = atoi(CONFIG_DEFAULT_SONY_ACTIVE_TIMEOUT);
+        }
+        inactiveTimeout = atoi(config->getString(name, CONFIG_KEY_SONY_INACTIVE_TIMEOUT, CONFIG_DEFAULT_SONY_INACTIVE_TIMEOUT).c_str());
+        if (inactiveTimeout == 0) {
+            inactiveTimeout = atoi(CONFIG_DEFAULT_SONY_INACTIVE_TIMEOUT);
+        }
+        badDataWindow = atoi(config->getString(name, CONFIG_KEY_SONY_BAD_DATA_WINDOW, CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW).c_str());
+        if (badDataWindow == 0) {
+            badDataWindow = atoi(CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW);
+        }
         if (Usb.Init() != 0) {
             logger->log(name, FATAL, "Unable to init() the USB stack");
         }
@@ -69,9 +80,9 @@ namespace droid::controller {
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_ALT_RIGHT_MAC, config->getString(name, CONFIG_KEY_SONY_ALT_RIGHT_MAC, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_LEFT_MAC, config->getString(name, CONFIG_KEY_SONY_LEFT_MAC, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_ALT_LEFT_MAC, config->getString(name, CONFIG_KEY_SONY_ALT_LEFT_MAC, "").c_str());
-        logger->log(name, INFO, "Config %s = %d\n", CONFIG_KEY_SONY_ACTIVE_TIMEOUT, config->getInt(name, CONFIG_KEY_SONY_ACTIVE_TIMEOUT, 0));
-        logger->log(name, INFO, "Config %s = %d\n", CONFIG_KEY_SONY_INACTIVE_TIMEOUT, config->getInt(name, CONFIG_KEY_SONY_INACTIVE_TIMEOUT, 0));
-        logger->log(name, INFO, "Config %s = %d\n", CONFIG_KEY_SONY_BAD_DATA_WINDOW, config->getInt(name, CONFIG_KEY_SONY_BAD_DATA_WINDOW, 0));
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_ACTIVE_TIMEOUT, config->getString(name, CONFIG_KEY_SONY_ACTIVE_TIMEOUT, ""));
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_INACTIVE_TIMEOUT, config->getString(name, CONFIG_KEY_SONY_INACTIVE_TIMEOUT, ""));
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_BAD_DATA_WINDOW, config->getString(name, CONFIG_KEY_SONY_BAD_DATA_WINDOW, ""));
     }
 
     void DualSonyMoveController::failsafe() {

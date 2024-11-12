@@ -18,5 +18,6 @@ namespace droid::brain {
         droid::motor::MotorDriver* domeMotor;
         droid::services::Logger* logger;
         droid::services::Config* config;
+        droid::services::DroidState* droidState;
     };
 }

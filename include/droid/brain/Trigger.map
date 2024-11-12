@@ -19,11 +19,11 @@ cmdMap["VolumeMid"]     = "HCR>$m";
 cmdMap["CloseDomeAll"]  = "Dome>:CL00";
 cmdMap["OpenDomeAll"]   = "Dome>:OP00";
 
-cmdMap["StickDisable"]  = "Brain>+STICKOFF";
-cmdMap["StickEnable"]   = "Brain>+STICKON";
-cmdMap["ToggleSpeed"]   = "Brain>+TSPEED";
-cmdMap["AutoDomeOn"]    = "Brain>+AUTODOMEON";
-cmdMap["AutoDomeOff"]   = "Brain>+AUTODOMEOFF";
+cmdMap["StickDisable"]  = "Brain>StickOff";
+cmdMap["StickEnable"]   = "Brain>StickOn";
+cmdMap["ToggleSpeed"]   = "Brain>SpeedToggle";
+cmdMap["AutoDomeOn"]    = "Brain>AutoDomeOn";
+cmdMap["AutoDomeOff"]   = "Brain>AutoDomeOff";
 cmdMap["FullAwake"]     = "Dome>:SE11";
 cmdMap["QuietMode"]     = "Dome>:SE10";
 cmdMap["MidAwake"]      = "Dome>:SE13";
