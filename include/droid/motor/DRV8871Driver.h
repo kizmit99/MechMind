@@ -22,7 +22,6 @@ namespace droid::motor {
     private:
         void setMotorSpeed(int16_t speed);
         
-        //instance name
         const char* name;
         droid::services::Logger* logger;
         droid::services::PWMService* pwmService;

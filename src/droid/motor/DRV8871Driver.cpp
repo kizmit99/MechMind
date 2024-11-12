@@ -94,10 +94,10 @@ namespace droid::motor {
             pwmService->setPWMpercent(out2, 100);
         } else if (dutyCycle > 0) {
             pwmService->setPWMpercent(out2, 0);
-            pwmService->setPWMpercent(out1, (abs(dutyCycle)));
+            pwmService->setPWMpercent(out1, abs(dutyCycle), timeoutMs);
         } else {
             pwmService->setPWMpercent(out1, 0);
-            pwmService->setPWMpercent(out2, (abs(dutyCycle)));
+            pwmService->setPWMpercent(out2, abs(dutyCycle), timeoutMs);
         }
     }
 }

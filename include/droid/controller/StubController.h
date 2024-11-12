@@ -23,7 +23,6 @@ namespace droid::controller {
         String getTrigger() {return "";}
 
     private:
-        //instance name
         const char* name;
         droid::services::Logger* logger;
         droid::services::Config* config;

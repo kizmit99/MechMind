@@ -26,8 +26,8 @@ namespace droid::brain {
         Instruction* addInstruction();
         Instruction* deleteInstruction(Instruction*);  //Note, this method returns the NEXT Instruction* in the list
         Instruction* initLoop();
-        // Instruction* getNext(Instruction*);
-        // void dump(const char *name, droid::services::Logger* logger);
+        Instruction* getNext(Instruction*);
+        void dump(const char *name, droid::services::Logger* logger);
 
     private:
         Instruction list[INSTRUCTION_QUEUE_SIZE];

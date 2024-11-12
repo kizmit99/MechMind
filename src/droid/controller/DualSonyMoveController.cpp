@@ -26,7 +26,7 @@ namespace droid::controller {
         logger = sys->getLogger();
         if (DualSonyMoveController::instance != NULL) {
             logger->log(name, droid::services::Logger::Level::FATAL, "Constructor for DualSonyMoveController called more than once!\n");
-            while (1);  //TODO Better eay to handle this???
+            while (1);  //TODO Better way to handle this???
         }
         DualSonyMoveController::instance = this;
 

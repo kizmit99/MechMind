@@ -163,15 +163,15 @@ namespace droid::brain {
         }
     }
 
-    // void InstructionList::dump(const char* name, droid::services::Logger* logger) {
-    //     int i = 0;
-    //     Instruction* instruction = head;
-    //     while (instruction != NULL) {
-    //         logger->log(name, INFO, "InstructionList[%d] device: %s, cmd: %s\n", i, instruction->device, instruction->command);
-    //         i++;
-    //         instruction = instruction->next;
-    //     }
-    // }
+    void InstructionList::dump(const char* name, droid::services::Logger* logger) {
+        int i = 0;
+        Instruction* instruction = head;
+        while (instruction != NULL) {
+            logger->log(name, INFO, "InstructionList[%d] device: %s, cmd: %s\n", i, instruction->device, instruction->command);
+            i++;
+            instruction = instruction->next;
+        }
+    }
 
     Instruction* InstructionList::addInstruction() {
         Instruction* freeRec = NULL;
@@ -235,12 +235,12 @@ namespace droid::brain {
         return head;
     }
 
-    // Instruction* InstructionList::getNext(Instruction* entry) {
-    //     if (entry == NULL) {
-    //         return NULL;
-    //     }
-    //     return entry->next;
-    // }
+    Instruction* InstructionList::getNext(Instruction* entry) {
+        if (entry == NULL) {
+            return NULL;
+        }
+        return entry->next;
+    }
 
 
 

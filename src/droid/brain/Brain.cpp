@@ -65,19 +65,19 @@ namespace droid::brain {
         actionMgr.fireTrigger(trigger);
     }
 
-    void Brain::task() {
+    void Brain::processCmdInput(Stream* cmdStream) {
         //Check for incoming serial commands
-        if (Serial.available()) {       //if or while?  while gives precedence to typing, if gives precedence to the rest of the droid?
-            char in = Serial.read();
+        while (cmdStream->available()) {
+            char in = cmdStream->read();
             if (in == '\b') {    //backspace
-                Serial.print("\b \b");
+                cmdStream->print("\b \b");
                 if (bufIndex > 0) {
                     bufIndex--;
                 }
             } else {
-                Serial.print(in);
+                cmdStream->print(in);
                 if (in == '\r') {
-                    Serial.print('\n');
+                    cmdStream->print('\n');
                 }
                 if (bufIndex < sizeof(inputBuf)) {
                     inputBuf[bufIndex] = in;
@@ -90,13 +90,15 @@ namespace droid::brain {
                 //end of input
                 if (bufIndex > 1) {     //Skip empty commands
                     inputBuf[bufIndex - 1] = 0;
-                    logger->log(name, DEBUG, "inputBuf: %s, len=%d\n", inputBuf, strlen(inputBuf));
                     actionMgr.queueCommand("Brain", inputBuf, millis());
                 }
                 bufIndex = 0;
             }
         }
+    }
 
+    void Brain::task() {
+        processCmdInput(&LOGGER_STREAM);
         controller.task();
         domeMgr.task();
         actionMgr.task();

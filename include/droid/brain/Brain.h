@@ -43,5 +43,7 @@ namespace droid::brain {
 
         char inputBuf[100];
         uint8_t bufIndex = 0;
+
+        void processCmdInput(Stream* cmdStream);
     };
 }
