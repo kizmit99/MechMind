@@ -11,7 +11,7 @@
 #define MAX_SEQUENCE_LEN 200
 #define INSTRUCTION_QUEUE_SIZE 20
 
-namespace droid::brain {
+namespace droid::command {
     struct Instruction {
         char device[MAX_DEVICE_LEN];
         char command[MAX_COMMAND_LEN];

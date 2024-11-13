@@ -1,6 +1,6 @@
-#include "droid/command/LocalCmdHandler.h"
+#include "droid/brain/LocalCmdHandler.h"
 #include "droid/services/DroidState.h"
-#include "droid/brain/ActionMgr.h"
+#include "droid/command/ActionMgr.h"
 
 namespace {
     const char* trimSpaces(const char* str) {
@@ -64,8 +64,8 @@ namespace {
     }   
 }
 
-namespace droid::command {
-    LocalCmdHandler::LocalCmdHandler(const char* name, droid::services::System* system, droid::brain::Brain* brain) :
+namespace droid::brain {
+    LocalCmdHandler::LocalCmdHandler(const char* name, droid::services::System* system, Brain* brain) :
         name(name),
         brain(brain),
         logger(system->getLogger()),

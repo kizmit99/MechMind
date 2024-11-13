@@ -2,7 +2,7 @@
 #include "droid/brain/Brain.h"
 #include "droid/command/StreamCmdHandler.h"
 #include "droid/command/CmdLogger.h"
-#include "droid/command/LocalCmdHandler.h"
+#include "droid/brain/LocalCmdHandler.h"
 
 #define CONFIG_KEY_BRAIN_INITIALIZED    "initialized"
 
@@ -20,15 +20,16 @@ namespace droid::brain {
         motorDriver("DRV8871", &system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2),
         domeMgr("DomeMgr", &system, &controller, &motorDriver),
         actionMgr("ActionMgr", &system, &controller) {
-            config = system.getConfig();
-            logger = system.getLogger();
-            actionMgr.addCmdHandler(new droid::command::CmdLogger("CmdLogger", &system));
-            //TODO Implement configurable Serial ports
-            actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Dome", &system, &DOME_STREAM));
-            actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Body", &system, &BODY_STREAM));
-            actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("HCR", &system, &HCR_STREAM));
-            actionMgr.addCmdHandler(new droid::command::LocalCmdHandler("Brain", &system, this));
-        }
+
+        config = system.getConfig();
+        logger = system.getLogger();
+        actionMgr.addCmdHandler(new droid::command::CmdLogger("CmdLogger", &system));
+        //TODO Implement configurable Serial ports
+        actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Dome", &system, &DOME_STREAM));
+        actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Body", &system, &BODY_STREAM));
+        actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("HCR", &system, &HCR_STREAM));
+        actionMgr.addCmdHandler(new droid::brain::LocalCmdHandler("Brain", &system, this));
+    }
 
     void Brain::init() {
         bool initialized = config->getString(name, CONFIG_KEY_BRAIN_INITIALIZED, "0") == "1";

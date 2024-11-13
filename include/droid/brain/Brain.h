@@ -7,8 +7,8 @@
 #include "droid/controller/DualSonyMoveController.h"
 #include "droid/controller/StubController.h"
 #include "droid/motor/DRV8871Driver.h"
-#include "DomeMgr.h"
-#include "ActionMgr.h"
+#include "droid/brain/DomeMgr.h"
+#include "droid/command/ActionMgr.h"
 
 namespace droid::brain {
     class Brain {
@@ -39,7 +39,7 @@ namespace droid::brain {
 #endif
         droid::motor::DRV8871Driver motorDriver;
         DomeMgr domeMgr;
-        ActionMgr actionMgr;
+        droid::command::ActionMgr actionMgr;
 
         char inputBuf[100];
         uint8_t bufIndex = 0;

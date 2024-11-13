@@ -1,7 +1,7 @@
-#include "droid/brain/ActionMgr.h"
+#include "droid/command/ActionMgr.h"
 #include <map>
 
-namespace droid::brain {
+namespace droid::command {
     ActionMgr::ActionMgr(const char* name, droid::services::System* system, droid::controller::Controller* controller) :
         name(name),
         logger(system->getLogger()),
@@ -11,7 +11,7 @@ namespace droid::brain {
     void ActionMgr::init() {
         //init cmdMap with defaults then load overrides from config
         cmdMap.clear();
-        #include "droid/brain/Trigger.map"
+        #include "droid/command/Trigger.map"
         // Iterate through the map looking for overrides
         for (const auto& mapEntry : cmdMap) {
             const char* trigger = mapEntry.first.c_str();
@@ -32,7 +32,7 @@ namespace droid::brain {
     void ActionMgr::factoryReset() {
         //init cmdMap with defaults then store default into config
         cmdMap.clear();
-        #include "droid/brain/Trigger.map"
+        #include "droid/command/Trigger.map"
         // Iterate through the map clearing all overrides
         for (const auto& mapEntry : cmdMap) {
             const char* trigger = mapEntry.first.c_str();
@@ -46,7 +46,7 @@ namespace droid::brain {
             if (cmd == NULL) {  //Revert to default
                 std::map<String, String> cmdMap;
                 //Load defaults into a temp map
-                #include "droid/brain/Trigger.map"
+                #include "droid/command/Trigger.map"
                 //override master map with the default value just loaded
                 this->cmdMap[trigger] = cmdMap[trigger];
                 //save the default back to config storage
