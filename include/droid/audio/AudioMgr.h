@@ -2,33 +2,9 @@
 #include <Arduino.h>
 #include "droid/services/System.h"
 #include "droid/audio/AudioDriver.h"
-
-#define AUDIO_MAX_COMMAND_LEN 25
-#define AUDIO_COMMAND_QUEUE_SIZE 20
+#include "droid/util/InstructionList.h"
 
 namespace droid::audio {
-    struct AudioCmd {
-        char command[AUDIO_MAX_COMMAND_LEN];
-        unsigned long executeTime; // Time when the instruction should be executed
-        bool isActive;
-        AudioCmd* next;
-        AudioCmd* prev;
-    };
-
-    class AudioCmdList {
-    public:
-        AudioCmd* addCommand();
-        AudioCmd* deleteCommand(AudioCmd*);  //Note, this method returns the NEXT Instruction* in the list
-        AudioCmd* initLoop();
-        AudioCmd* getNext(AudioCmd*);
-        void dump(const char *name, droid::services::Logger* logger);
-
-    private:
-        AudioCmd list[AUDIO_COMMAND_QUEUE_SIZE];
-        AudioCmd* head = 0;
-        AudioCmd* tail = 0;
-    };
-
     class AudioMgr {
     public:
         AudioMgr(const char* name, droid::services::System* system, AudioDriver* driver);
@@ -58,7 +34,8 @@ namespace droid::audio {
         droid::services::Config* config;
         droid::services::DroidState* droidState;
         AudioDriver* driver;
-        AudioCmdList audioCmdList;
+        droid::util::InstructionList audioCmdList;
+        char cmdBuffer[INSTRUCTIONLIST_COMMAND_LEN] = {0};
         float maxVolume;
         float minVolume;
         float volume;

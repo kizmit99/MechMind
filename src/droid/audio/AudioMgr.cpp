@@ -40,7 +40,7 @@ namespace droid::audio {
     
     void AudioMgr::task() {
         unsigned long currentTime = millis();
-        AudioCmd* instruction = audioCmdList.initLoop();
+        droid::util::Instruction* instruction = audioCmdList.initLoop();
         while (instruction != NULL) {
             if (currentTime >= instruction->executeTime) {
 
@@ -57,7 +57,7 @@ namespace droid::audio {
                     }
                 }
 
-                instruction = audioCmdList.deleteCommand(instruction);
+                instruction = audioCmdList.deleteInstruction(instruction);
             } else {
                 instruction = instruction->next;
             }
@@ -130,8 +130,7 @@ namespace droid::audio {
         }
         config->putFloat(name, CONFIG_KEY_VOLUME, newVolume);
         this->volume = newVolume;
-        char buf[AUDIO_MAX_COMMAND_LEN];
-        queueCommand(driver->getSetVolumeCmd(buf, AUDIO_MAX_COMMAND_LEN, newVolume));
+        queueCommand(driver->getSetVolumeCmd(cmdBuffer, INSTRUCTIONLIST_COMMAND_LEN, newVolume));
     }
     
     float AudioMgr::getVolume() {
@@ -147,8 +146,7 @@ namespace droid::audio {
         }
         config->putInt(name, CONFIG_KEY_RANDOM_MIN, millis);
         this->minRandomMilliSeconds = millis;
-        char buf[AUDIO_MAX_COMMAND_LEN];
-        const char* cmd = driver->getSetMuseMinCmd(buf, AUDIO_MAX_COMMAND_LEN, millis);
+        const char* cmd = driver->getSetMuseMinCmd(cmdBuffer, INSTRUCTIONLIST_COMMAND_LEN, millis);
         if (cmd != NULL) {
             queueCommand(cmd);
         }
@@ -167,8 +165,7 @@ namespace droid::audio {
         }
         config->putInt(name, CONFIG_KEY_RANDOM_MIN, millis);
         this->maxRandomMilliSeconds = millis;
-        char buf[AUDIO_MAX_COMMAND_LEN];
-        const char* cmd = driver->getSetMuseMaxCmd(buf, AUDIO_MAX_COMMAND_LEN, millis);
+        const char* cmd = driver->getSetMuseMaxCmd(cmdBuffer, INSTRUCTIONLIST_COMMAND_LEN, millis);
         if (cmd != NULL) {
             queueCommand(cmd);
         }
@@ -180,20 +177,17 @@ namespace droid::audio {
     
     void AudioMgr::playSound(uint8_t bank, uint8_t sound) {
         logger->log(name, DEBUG, "playSound(%d, %d)\n", bank, sound);
-        char buf[AUDIO_MAX_COMMAND_LEN];
-        queueCommand(driver->getPlaySoundCmd(buf, AUDIO_MAX_COMMAND_LEN, bank, sound));
+        queueCommand(driver->getPlaySoundCmd(cmdBuffer, INSTRUCTIONLIST_COMMAND_LEN, bank, sound));
     }
     
     void AudioMgr::stop() {
         logger->log(name, DEBUG, "stop()\n");
-        char buf[AUDIO_MAX_COMMAND_LEN];
-        queueCommand(driver->getStopCmd(buf, AUDIO_MAX_COMMAND_LEN));
+        queueCommand(driver->getStopCmd(cmdBuffer, INSTRUCTIONLIST_COMMAND_LEN));
     }
     
     void AudioMgr::enableRandom(bool enable, uint8_t secondsInFuture) {
         logger->log(name, DEBUG, "enableRandom(%d, %d)\n", enable, secondsInFuture);
-        char buf[AUDIO_MAX_COMMAND_LEN];
-        queueCommand(driver->getEnableRandomCmd(buf, AUDIO_MAX_COMMAND_LEN, enable), (((int) secondsInFuture) * 1000));
+        queueCommand(driver->getEnableRandomCmd(cmdBuffer, INSTRUCTIONLIST_COMMAND_LEN, enable), (((int) secondsInFuture) * 1000));
     }
 
     bool AudioMgr::isRandomEnabled() {
@@ -215,86 +209,8 @@ namespace droid::audio {
     
     void AudioMgr::queueCommand(const char* command, unsigned long delayMs) {
         logger->log(name, DEBUG, "queueCommand(%s, %d)\n", command, delayMs);
-        AudioCmd* newAudioCmd = audioCmdList.addCommand();
-        strncpy(newAudioCmd->command, command, AUDIO_MAX_COMMAND_LEN);
+        droid::util::Instruction* newAudioCmd = audioCmdList.addInstruction();
+        strncpy(newAudioCmd->command, command, INSTRUCTIONLIST_COMMAND_LEN);
         newAudioCmd->executeTime = millis() + delayMs;
-    }
-
-    AudioCmd* AudioCmdList::addCommand() {
-        AudioCmd* freeRec = NULL;
-        uint8_t index = 0;
-        for (index = 0; index < AUDIO_COMMAND_QUEUE_SIZE; index++) {
-            if (!list[index].isActive) {
-                freeRec = &list[index];
-                break;
-            }
-        }
-        if (freeRec == NULL) {  //List is full
-            return NULL;
-        }
-        //link prev record to this one
-        if (tail != NULL) {
-            tail->next = freeRec;
-        }
-        //Prepare record for reuse
-        freeRec->isActive = true;
-        freeRec->prev = tail;       //Always add to end of list
-        freeRec->next = NULL;
-        tail = freeRec;
-        if (head == NULL) {   //List was empty
-            head = freeRec;
-        }
-        return freeRec;
-    }
-    
-    AudioCmd* AudioCmdList::deleteCommand(AudioCmd* entry) {
-        if (entry == NULL) {
-            return NULL;
-        }
-        if (head == NULL) {
-            return NULL;
-        }
-        if (entry->prev == NULL) {   //Was first entry in list
-            head = entry->next;
-        } else {
-            entry->prev->next = entry->next;
-        }
-        if (tail == entry) {    //Was last entry in list
-            tail = entry->prev;
-        }
-        AudioCmd* next = entry->next;
-        if (next != NULL) {
-            next->prev = entry->prev;
-        }
-
-        //Clear record for reuse
-        entry->command[0] = 0;
-        entry->executeTime = 0;
-        entry->isActive = false;
-        entry->next = NULL;
-        entry->prev = NULL;
-
-        return next;
-    }
-
-    AudioCmd* AudioCmdList::initLoop() {
-        return head;
-    }
-    
-    AudioCmd* AudioCmdList::getNext(AudioCmd* entry) {
-        if (entry == NULL) {
-            return NULL;
-        }
-        return entry->next;
-    }
-    
-    void AudioCmdList::dump(const char *name, droid::services::Logger* logger) {
-        int i = 0;
-        AudioCmd* cmd = head;
-        while (cmd != NULL) {
-            logger->log(name, INFO, "AudioCmdList[%d] cmd: %s\n", i, cmd->command);
-            i++;
-            cmd = cmd->next;
-        }
     }
 }

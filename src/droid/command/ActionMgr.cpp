@@ -99,7 +99,7 @@ namespace droid::command {
         char buf[ACTION_MAX_SEQUENCE_LEN];
         strncpy(buf, sequence, sizeof(buf));  // Create a copy of the sequence to avoid modifying the original
         char* token = strtok(buf, ";");
-        char currentDevice[ACTION_MAX_DEVICE_LEN] = "";
+        char currentDevice[INSTRUCTIONLIST_DEVICE_LEN] = "";
         unsigned long currentTime = millis();
         unsigned long cumulativeDelay = 0;
 
@@ -128,16 +128,16 @@ namespace droid::command {
     }
 
     void ActionMgr::queueCommand(const char* device, const char* command, unsigned long executeTime) {
-        Instruction* newInstruction = instructionList.addInstruction();
-        strncpy(newInstruction->device, device, ACTION_MAX_DEVICE_LEN);
-        strncpy(newInstruction->command, command, ACTION_MAX_COMMAND_LEN);
+        droid::util::Instruction* newInstruction = instructionList.addInstruction();
+        strncpy(newInstruction->device, device, INSTRUCTIONLIST_DEVICE_LEN);
+        strncpy(newInstruction->command, command, INSTRUCTIONLIST_COMMAND_LEN);
         newInstruction->executeTime = executeTime;
     }
 
     // Execute commands at the proper times
     void ActionMgr::executeCommands() {
         unsigned long currentTime = millis();
-        Instruction* instruction = instructionList.initLoop();
+        droid::util::Instruction* instruction = instructionList.initLoop();
         while (instruction != NULL) {
             if (currentTime >= instruction->executeTime) {
 
@@ -160,86 +160,6 @@ namespace droid::command {
             }
         }
     }
-
-    void InstructionList::dump(const char* name, droid::services::Logger* logger) {
-        int i = 0;
-        Instruction* instruction = head;
-        while (instruction != NULL) {
-            logger->log(name, INFO, "InstructionList[%d] device: %s, cmd: %s\n", i, instruction->device, instruction->command);
-            i++;
-            instruction = instruction->next;
-        }
-    }
-
-    Instruction* InstructionList::addInstruction() {
-        Instruction* freeRec = NULL;
-        uint8_t index = 0;
-        for (index = 0; index < INSTRUCTION_QUEUE_SIZE; index++) {
-            if (!list[index].isActive) {
-                freeRec = &list[index];
-                break;
-            }
-        }
-        if (freeRec == NULL) {  //List is full
-            return NULL;
-        }
-        //link prev record to this one
-        if (tail != NULL) {
-            tail->next = freeRec;
-        }
-        //Prepare record for reuse
-        freeRec->isActive = true;
-        freeRec->prev = tail;       //Always add to end of list
-        freeRec->next = NULL;
-        tail = freeRec;
-        if (head == NULL) {   //List was empty
-            head = freeRec;
-        }
-        return freeRec;
-    }
-
-    Instruction* InstructionList::deleteInstruction(Instruction* entry) {
-        if (entry == NULL) {
-            return NULL;
-        }
-        if (head == NULL) {
-            return NULL;
-        }
-        if (entry->prev == NULL) {   //Was first entry in list
-            head = entry->next;
-        } else {
-            entry->prev->next = entry->next;
-        }
-        if (tail == entry) {    //Was last entry in list
-            tail = entry->prev;
-        }
-        Instruction* next = entry->next;
-        if (next != NULL) {
-            next->prev = entry->prev;
-        }
-
-        //Clear record for reuse
-        entry->command[0] = 0;
-        entry->device[0] = 0;
-        entry->executeTime = 0;
-        entry->isActive = false;
-        entry->next = NULL;
-        entry->prev = NULL;
-
-        return next;
-    }
-
-    Instruction* InstructionList::initLoop() {
-        return head;
-    }
-
-    Instruction* InstructionList::getNext(Instruction* entry) {
-        if (entry == NULL) {
-            return NULL;
-        }
-        return entry->next;
-    }
-
 
 
 // // =======================================================================================

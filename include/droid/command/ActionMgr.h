@@ -3,38 +3,13 @@
 #include "droid/services/System.h"
 #include "droid/controller/Controller.h"
 #include "droid/command/CmdHandler.h"
+#include "droid/util/InstructionList.h"
 #include <map>
 #include <vector>
 
-#define ACTION_MAX_DEVICE_LEN 20
-#define ACTION_MAX_COMMAND_LEN 50
 #define ACTION_MAX_SEQUENCE_LEN 200
-#define INSTRUCTION_QUEUE_SIZE 20
 
 namespace droid::command {
-    struct Instruction {
-        char device[ACTION_MAX_DEVICE_LEN];
-        char command[ACTION_MAX_COMMAND_LEN];
-        unsigned long executeTime; // Time when the instruction should be executed
-        bool isActive;
-        Instruction* next;
-        Instruction* prev;
-    };
-
-    class InstructionList {
-    public:
-        Instruction* addInstruction();
-        Instruction* deleteInstruction(Instruction*);  //Note, this method returns the NEXT Instruction* in the list
-        Instruction* initLoop();
-        Instruction* getNext(Instruction*);
-        void dump(const char *name, droid::services::Logger* logger);
-
-    private:
-        Instruction list[INSTRUCTION_QUEUE_SIZE];
-        Instruction* head = 0;
-        Instruction* tail = 0;
-    };
-
     class ActionMgr {
     public:
         ActionMgr(const char* name, droid::services::System* system, droid::controller::Controller*);
@@ -55,7 +30,7 @@ namespace droid::command {
         std::map<String, String> cmdMap;
         unsigned long lastTriggerTime = 0;
         String lastTrigger;
-        InstructionList instructionList;
+        droid::util::InstructionList instructionList;
         std::vector<droid::command::CmdHandler*> cmdHandlers;
 
         void parseCommands(const char* command);
