@@ -96,10 +96,10 @@ namespace droid::command {
     // Parse the command sequence and store commands with their execute times
     void ActionMgr::parseCommands(const char* sequence) {
         // instructionList.dump("parseBegin", logger);
-        char buf[MAX_SEQUENCE_LEN];
+        char buf[ACTION_MAX_SEQUENCE_LEN];
         strncpy(buf, sequence, sizeof(buf));  // Create a copy of the sequence to avoid modifying the original
         char* token = strtok(buf, ";");
-        char currentDevice[MAX_DEVICE_LEN] = "";
+        char currentDevice[ACTION_MAX_DEVICE_LEN] = "";
         unsigned long currentTime = millis();
         unsigned long cumulativeDelay = 0;
 
@@ -129,8 +129,8 @@ namespace droid::command {
 
     void ActionMgr::queueCommand(const char* device, const char* command, unsigned long executeTime) {
         Instruction* newInstruction = instructionList.addInstruction();
-        strncpy(newInstruction->device, device, MAX_DEVICE_LEN);
-        strncpy(newInstruction->command, command, MAX_COMMAND_LEN);
+        strncpy(newInstruction->device, device, ACTION_MAX_DEVICE_LEN);
+        strncpy(newInstruction->command, command, ACTION_MAX_COMMAND_LEN);
         newInstruction->executeTime = executeTime;
     }
 
@@ -141,18 +141,16 @@ namespace droid::command {
         while (instruction != NULL) {
             if (currentTime >= instruction->executeTime) {
 
-                Serial.print("Sending command to ");
-                Serial.print(instruction->device);
-                Serial.print(": ");
-                Serial.print(instruction->command);
-                Serial.print(" at time: ");
-                Serial.println(currentTime);
+                logger->log(name, DEBUG, "Sending command to %s: %s at time: %d\n", instruction->device, instruction->command, currentTime);
 
-                bool processed = false;
+                bool consumed = false;
                 for (droid::command::CmdHandler* cmdHandler : cmdHandlers) {
-                    processed |= cmdHandler->process(instruction->device, instruction->command);
+                    consumed |= cmdHandler->process(instruction->device, instruction->command);
+                    if (consumed) {
+                        break;
+                    }
                 }
-                if (!processed) {
+                if (!consumed) {
                     logger->log(name, WARN, "Command was not handled.  Device: %s, cmd: %s\n", instruction->device, instruction->command);
                 }
 
@@ -176,7 +174,7 @@ namespace droid::command {
     Instruction* InstructionList::addInstruction() {
         Instruction* freeRec = NULL;
         uint8_t index = 0;
-        for (index = 0; index < sizeof(list); index++) {
+        for (index = 0; index < INSTRUCTION_QUEUE_SIZE; index++) {
             if (!list[index].isActive) {
                 freeRec = &list[index];
                 break;

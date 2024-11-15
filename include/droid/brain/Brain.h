@@ -9,6 +9,8 @@
 #include "droid/motor/DRV8871Driver.h"
 #include "droid/brain/DomeMgr.h"
 #include "droid/command/ActionMgr.h"
+#include "droid/audio/AudioMgr.h"
+#include "droid/audio/HCRDriver.h"
 
 namespace droid::brain {
     class Brain {
@@ -40,6 +42,8 @@ namespace droid::brain {
         droid::motor::DRV8871Driver motorDriver;
         DomeMgr domeMgr;
         droid::command::ActionMgr actionMgr;
+        droid::audio::HCRDriver audioDriver;
+        droid::audio::AudioMgr audioMgr;
 
         char inputBuf[100];
         uint8_t bufIndex = 0;

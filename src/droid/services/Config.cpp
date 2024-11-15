@@ -3,16 +3,74 @@
 namespace droid::services {
     Config::Config() {}
 
-    void Config::putString(const char* nspace, const char* key, const char* value) {
-        Serial.println("Debug 1");
-        if (preferences.begin(nspace, false)) {
-            Serial.println("Debug 2");
-            preferences.putString(key, value);
-            Serial.println("Debug 3");
-            preferences.end();
-            Serial.println("Debug 4");
+    void Config::putInt(const char* nspace, const char* key, int value) {
+        char buf[20];
+        snprintf(buf, sizeof(buf), "%d", value);
+        putString(nspace, key, buf);
+    }
+
+    int Config::getInt(const char* nspace, const char* key, int defaultValue) {
+        int value = defaultValue;
+        char defaultStr[20];
+        snprintf(defaultStr, sizeof(defaultStr), "%d", defaultValue);
+        String configValue = getString(nspace, key, defaultStr);
+        const char* cValue = configValue.c_str();
+        char* endPtr;
+        value = strtol(cValue, &endPtr, 10);
+        if ((endPtr == cValue) || (*endPtr != '\0')) {   //parse error
+            Serial.printf("Parse ERROR in Config.getInt(%s, %s, %d) value from store: '%s'\n", nspace, key, defaultValue, cValue);
+            value = defaultValue;
         }
-        Serial.println("Debug 5");
+        return value;
+    }
+
+    void Config::putBool(const char* nspace, const char* key, bool value) {
+        char buf[20];
+        snprintf(buf, sizeof(buf), "%d", value);
+        putString(nspace, key, buf);
+    }
+
+    bool Config::getBool(const char* nspace, const char* key, bool defaultValue) {
+        bool value = defaultValue;
+        char defaultStr[20];
+        snprintf(defaultStr, sizeof(defaultStr), "%d", defaultValue);
+        String configValue = getString(nspace, key, defaultStr);
+        const char* cValue = configValue.c_str();
+        char* endPtr;
+        value = (bool) strtol(cValue, &endPtr, 10);
+        if ((endPtr == cValue) || (*endPtr != '\0')) {   //parse error
+            Serial.printf("Parse ERROR in Config.getBool(%s, %s, %d) value from store: '%s'\n", nspace, key, defaultValue, cValue);
+            value = defaultValue;
+        }
+        return value;
+    }
+
+    void Config::putFloat(const char* nspace, const char* key, float value) {
+        char buf[20];
+        snprintf(buf, sizeof(buf), "%.3f", value);
+        putString(nspace, key, buf);
+    }
+
+    float Config::getFloat(const char* nspace, const char* key, float defaultValue) {
+        float value = defaultValue;
+        char defaultStr[20];
+        snprintf(defaultStr, sizeof(defaultStr), "%.3f", defaultValue);
+        String configValue = getString(nspace, key, defaultStr);
+        const char* cValue = configValue.c_str();
+        char* endPtr;
+        value = strtof(cValue, &endPtr);
+        if ((endPtr == cValue) || (*endPtr != '\0')) {   //parse error
+            Serial.printf("Parse ERROR in Config.getInt(%s, %s, %.3f) value from store: '%s'\n", nspace, key, defaultValue, cValue);
+            value = defaultValue;
+        }
+        return value;
+    }
+
+    void Config::putString(const char* nspace, const char* key, const char* value) {
+        if (preferences.begin(nspace, false)) {
+            preferences.putString(key, value);
+            preferences.end();
+        }
     }
 
     String Config::getString(const char* nspace, const char* key, const char* defaultValue) {
@@ -22,15 +80,6 @@ namespace droid::services {
             preferences.end();
         }
         return value;
-    }
-
-    size_t Config::getString(const char* nspace, const char* key, char* value, size_t maxLen) {
-        size_t length = 0;
-        if (preferences.begin(nspace, true)) {
-            length = preferences.getString(key, value, maxLen);
-            preferences.end();
-        }
-        return length;
     }
 
     void Config::clear(const char* nspace) {

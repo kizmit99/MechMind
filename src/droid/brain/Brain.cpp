@@ -3,6 +3,7 @@
 #include "droid/command/StreamCmdHandler.h"
 #include "droid/command/CmdLogger.h"
 #include "droid/brain/LocalCmdHandler.h"
+#include "droid/audio/AudioCmdHandler.h"
 
 #define CONFIG_KEY_BRAIN_INITIALIZED    "initialized"
 
@@ -19,7 +20,9 @@ namespace droid::brain {
         system(name, &LOGGER_STREAM, DEBUG, &pwmService),
         motorDriver("DRV8871", &system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2),
         domeMgr("DomeMgr", &system, &controller, &motorDriver),
-        actionMgr("ActionMgr", &system, &controller) {
+        actionMgr("ActionMgr", &system, &controller),
+        audioDriver(&HCR_STREAM),
+        audioMgr("AudioMgr", &system, &audioDriver) {
 
         config = system.getConfig();
         logger = system.getLogger();
@@ -27,13 +30,14 @@ namespace droid::brain {
         //TODO Implement configurable Serial ports
         actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Dome", &system, &DOME_STREAM));
         actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Body", &system, &BODY_STREAM));
-        actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("HCR", &system, &HCR_STREAM));
+        actionMgr.addCmdHandler(new droid::audio::AudioCmdHandler("HCR", &system, &audioMgr));
         actionMgr.addCmdHandler(new droid::brain::LocalCmdHandler("Brain", &system, this));
     }
 
     void Brain::init() {
-        bool initialized = config->getString(name, CONFIG_KEY_BRAIN_INITIALIZED, "0") == "1";
+        bool initialized = config->getBool(name, CONFIG_KEY_BRAIN_INITIALIZED, false);
         if (!initialized) {
+            logger->log(name, INFO, "Brain has not been initialized, performing a factory reset.");
             factoryReset();
         }
         pwmService.init();
@@ -43,13 +47,15 @@ namespace droid::brain {
         motorDriver.init();
         domeMgr.init();
         actionMgr.init();
+        audioMgr.init();
     }
 
     void Brain::factoryReset() {
-        config->putString(name, CONFIG_KEY_BRAIN_INITIALIZED, "1");
+        config->putBool(name, CONFIG_KEY_BRAIN_INITIALIZED, true);
         controller.factoryReset();
         motorDriver.factoryReset();
         actionMgr.factoryReset();
+        audioMgr.factoryReset();
     }
 
     void Brain::reboot() {
@@ -104,6 +110,7 @@ namespace droid::brain {
         domeMgr.task();
         actionMgr.task();
         motorDriver.task();
+        audioMgr.task();
 
         if (logger->getMaxLevel() >= ERROR) {
             pwmService.failsafe();
@@ -117,6 +124,7 @@ namespace droid::brain {
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_INITIALIZED, config->getString(name, CONFIG_KEY_BRAIN_INITIALIZED, "0"));
         controller.logConfig();
         motorDriver.logConfig();
+        audioMgr.logConfig();
         actionMgr.logConfig();
     }
 }

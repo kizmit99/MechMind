@@ -73,15 +73,15 @@ namespace droid::brain {
         droidState(system->getDroidState()) {}
 
     bool LocalCmdHandler::process(const char* device, const char* command) {
-        char cmd[MAX_SEQUENCE_LEN] = {0};
-        char parm1[MAX_SEQUENCE_LEN] = {0};
-        char parm2[MAX_SEQUENCE_LEN] = {0};
-        char parm2a[MAX_SEQUENCE_LEN] = {0};
-        char parm3[MAX_SEQUENCE_LEN] = {0};
+        char cmd[ACTION_MAX_SEQUENCE_LEN] = {0};
+        char parm1[ACTION_MAX_SEQUENCE_LEN] = {0};
+        char parm2[ACTION_MAX_SEQUENCE_LEN] = {0};
+        char parm2a[ACTION_MAX_SEQUENCE_LEN] = {0};
+        char parm3[ACTION_MAX_SEQUENCE_LEN] = {0};
 
-        logger->log(name, DEBUG, "LocalCmdHandler asked to processcommand: %s\n", command);
         if ((strcasecmp(name, device) == 0) &&
             (command != NULL)) {
+            logger->log(name, DEBUG, "LocalCmdHandler asked to processcommand: %s\n", command);
             parseCmd(command, cmd, sizeof(cmd), parm1, sizeof(parm1), parm2, sizeof(parm2));
             if (strcasecmp(cmd, "stickOn") == 0) {
                 droidState->stickEnable = true;

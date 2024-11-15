@@ -6,15 +6,15 @@
 #include <map>
 #include <vector>
 
-#define MAX_DEVICE_LEN 20
-#define MAX_COMMAND_LEN 50
-#define MAX_SEQUENCE_LEN 200
+#define ACTION_MAX_DEVICE_LEN 20
+#define ACTION_MAX_COMMAND_LEN 50
+#define ACTION_MAX_SEQUENCE_LEN 200
 #define INSTRUCTION_QUEUE_SIZE 20
 
 namespace droid::command {
     struct Instruction {
-        char device[MAX_DEVICE_LEN];
-        char command[MAX_COMMAND_LEN];
+        char device[ACTION_MAX_DEVICE_LEN];
+        char command[ACTION_MAX_COMMAND_LEN];
         unsigned long executeTime; // Time when the instruction should be executed
         bool isActive;
         Instruction* next;
