@@ -16,12 +16,12 @@ namespace droid::brain {
         }
 
     void DomeMgr::init() {
-        domeMotor->setPowerRamp(DOMEMOTOR_POWER_RAMP);
+        //NOOP
     }
 
     void DomeMgr::task() {
         int8_t pos = controller->getJoystickPosition(droid::controller::Controller::Joystick::LEFT, droid::controller::Controller::Axis::X);
         controller->setCritical(abs(pos) > 0);
-        domeMotor->drive(pos);
+        domeMotor->setMotorSpeed(0, pos);
     }
 }
