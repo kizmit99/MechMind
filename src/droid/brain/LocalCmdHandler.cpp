@@ -80,7 +80,7 @@ namespace droid::brain {
             (command != NULL)) {
             logger->log(name, DEBUG, "LocalCmdHandler asked to processcommand: %s\n", command);
             parseCmd(command, cmd, sizeof(cmd), parm1, sizeof(parm1), parm2, sizeof(parm2));
-            if (strcasecmp(cmd, "stickOn") == 0) {
+            if (strcasecmp(cmd, "StickOn") == 0) {
                 droidState->stickEnable = true;
 
             } else if (strcasecmp(cmd, "StickOff") == 0) {
@@ -144,6 +144,10 @@ namespace droid::brain {
                     config->putString((const char*) &parm1, (const char*) &parm2a, (const char*) &parm3);
                 }
 
+            } else if (strcasecmp(cmd, "Help") == 0) {
+                //Provide help on using Local Commands
+                printHelp();
+
             } else {
                 logger->log(name, WARN, "LocalCmdHandler asked to process an undefined command: %s\n", command);
             }
@@ -151,5 +155,41 @@ namespace droid::brain {
         } else {
             return false;
         }
+    }
+
+    void LocalCmdHandler::printHelp() {
+        logger->printf("\n");
+        logger->printf("Commands:");
+        printCmdHelp("Help", "Print this list of commands");
+        printCmdHelp("StickOn", "Enable the Drive joystick");
+        printCmdHelp("StickOff", "Disable the Drive joystick");
+        printCmdHelp("StickToggle", "Toggle the enabled state of the Drive joystick");
+        printCmdHelp("AutoDomeOn", "Enable the Auto Dome functionality");
+        printCmdHelp("AutoDomeOff", "Disable the Auto Dome functionality");
+        printCmdHelp("AutoDomeToggle", "Toggle the enabled state of the Auto Dome Functionality");
+        printCmdHelp("Restart", "Perform a complete system restart");
+        printCmdHelp("Reset", "Restore all configuration parameters to defaults and restart the system");
+        printCmdHelp("ListConfig", "Print out all of the configuration parameters");
+        printCmdHelp("SetTrigger <trigger> <action>", "Configure the Action associated with the specified Trigger");
+        printParmHelp("trigger", "The Trigger to override");
+        printParmHelp("action", "The new Action (list of instructions) to associate with the Trigger");
+        printCmdHelp("Play <command>", "Execute the specified Trigger or Action");
+        printParmHelp("command", "This can be a Trigger, or a list of instructions (see ListConfig for examples)");
+        printCmdHelp("ResetTrigger <trigger>", "Restore the default Action associated with the specified Trigger");
+        printParmHelp("trigger", "The Trigger to override");
+        printCmdHelp("SetConfig <anmespace> <key> <newValue>", "Update the specified configuration value");
+        printParmHelp("namespace", "The namespace of the configuration entry to update (see ListConfig for valid options)");
+        printParmHelp("key", "The key name of the configuration entry to update (see ListConfig for valid options)");
+        printParmHelp("newValue", "The new value for the specified configuration namespace/key");
+    }
+
+    void LocalCmdHandler::printCmdHelp(const char* cmdName, const char* cmdDescription) {
+        logger->printf("\n");
+        logger->printf("  %s\n", cmdName);
+        logger->printf("    %s\n", cmdDescription);
+    }
+
+    void LocalCmdHandler::printParmHelp(const char* parmName, const char* parmDescription) {
+        logger->printf("    -- %s: %s\n", parmName, parmDescription);
     }
 }

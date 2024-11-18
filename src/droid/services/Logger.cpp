@@ -54,6 +54,16 @@ namespace droid::services {
         }
     }
 
+    void Logger::printf(const char *format, ...) {
+        if (out) {
+            va_list args; 
+            va_start(args, format); 
+            vsnprintf(buf, sizeof(buf), format, args); 
+            va_end(args);
+            out->print(buf);
+        }
+    }
+
     void Logger::clear() {
         maxLevel = DEBUG;
     }

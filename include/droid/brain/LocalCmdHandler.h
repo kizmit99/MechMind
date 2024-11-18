@@ -12,5 +12,9 @@ namespace droid::brain {
 
     private:
         Brain* brain;
+
+        void printHelp();
+        void printCmdHelp(const char* cmdName, const char* cmdDescription);
+        void printParmHelp(const char* parmName, const char* parmDescription);
     };
 }
