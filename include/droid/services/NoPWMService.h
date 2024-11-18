@@ -4,7 +4,7 @@
 namespace droid::services {
     class NoPWMService : public PWMService {
     public:
-        NoPWMService(const char* name, droid::services::System* system) :
+        NoPWMService(const char* name, droid::core::System* system) :
             PWMService(name, system) {}
 
         void init() override {}

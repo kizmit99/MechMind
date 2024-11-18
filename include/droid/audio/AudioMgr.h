@@ -1,13 +1,13 @@
 #pragma once
 #include <Arduino.h>
-#include "droid/services/ActiveComponent.h"
+#include "droid/core/ActiveComponent.h"
 #include "droid/audio/AudioDriver.h"
-#include "droid/util/InstructionList.h"
+#include "droid/core/InstructionList.h"
 
 namespace droid::audio {
-    class AudioMgr : public droid::services::ActiveComponent {
+    class AudioMgr : public droid::core::ActiveComponent {
     public:
-        AudioMgr(const char* name, droid::services::System* system, AudioDriver* driver);
+        AudioMgr(const char* name, droid::core::System* system, AudioDriver* driver);
 
         //Override virtual methods from ActiveComponent
         void init() override;
@@ -33,7 +33,7 @@ namespace droid::audio {
 
     private:
         AudioDriver* driver;
-        droid::util::InstructionList audioCmdList;
+        droid::core::InstructionList audioCmdList;
         char cmdBuffer[INSTRUCTIONLIST_COMMAND_LEN] = {0};
         float maxVolume;
         float minVolume;

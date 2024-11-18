@@ -17,7 +17,7 @@ namespace {
 }
 
 namespace droid::brain {
-    DomeMgr::DomeMgr(const char* name, droid::services::System* system, droid::controller::Controller* controller, droid::motor::MotorDriver* domeMotor) : 
+    DomeMgr::DomeMgr(const char* name, droid::core::System* system, droid::controller::Controller* controller, droid::motor::MotorDriver* domeMotor) : 
         ActiveComponent(name, system),
         controller(controller),
         domeMotor(domeMotor) {}

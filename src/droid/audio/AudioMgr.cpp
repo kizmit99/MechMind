@@ -20,7 +20,7 @@
 #define AUDIO_CMD_RANDOM_OFF    "RandomOff"
 
 namespace droid::audio {
-    AudioMgr::AudioMgr(const char* name, droid::services::System* system, AudioDriver* driver) :
+    AudioMgr::AudioMgr(const char* name, droid::core::System* system, AudioDriver* driver) :
         ActiveComponent(name, system),
         driver(driver) {}
 
@@ -37,7 +37,7 @@ namespace droid::audio {
     
     void AudioMgr::task() {
         unsigned long currentTime = millis();
-        droid::util::Instruction* instruction = audioCmdList.initLoop();
+        droid::core::Instruction* instruction = audioCmdList.initLoop();
         while (instruction != NULL) {
             if (currentTime >= instruction->executeTime) {
 
@@ -210,7 +210,7 @@ namespace droid::audio {
     
     void AudioMgr::queueCommand(const char* command, unsigned long delayMs) {
         logger->log(name, DEBUG, "queueCommand(%s, %d)\n", command, delayMs);
-        droid::util::Instruction* newAudioCmd = audioCmdList.addInstruction();
+        droid::core::Instruction* newAudioCmd = audioCmdList.addInstruction();
         strncpy(newAudioCmd->command, command, INSTRUCTIONLIST_COMMAND_LEN);
         newAudioCmd->executeTime = millis() + delayMs;
     }

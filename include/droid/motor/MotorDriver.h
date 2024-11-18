@@ -1,10 +1,10 @@
 #pragma once
-#include "droid/services/ActiveComponent.h"
+#include "droid/core/ActiveComponent.h"
 
 namespace droid::motor {
-    class MotorDriver : public droid::services::ActiveComponent {
+    class MotorDriver : public droid::core::ActiveComponent {
     public:
-        MotorDriver(const char* name, droid::services::System* system) :
+        MotorDriver(const char* name, droid::core::System* system) :
             ActiveComponent(name, system) {}
             
         //Virtual methods from ActiveComponent redeclared here for clarity

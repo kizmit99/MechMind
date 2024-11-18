@@ -1,7 +1,7 @@
 #include "droid/command/ESPNowCmdHandler.h"
 
 namespace droid::command {
-    ESPNowCmdHandler::ESPNowCmdHandler(const char* name, droid::services::System* system) :
+    ESPNowCmdHandler::ESPNowCmdHandler(const char* name, droid::core::System* system) :
         CmdHandler(name, system) {}
 
     bool ESPNowCmdHandler::process(const char* device, const char* command) {

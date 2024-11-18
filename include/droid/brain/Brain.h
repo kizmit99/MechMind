@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
-#include "droid/brain/hardware.h"
-#include "droid/services/System.h"
+#include "droid/core/hardware.h"
+#include "droid/core/System.h"
 #include "droid/services/NoPWMService.h"
 #include "droid/services/PCA9685PWM.h"
 #include "droid/controller/DualSonyMoveController.h"
@@ -13,12 +13,12 @@
 #include "droid/audio/AudioMgr.h"
 #include "droid/audio/HCRDriver.h"
 #include "droid/brain/DriveMgr.h"
-#include "droid/services/ActiveComponent.h"
+#include "droid/core/ActiveComponent.h"
 
 namespace droid::brain {
-    class Brain : droid::services::ActiveComponent {
+    class Brain : droid::core::ActiveComponent {
     public:
-        Brain(const char* name, droid::services::System* system);
+        Brain(const char* name, droid::core::System* system);
 
         //Override virtual methods from ActiveComponent
         void init() override;
@@ -32,7 +32,7 @@ namespace droid::brain {
         void trigger(const char* trigger);
 
     private:
-        droid::services::System* system;
+        droid::core::System* system;
 #ifdef BUILD_FOR_DEBUGGER
         droid::services::NoPWMService pwmService;
 #else
@@ -51,7 +51,7 @@ namespace droid::brain {
         droid::audio::AudioMgr audioMgr;
         droid::brain::DriveMgr driveMgr;
 
-        std::vector<droid::services::ActiveComponent*> componentList;
+        std::vector<droid::core::ActiveComponent*> componentList;
 
         char inputBuf[100];
         uint8_t bufIndex = 0;

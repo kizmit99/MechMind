@@ -1,5 +1,5 @@
 #pragma once
-#include "PWMService.h"
+#include "droid/services/PWMService.h"
 #include <Adafruit_PWMServoDriver.h>
 
 #define NUMBER_OF_PWM_OUTPUTS 16
@@ -7,8 +7,8 @@
 namespace droid::services {
     class PCA9685PWM : public PWMService {
     public:
-        PCA9685PWM(const char* name, droid::services::System* system, const uint8_t I2CAddress, uint8_t outputEnablePin = 0);
-        PCA9685PWM(const char* name, droid::services::System* system, const uint8_t I2CAddress, TwoWire &i2c, uint8_t outputEnablePin = 0);
+        PCA9685PWM(const char* name, droid::core::System* system, const uint8_t I2CAddress, uint8_t outputEnablePin = 0);
+        PCA9685PWM(const char* name, droid::core::System* system, const uint8_t I2CAddress, TwoWire &i2c, uint8_t outputEnablePin = 0);
 
         //Override virtual methods from PWMService/ActiveComponent
         void init() override;

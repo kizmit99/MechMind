@@ -1,7 +1,7 @@
 #include "droid/command/StreamCmdHandler.h"
 
 namespace droid::command {
-    StreamCmdHandler::StreamCmdHandler(const char* name, droid::services::System* system, Stream* stream) :
+    StreamCmdHandler::StreamCmdHandler(const char* name, droid::core::System* system, Stream* stream) :
         CmdHandler(name, system),
         stream(stream) {}
 

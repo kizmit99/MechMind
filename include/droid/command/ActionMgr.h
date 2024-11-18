@@ -1,18 +1,18 @@
 #pragma once
 #include <Arduino.h>
-#include "droid/services/ActiveComponent.h"
+#include "droid/core/ActiveComponent.h"
 #include "droid/controller/Controller.h"
 #include "droid/command/CmdHandler.h"
-#include "droid/util/InstructionList.h"
+#include "droid/core/InstructionList.h"
 #include <map>
 #include <vector>
 
 #define ACTION_MAX_SEQUENCE_LEN 200
 
 namespace droid::command {
-    class ActionMgr : public droid::services::ActiveComponent {
+    class ActionMgr : public droid::core::ActiveComponent {
     public:
-        ActionMgr(const char* name, droid::services::System* system, droid::controller::Controller*);
+        ActionMgr(const char* name, droid::core::System* system, droid::controller::Controller*);
 
         //Override virtual methods from ActiveComponent
         void init() override;
@@ -31,7 +31,7 @@ namespace droid::command {
         std::map<String, String> cmdMap;
         unsigned long lastTriggerTime = 0;
         String lastTrigger;
-        droid::util::InstructionList instructionList;
+        droid::core::InstructionList instructionList;
         std::vector<droid::command::CmdHandler*> cmdHandlers;
 
         void parseCommands(const char* command);

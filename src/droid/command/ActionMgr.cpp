@@ -2,7 +2,7 @@
 #include <map>
 
 namespace droid::command {
-    ActionMgr::ActionMgr(const char* name, droid::services::System* system, droid::controller::Controller* controller) :
+    ActionMgr::ActionMgr(const char* name, droid::core::System* system, droid::controller::Controller* controller) :
         ActiveComponent(name, system),
         controller(controller) {}
 
@@ -130,7 +130,7 @@ namespace droid::command {
     }
 
     void ActionMgr::queueCommand(const char* device, const char* command, unsigned long executeTime) {
-        droid::util::Instruction* newInstruction = instructionList.addInstruction();
+        droid::core::Instruction* newInstruction = instructionList.addInstruction();
         strncpy(newInstruction->device, device, INSTRUCTIONLIST_DEVICE_LEN);
         strncpy(newInstruction->command, command, INSTRUCTIONLIST_COMMAND_LEN);
         newInstruction->executeTime = executeTime;
@@ -139,7 +139,7 @@ namespace droid::command {
     // Execute commands at the proper times
     void ActionMgr::executeCommands() {
         unsigned long currentTime = millis();
-        droid::util::Instruction* instruction = instructionList.initLoop();
+        droid::core::Instruction* instruction = instructionList.initLoop();
         while (instruction != NULL) {
             if (currentTime >= instruction->executeTime) {
 

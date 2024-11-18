@@ -1,6 +1,6 @@
-#include "droid/util/InstructionList.h"
+#include "droid/core/InstructionList.h"
 
-namespace droid::util {
+namespace droid::core {
 
     void InstructionList::dump(const char* name, droid::services::Logger* logger) {
         int i = 0;

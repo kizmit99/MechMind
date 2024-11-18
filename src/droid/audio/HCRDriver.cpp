@@ -1,7 +1,7 @@
 #include "droid/audio/HCRDriver.h"
 
 namespace droid::audio {
-    HCRDriver::HCRDriver(const char* name, droid::services::System* system, Stream* out) : 
+    HCRDriver::HCRDriver(const char* name, droid::core::System* system, Stream* out) : 
         AudioDriver(name, system),
         out(out) {}
 

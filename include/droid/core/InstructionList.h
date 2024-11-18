@@ -1,12 +1,11 @@
 #pragma once
-#include <Arduino.h>
-#include "droid/services/System.h"
+#include "droid/core/System.h"
 
 #define INSTRUCTIONLIST_DEVICE_LEN  20
 #define INSTRUCTIONLIST_COMMAND_LEN 50
 #define INSTRUCTIONLIST_QUEUE_SIZE  20
 
-namespace droid::util {
+namespace droid::core {
 
     struct Instruction {
         char device[INSTRUCTIONLIST_DEVICE_LEN] = {0};

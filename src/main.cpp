@@ -3,10 +3,10 @@
 
 #include <Arduino.h>
 #include "droid/brain/Brain.h"
-#include "droid/services/System.h"
-#include "droid/brain/hardware.h"
+#include "droid/core/System.h"
+#include "droid/core/hardware.h"
 
-droid::services::System sys(&LOGGER_STREAM, DEBUG);
+droid::core::System sys(&LOGGER_STREAM, DEBUG);
 droid::brain::Brain brain("R2D2", &sys);
 
 void setup() {

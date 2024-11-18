@@ -2,13 +2,13 @@
 
 #include "droid/motor/MotorDriver.h"
 #include <motor/CytronSmartDriveDuoDriver.h>
-#include "droid/services/System.h"
+#include "droid/core/System.h"
 
 namespace droid::motor {
     class CytronSmartDriveDuoDriver : public MotorDriver {
     public:
 
-        CytronSmartDriveDuoDriver(const char* name, droid::services::System* system, byte address, Stream& port, uint8_t initialByte = 0x80);
+        CytronSmartDriveDuoDriver(const char* name, droid::core::System* system, byte address, Stream& port, uint8_t initialByte = 0x80);
 
         //Override virtual methods from MotorDriver/ActiveComponent
         void init() override;
@@ -34,21 +34,21 @@ namespace droid::motor {
     class CytronSmartDriveDuoMDDS10Driver : public CytronSmartDriveDuoDriver
     {
     public:
-        CytronSmartDriveDuoMDDS10Driver(const char* name, droid::services::System* system, byte address, Stream& port) :
+        CytronSmartDriveDuoMDDS10Driver(const char* name, droid::core::System* system, byte address, Stream& port) :
             CytronSmartDriveDuoDriver(name, system, address, port, 0x55) {}
     };
 
     class CytronSmartDriveDuoMDDS30Driver : public CytronSmartDriveDuoDriver
     {
     public:
-        CytronSmartDriveDuoMDDS30Driver(const char* name, droid::services::System* system, byte address, Stream& port) :
+        CytronSmartDriveDuoMDDS30Driver(const char* name, droid::core::System* system, byte address, Stream& port) :
             CytronSmartDriveDuoDriver(name, system, address, port, 0x80) {}
     };
 
     class CytronSmartDriveDuoMDDS60Driver : public CytronSmartDriveDuoDriver
     {
     public:
-        CytronSmartDriveDuoMDDS60Driver(const char* name, droid::services::System* system, byte address, Stream& port) :
+        CytronSmartDriveDuoMDDS60Driver(const char* name, droid::core::System* system, byte address, Stream& port) :
             CytronSmartDriveDuoDriver(name, system, address, port, 0x55) {}
     };
 }

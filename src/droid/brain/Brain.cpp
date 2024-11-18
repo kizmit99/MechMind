@@ -4,7 +4,7 @@
 #include "droid/command/CmdLogger.h"
 #include "droid/brain/LocalCmdHandler.h"
 #include "droid/audio/AudioCmdHandler.h"
-#include "droid/services/ActiveComponent.h"
+#include "droid/core/ActiveComponent.h"
 
 #define CONFIG_KEY_BRAIN_INITIALIZED     "Initialized"
 #define CONFIG_KEY_BRAIN_STICK_ENABLE    "StartDriveOn"
@@ -17,7 +17,7 @@
 #define CONFIG_DEFAULT_BRAIN_AUTODOME_ENABLE false
 
 namespace droid::brain {
-    Brain::Brain(const char* name, droid::services::System* system) : 
+    Brain::Brain(const char* name, droid::core::System* system) : 
         ActiveComponent(name, system),
         system(system),
 #ifdef BUILD_FOR_DEBUGGER
@@ -65,7 +65,7 @@ namespace droid::brain {
         droidState->stickEnable = config->getBool(name, CONFIG_KEY_BRAIN_STICK_ENABLE, CONFIG_DEFAULT_BRAIN_STICK_ENABLE);
         droidState->turboSpeed = config->getBool(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, CONFIG_DEFAULT_BRAIN_TURBO_ENABLE);
         droidState->autoDomeEnable = config->getBool(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, CONFIG_DEFAULT_BRAIN_AUTODOME_ENABLE);
-        for (droid::services::ActiveComponent* component : componentList) {
+        for (droid::core::ActiveComponent* component : componentList) {
             component->init();
         }
         pwmService.setOscFreq(PCA9685_OSC_FREQUENCY);
@@ -77,13 +77,13 @@ namespace droid::brain {
         config->putBool(name, CONFIG_KEY_BRAIN_STICK_ENABLE, CONFIG_DEFAULT_BRAIN_STICK_ENABLE);
         config->putBool(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, CONFIG_DEFAULT_BRAIN_TURBO_ENABLE);
         config->putBool(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, CONFIG_DEFAULT_BRAIN_AUTODOME_ENABLE);
-        for (droid::services::ActiveComponent* component : componentList) {
+        for (droid::core::ActiveComponent* component : componentList) {
             component->factoryReset();
         }
     }
 
     void Brain::failsafe() {
-        for (droid::services::ActiveComponent* component : componentList) {
+        for (droid::core::ActiveComponent* component : componentList) {
             component->failsafe();
         }
     }
@@ -136,7 +136,7 @@ namespace droid::brain {
 
     void Brain::task() {
         processCmdInput(&LOGGER_STREAM);
-        for (droid::services::ActiveComponent* component : componentList) {
+        for (droid::core::ActiveComponent* component : componentList) {
             component->task();
         }
 
@@ -151,7 +151,7 @@ namespace droid::brain {
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_STICK_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_STICK_ENABLE, "0"));
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_TURBO_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, "0"));
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_AUTODOME_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, "0"));
-        for (droid::services::ActiveComponent* component : componentList) {
+        for (droid::core::ActiveComponent* component : componentList) {
             component->logConfig();
         }
     }

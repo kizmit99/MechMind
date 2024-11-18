@@ -1,12 +1,12 @@
 #pragma once
-#include "droid/services/ActiveComponent.h"
+#include "droid/core/ActiveComponent.h"
 #include "droid/controller/Controller.h"
 #include "droid/motor/MotorDriver.h"
 
 namespace droid::brain {
-    class DriveMgr : public droid::services::ActiveComponent {
+    class DriveMgr : public droid::core::ActiveComponent {
     public:
-        DriveMgr(const char* name, droid::services::System* system, droid::controller::Controller*, droid::motor::MotorDriver*);
+        DriveMgr(const char* name, droid::core::System* system, droid::controller::Controller*, droid::motor::MotorDriver*);
 
         //Override virtual methods from ActiveComponent
         void init() override;

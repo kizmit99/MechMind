@@ -29,7 +29,7 @@
 #include "droid/audio/AudioCmdHandler.h"
 
 namespace droid::audio {
-    AudioCmdHandler::AudioCmdHandler(const char* name, droid::services::System* system, AudioMgr* audioMgr) :
+    AudioCmdHandler::AudioCmdHandler(const char* name, droid::core::System* system, AudioMgr* audioMgr) :
         CmdHandler(name, system),
         audioMgr(audioMgr) {}
     

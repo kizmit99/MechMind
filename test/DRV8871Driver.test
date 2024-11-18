@@ -1,11 +1,11 @@
 #include <Arduino.h>
-#include "droid/services/System.h"
+#include "droid/core/System.h"
 #include "droid/motor/DRV8871Driver.h"
 
 #define DOME_PIN1 14
 #define DOME_PIN2 13
 
-droid::services::System sys("R2D2", &Serial);
+droid::core::System sys("R2D2", &Serial);
 droid::motor::DRV8871Driver domeMotor("Dome Motor", &sys, DOME_PIN1, DOME_PIN2);
 
 void setup() {

@@ -65,7 +65,7 @@ namespace {
 }
 
 namespace droid::brain {
-    LocalCmdHandler::LocalCmdHandler(const char* name, droid::services::System* system, Brain* brain) :
+    LocalCmdHandler::LocalCmdHandler(const char* name, droid::core::System* system, Brain* brain) :
         CmdHandler(name, system),
         brain(brain) {}
 

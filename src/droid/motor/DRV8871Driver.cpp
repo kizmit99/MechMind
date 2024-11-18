@@ -9,7 +9,7 @@
 #define CONFIG_DEFAULT_DRV8871_RAMP         1.0
 
 namespace droid::motor {
-    DRV8871Driver::DRV8871Driver(const char* name, droid::services::System* system, uint8_t out1, uint8_t out2) :
+    DRV8871Driver::DRV8871Driver(const char* name, droid::core::System* system, uint8_t out1, uint8_t out2) :
         MotorDriver(name, system),
         out1(out1),
         out2(out2) {

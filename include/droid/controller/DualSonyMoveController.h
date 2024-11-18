@@ -3,7 +3,7 @@
 #include <PS3BT.h>
 
 #include "droid/controller/Controller.h"
-#include "droid/services/System.h"
+#include "droid/core/System.h"
 
 namespace droid::controller {
     struct ControllerDetails {
@@ -22,7 +22,7 @@ namespace droid::controller {
 
     class DualSonyMoveController : public Controller {
     public:
-        DualSonyMoveController(const char* name, droid::services::System* system);
+        DualSonyMoveController(const char* name, droid::core::System* system);
 
         //Override virtual methods from ActiveComponent
         void init() override;

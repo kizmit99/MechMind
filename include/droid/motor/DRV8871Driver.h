@@ -4,7 +4,7 @@
 namespace droid::motor {
     class DRV8871Driver : public MotorDriver {
     public:
-        DRV8871Driver(const char* name, droid::services::System* system, uint8_t out1, uint8_t out2);
+        DRV8871Driver(const char* name, droid::core::System* system, uint8_t out1, uint8_t out2);
 
         //Override virtual methods from MotorDriver/ActiveComponent
         void init() override;

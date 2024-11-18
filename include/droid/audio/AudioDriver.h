@@ -1,5 +1,5 @@
 #pragma once
-#include "droid/services/PassiveComponent.h"
+#include "droid/core/PassiveComponent.h"
 
 /***********************************************************
  *  On the Sparkfun MP3, there are a maximum of 255 sound files
@@ -43,9 +43,9 @@
 #define MP3_BANK9_SOUNDS MP3_MAX_SOUNDS_PER_BANK // mus sounds, numbered 201 t0 225
 
 namespace droid::audio {
-    class AudioDriver : public droid::services::PassiveComponent {
+    class AudioDriver : public droid::core::PassiveComponent {
     public:
-        AudioDriver(const char* name, droid::services::System* system) :
+        AudioDriver(const char* name, droid::core::System* system) :
             PassiveComponent(name, system) {}
             
         virtual const char* getPlaySoundCmd(char* cmdBuf, size_t buflen, uint8_t bank, uint8_t sound) = 0;

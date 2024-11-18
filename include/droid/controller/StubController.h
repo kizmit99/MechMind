@@ -4,7 +4,7 @@
 namespace droid::controller {
     class StubController : public Controller {
     public:
-        StubController(const char* name, droid::services::System* system) :
+        StubController(const char* name, droid::core::System* system) :
             Controller(name, system) {}
 
         void init() override {}

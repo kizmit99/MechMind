@@ -1,11 +1,11 @@
 #pragma once
 #include <Arduino.h>
-#include "droid/services/PassiveComponent.h"
+#include "droid/core/PassiveComponent.h"
 
 namespace droid::command {
-    class CmdHandler : public droid::services::PassiveComponent {
+    class CmdHandler : public droid::core::PassiveComponent {
     public:
-        CmdHandler(const char* name, droid::services::System* system) :
+        CmdHandler(const char* name, droid::core::System* system) :
             PassiveComponent(name, system) {}
 
         virtual bool process(const char* device, const char* command) = 0;

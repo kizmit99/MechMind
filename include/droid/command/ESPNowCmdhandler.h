@@ -5,7 +5,7 @@
 namespace droid::command {
     class ESPNowCmdHandler : public CmdHandler {
     public:
-        ESPNowCmdHandler(const char* name, droid::services::System* system);
+        ESPNowCmdHandler(const char* name, droid::core::System* system);
         bool process(const char* device, const char* command);
     };
 }

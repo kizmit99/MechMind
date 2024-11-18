@@ -14,20 +14,20 @@ namespace droid::services {
     class PWMService;
 }
 
-namespace droid::services {
+namespace droid::core {
     class System {
     public:
-        System(Stream* out, Logger::Level defaultLogLevel);
-        Config* getConfig();
-        Logger* getLogger();
-        void setPWMService(PWMService*);
-        PWMService* getPWMService();
-        DroidState* getDroidState();
+        System(Stream* out, droid::services::Logger::Level defaultLogLevel);
+        droid::services::Config* getConfig();
+        droid::services::Logger* getLogger();
+        void setPWMService(droid::services::PWMService*);
+        droid::services::PWMService* getPWMService();
+        droid::services::DroidState* getDroidState();
 
     private:
-        Config config;
-        Logger logger;
-        DroidState droidState;
-        PWMService* pwmService;
+        droid::services::Config config;
+        droid::services::Logger logger;
+        droid::services::DroidState droidState;
+        droid::services::PWMService* pwmService;
     };
 }

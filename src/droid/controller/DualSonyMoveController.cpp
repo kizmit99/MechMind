@@ -1,5 +1,5 @@
 #include "droid/controller/DualSonyMoveController.h"
-#include "droid/brain/hardware.h"
+#include "droid/core/hardware.h"
 #include <string>
 #include <stdexcept>
 
@@ -15,7 +15,7 @@
 #define CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW  50
 
 namespace droid::controller {
-    DualSonyMoveController::DualSonyMoveController(const char* name, droid::services::System* system) :
+    DualSonyMoveController::DualSonyMoveController(const char* name, droid::core::System* system) :
         Controller(name, system),
         Usb(),
         Btd(&Usb),
@@ -23,7 +23,7 @@ namespace droid::controller {
         PS3Left(&Btd) {
 
         if (DualSonyMoveController::instance != NULL) {
-            logger->log(name, droid::services::Logger::Level::FATAL, "Constructor for DualSonyMoveController called more than once!\n");
+            logger->log(name, FATAL, "Constructor for DualSonyMoveController called more than once!\n");
             while (1);  //TODO Better way to handle this???
         }
         DualSonyMoveController::instance = this;

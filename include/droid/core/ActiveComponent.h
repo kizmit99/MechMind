@@ -1,7 +1,7 @@
 #pragma once
-#include "droid/services/PassiveComponent.h"
+#include "droid/core/PassiveComponent.h"
 
-namespace droid::services {
+namespace droid::core {
     class ActiveComponent : public PassiveComponent {
     public:
         ActiveComponent(const char* name, System* system) :

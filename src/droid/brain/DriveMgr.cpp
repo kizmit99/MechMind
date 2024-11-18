@@ -21,7 +21,7 @@ namespace {
 }
 
 namespace droid::brain {
-    DriveMgr::DriveMgr(const char* name, droid::services::System* system, droid::controller::Controller* controller, droid::motor::MotorDriver* driveMotor) : 
+    DriveMgr::DriveMgr(const char* name, droid::core::System* system, droid::controller::Controller* controller, droid::motor::MotorDriver* driveMotor) : 
         ActiveComponent(name, system),
         controller(controller),
         driveMotor(driveMotor) {}
