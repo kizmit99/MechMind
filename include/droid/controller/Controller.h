@@ -1,20 +1,25 @@
 #pragma once
-#include <Arduino.h>
+#include "droid/services/ActiveComponent.h"
 
 namespace droid::controller {
-    class Controller {
+    class Controller : public droid::services::ActiveComponent {
     public:
         enum Axis {
             X, Y};
         
         enum Joystick {
             LEFT, RIGHT};
+
+        Controller(const char* name, droid::services::System* system) :
+            ActiveComponent(name, system) {}
         
+        //Virtual methods from ActiveComponent redeclared here for clarity
         virtual void init() = 0;
         virtual void factoryReset() = 0;
         virtual void task() = 0;
         virtual void logConfig() = 0;
         virtual void failsafe() = 0;
+
         virtual void setCritical(bool isCritical) = 0;
         virtual void setDeadband(int8_t deadband) = 0;
         virtual int8_t getJoystickPosition(Joystick, Axis) = 0;

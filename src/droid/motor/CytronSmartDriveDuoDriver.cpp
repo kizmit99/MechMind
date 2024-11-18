@@ -7,10 +7,8 @@
 
 namespace droid::motor {
 
-    CytronSmartDriveDuoDriver::CytronSmartDriveDuoDriver(const char* name, droid::services::System* sys, byte address, Stream& port, uint8_t initialByte) : 
-        name(name),
-        logger(sys->getLogger()),
-        config(sys->getConfig()),
+    CytronSmartDriveDuoDriver::CytronSmartDriveDuoDriver(const char* name, droid::services::System* system, byte address, Stream& port, uint8_t initialByte) : 
+        MotorDriver(name, system),
         wrapped(address, port, initialByte) {}
 
     void CytronSmartDriveDuoDriver::init() {

@@ -5,7 +5,7 @@
 namespace droid::audio {
     class SparkDriver : public AudioDriver {
     public:
-        SparkDriver(Stream* out);
+        SparkDriver(const char* name, droid::services::System* system, Stream* out);
         const char* getPlaySoundCmd(char* cmdBuf, size_t buflen, uint8_t bank, uint8_t sound);
         const char* getSetVolumeCmd(char* cmdBuf, size_t buflen, float newVolume);
         const char* getStopCmd(char* cmdBuf, size_t buflen);

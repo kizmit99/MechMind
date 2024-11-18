@@ -23,21 +23,20 @@ namespace droid::controller {
     class DualSonyMoveController : public Controller {
     public:
         DualSonyMoveController(const char* name, droid::services::System* system);
-        void init();
-        void factoryReset();
-        void task();
-        void logConfig();
-        void failsafe();
+
+        //Override virtual methods from ActiveComponent
+        void init() override;
+        void factoryReset() override;
+        void task() override;
+        void logConfig() override;
+        void failsafe() override;
+
         void setCritical(bool isCritical);
         void setDeadband(int8_t deadband);
         int8_t getJoystickPosition(Joystick, Axis);
         String getTrigger();
 
     private:
-        const char* name;
-        droid::services::Logger* logger;
-        droid::services::Config* config;
-
         USB Usb;
         BTD Btd;
         ControllerDetails PS3Right;

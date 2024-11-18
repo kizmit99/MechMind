@@ -1,14 +1,8 @@
 #include "droid/services/System.h"
 
 namespace droid::services {
-    System::System(const char* name, Stream* out, Logger::Level defaultLogLevel, PWMService* pwmService) :
-        name(name),
-        logger(out, defaultLogLevel),
-        pwmService(pwmService) {
-    }
-
-    const char* System::getName() {
-        return name;
+    System::System(Stream* logStream, Logger::Level defaultLogLevel) :
+        logger(logStream, defaultLogLevel) {
     }
 
     Config* System::getConfig() {
@@ -19,11 +13,15 @@ namespace droid::services {
         return &logger;
     }
 
-    PWMService* System::getPWMService() {
-        return pwmService;
-    }
-
     DroidState* System::getDroidState() {
         return &droidState;
+    }
+
+    void System::setPWMService(PWMService* pwmService) {
+        this->pwmService = pwmService;
+    }
+
+    PWMService* System::getPWMService() {
+        return pwmService;
     }
 }

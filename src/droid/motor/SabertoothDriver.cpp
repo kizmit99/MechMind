@@ -29,10 +29,8 @@
 #define CONFIG_DEFAULT_SABERTOOTH_MAX_VOLTAGE  144
 
 namespace droid::motor {
-    SabertoothDriver::SabertoothDriver(const char* name, droid::services::System* sys, byte address, Stream& port) :
-        name(name),
-        logger(sys->getLogger()),
-        config(sys->getConfig()),
+    SabertoothDriver::SabertoothDriver(const char* name, droid::services::System* system, byte address, Stream& port) :
+        MotorDriver(name, system),
         wrapped(address, port) {}
 
     void SabertoothDriver::init() {
@@ -82,6 +80,10 @@ namespace droid::motor {
         if (speed > 127) {speed = 127;}
 
         wrapped.motor(motor + 1, speed);
+        if (speed != lastMotorSpeed[motor]) {
+            logger->log(name, DEBUG, "setMotorSpeed(%d, %d)\n", motor, speed);
+        }
+        lastMotorSpeed[motor] = speed;
         return true;
     }
     

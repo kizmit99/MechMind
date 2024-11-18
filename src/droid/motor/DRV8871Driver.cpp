@@ -1,4 +1,5 @@
 #include "droid/motor/DRV8871Driver.h"
+#include "droid/services/PWMService.h"
 
 #define CONFIG_KEY_DRV8871_TIMEOUT          "Timeout"
 #define CONFIG_KEY_DRV8871_DEADBAND         "Deadband"
@@ -8,16 +9,12 @@
 #define CONFIG_DEFAULT_DRV8871_RAMP         1.0
 
 namespace droid::motor {
-    DRV8871Driver::DRV8871Driver(const char* name, droid::services::System* sys, uint8_t out1, uint8_t out2) :
-        name(name),
+    DRV8871Driver::DRV8871Driver(const char* name, droid::services::System* system, uint8_t out1, uint8_t out2) :
+        MotorDriver(name, system),
         out1(out1),
-        out2(out2),
-        logger(sys->getLogger()),
-        config(sys->getConfig()),
-        pwmService(sys->getPWMService()) {
+        out2(out2) {
 
         requestedDutyCycle = 0;
-        setMotorSpeed(0);
     }
 
     void DRV8871Driver::init() {
@@ -119,16 +116,19 @@ namespace droid::motor {
 
     void DRV8871Driver::setMotorSpeed(int16_t dutyCycle) {
         logger->log(name, DEBUG, "setMotorSpeed %d\n", dutyCycle);
-        if (dutyCycle == 0) {
-            //Braking
-            pwmService->setPWMpercent(out1, 100);
-            pwmService->setPWMpercent(out2, 100);
-        } else if (dutyCycle > 0) {
-            pwmService->setPWMpercent(out2, 0);
-            pwmService->setPWMpercent(out1, abs(dutyCycle), timeoutMs);
-        } else {
-            pwmService->setPWMpercent(out1, 0);
-            pwmService->setPWMpercent(out2, abs(dutyCycle), timeoutMs);
+        droid::services::PWMService* pwmService = system->getPWMService();
+        if (pwmService) {
+            if (dutyCycle == 0) {
+                //Braking
+                pwmService->setPWMpercent(out1, 100);
+                pwmService->setPWMpercent(out2, 100);
+            } else if (dutyCycle > 0) {
+                pwmService->setPWMpercent(out2, 0);
+                pwmService->setPWMpercent(out1, abs(dutyCycle), timeoutMs);
+            } else {
+                pwmService->setPWMpercent(out1, 0);
+                pwmService->setPWMpercent(out2, abs(dutyCycle), timeoutMs);
+            }
         }
     }
 }

@@ -21,10 +21,7 @@
 
 namespace droid::audio {
     AudioMgr::AudioMgr(const char* name, droid::services::System* system, AudioDriver* driver) :
-        name(name),
-        logger(system->getLogger()),
-        config(system->getConfig()),
-        droidState(system->getDroidState()),
+        ActiveComponent(name, system),
         driver(driver) {}
 
     void AudioMgr::init() {
@@ -83,6 +80,10 @@ namespace droid::audio {
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_RANDOM_ENABLED, config->getString(name, CONFIG_KEY_RANDOM_ENABLED, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_RANDOM_MIN, config->getString(name, CONFIG_KEY_RANDOM_MIN, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_RANDOM_MAX, config->getString(name, CONFIG_KEY_RANDOM_MAX, "").c_str());
+    }
+
+    void AudioMgr::failsafe() {
+        stop();
     }
     
     void AudioMgr::setMaxVolume(float maxVolume) {

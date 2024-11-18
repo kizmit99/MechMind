@@ -1,9 +1,13 @@
 #pragma once
-#include <Arduino.h>
+#include "droid/services/ActiveComponent.h"
 
 namespace droid::motor {
-    class MotorDriver {
+    class MotorDriver : public droid::services::ActiveComponent {
     public:
+        MotorDriver(const char* name, droid::services::System* system) :
+            ActiveComponent(name, system) {}
+            
+        //Virtual methods from ActiveComponent redeclared here for clarity
         virtual void init() = 0;
         virtual void factoryReset() = 0;
         virtual void task() = 0;

@@ -1,7 +1,8 @@
 #include "droid/audio/HCRDriver.h"
 
 namespace droid::audio {
-    HCRDriver::HCRDriver(Stream* out) : 
+    HCRDriver::HCRDriver(const char* name, droid::services::System* system, Stream* out) : 
+        AudioDriver(name, system),
         out(out) {}
 
     const char* HCRDriver::getPlaySoundCmd(char* cmdBuf, size_t buflen, uint8_t bank, uint8_t sound) {

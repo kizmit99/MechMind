@@ -3,9 +3,7 @@
 
 namespace droid::command {
     ActionMgr::ActionMgr(const char* name, droid::services::System* system, droid::controller::Controller* controller) :
-        name(name),
-        logger(system->getLogger()),
-        config(system->getConfig()),
+        ActiveComponent(name, system),
         controller(controller) {}
 
     void ActionMgr::init() {
@@ -39,6 +37,10 @@ namespace droid::command {
             const char* cmd = mapEntry.second.c_str();
             config->putString(name, trigger, cmd);
         }
+    }
+
+    void ActionMgr::failsafe() {
+        //NOOP
     }
 
     void ActionMgr::overrideCmdMap(const char* trigger, const char* cmd) {

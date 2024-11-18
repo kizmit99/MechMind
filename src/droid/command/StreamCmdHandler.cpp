@@ -2,7 +2,7 @@
 
 namespace droid::command {
     StreamCmdHandler::StreamCmdHandler(const char* name, droid::services::System* system, Stream* stream) :
-        name(name),
+        CmdHandler(name, system),
         stream(stream) {}
 
     bool StreamCmdHandler::process(const char* device, const char* command) {

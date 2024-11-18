@@ -1,6 +1,6 @@
 #pragma once
 #include <Arduino.h>
-#include "droid/services/System.h"
+#include "droid/services/ActiveComponent.h"
 #include "droid/controller/Controller.h"
 #include "droid/command/CmdHandler.h"
 #include "droid/util/InstructionList.h"
@@ -10,23 +10,24 @@
 #define ACTION_MAX_SEQUENCE_LEN 200
 
 namespace droid::command {
-    class ActionMgr {
+    class ActionMgr : public droid::services::ActiveComponent {
     public:
         ActionMgr(const char* name, droid::services::System* system, droid::controller::Controller*);
-        void init();
-        void task();
-        void factoryReset();
-        void logConfig();
+
+        //Override virtual methods from ActiveComponent
+        void init() override;
+        void factoryReset() override;
+        void task() override;
+        void logConfig() override;
+        void failsafe() override;
+
         void addCmdHandler(droid::command::CmdHandler*);
         void fireTrigger(const char* trigger);
         void queueCommand(const char* device, const char* command, unsigned long executeTime);
         void overrideCmdMap(const char* trigger, const char* cmd);
 
     private:
-        const char* name;
         droid::controller::Controller* controller;
-        droid::services::Logger* logger;
-        droid::services::Config* config;
         std::map<String, String> cmdMap;
         unsigned long lastTriggerTime = 0;
         String lastTrigger;

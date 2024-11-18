@@ -7,7 +7,8 @@
 #define SPARK_CMD_RANDOM_OFF    "RandomOff"
 
 namespace droid::audio {
-    SparkDriver::SparkDriver(Stream* out) : 
+    SparkDriver::SparkDriver(const char* name, droid::services::System* system, Stream* out) : 
+        AudioDriver(name, system),
         out(out) {}
 
     const char* SparkDriver::getPlaySoundCmd(char* cmdBuf, size_t buflen, uint8_t bank, uint8_t sound) {

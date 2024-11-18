@@ -1,30 +1,21 @@
 #pragma once
-#include <Arduino.h>
-
 #include "droid/controller/Controller.h"
-#include "droid/services/System.h"
 
 namespace droid::controller {
     class StubController : public Controller {
     public:
         StubController(const char* name, droid::services::System* system) :
-            name(name),
-            logger(system->getLogger()),
-            config(system->getConfig()) {}
+            Controller(name, system) {}
 
-        void init() {}
-        void factoryReset() {}
-        void task() {}
-        void logConfig() {}
-        void failsafe() {}
+        void init() override {}
+        void factoryReset() override {}
+        void task() override {}
+        void logConfig() override {}
+        void failsafe() override {}
+
         void setCritical(bool isCritical) {}
         void setDeadband(int8_t deadband) {}
         int8_t getJoystickPosition(Joystick, Axis) {return 0;}
         String getTrigger() {return "";}
-
-    private:
-        const char* name;
-        droid::services::Logger* logger;
-        droid::services::Config* config;
     };
 }

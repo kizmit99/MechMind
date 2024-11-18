@@ -2,11 +2,13 @@
 #include <Arduino.h>
 
 namespace droid::services {
-    PCA9685PWM::PCA9685PWM(const uint8_t I2CAddress, uint8_t outputEnablePin) :
+    PCA9685PWM::PCA9685PWM(const char* name, droid::services::System* system, const uint8_t I2CAddress, uint8_t outputEnablePin) :
+        PWMService(name, system),
         outputEnablePin(outputEnablePin),
         pca9685Driver(I2CAddress) {}
 
-    PCA9685PWM::PCA9685PWM(const uint8_t I2CAddress, TwoWire &i2c, uint8_t outputEnablePin) :
+    PCA9685PWM::PCA9685PWM(const char* name, droid::services::System* system, const uint8_t I2CAddress, TwoWire &i2c, uint8_t outputEnablePin) :
+        PWMService(name, system),
         outputEnablePin(outputEnablePin),
         pca9685Driver(I2CAddress, i2c) {}
 
@@ -21,6 +23,10 @@ namespace droid::services {
         } else {
             initialized = false;
         }
+    }
+
+    void PCA9685PWM::factoryReset() {
+        //NOOP
     }
 
     void PCA9685PWM::task() {
@@ -47,6 +53,10 @@ namespace droid::services {
         if (outputEnablePin != 0) {
             digitalWrite(outputEnablePin, HIGH);
         }
+    }
+
+    void PCA9685PWM::logConfig() {
+        //NOOP
     }
 
     void PCA9685PWM::setOscFreq(uint32_t freq) {

@@ -7,14 +7,19 @@
 namespace droid::services {
     class PCA9685PWM : public PWMService {
     public:
-        PCA9685PWM(const uint8_t I2CAddress, uint8_t outputEnablePin = 0);
-        PCA9685PWM(const uint8_t I2CAddress, TwoWire &i2c, uint8_t outputEnablePin = 0);
-        void init();
-        void task();
-        void failsafe();
-        void setPWMuS(uint8_t outNum, uint16_t pulseMicroseconds, uint16_t durationMilliseconds = 0);
-        void setPWMpercent(uint8_t outNum, uint8_t percent, uint16_t durationMilliseconds = 0);
-        void setOscFreq(uint32_t freq);
+        PCA9685PWM(const char* name, droid::services::System* system, const uint8_t I2CAddress, uint8_t outputEnablePin = 0);
+        PCA9685PWM(const char* name, droid::services::System* system, const uint8_t I2CAddress, TwoWire &i2c, uint8_t outputEnablePin = 0);
+
+        //Override virtual methods from PWMService/ActiveComponent
+        void init() override;
+        void factoryReset() override;
+        void task() override;
+        void logConfig() override;
+        void failsafe() override;
+
+        void setPWMuS(uint8_t outNum, uint16_t pulseMicroseconds, uint16_t durationMilliseconds = 0) override;
+        void setPWMpercent(uint8_t outNum, uint8_t percent, uint16_t durationMilliseconds = 0) override;
+        void setOscFreq(uint32_t freq) override;
 
     private:
         Adafruit_PWMServoDriver pca9685Driver;

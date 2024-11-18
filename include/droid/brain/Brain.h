@@ -7,43 +7,51 @@
 #include "droid/controller/DualSonyMoveController.h"
 #include "droid/controller/StubController.h"
 #include "droid/motor/DRV8871Driver.h"
+#include "droid/motor/SabertoothDriver.h"
 #include "droid/brain/DomeMgr.h"
 #include "droid/command/ActionMgr.h"
 #include "droid/audio/AudioMgr.h"
 #include "droid/audio/HCRDriver.h"
+#include "droid/brain/DriveMgr.h"
+#include "droid/services/ActiveComponent.h"
 
 namespace droid::brain {
-    class Brain {
+    class Brain : droid::services::ActiveComponent {
     public:
-        Brain(const char* name);
-        void init();
-        void factoryReset();
-        void task();
-        void logConfig();
+        Brain(const char* name, droid::services::System* system);
+
+        //Override virtual methods from ActiveComponent
+        void init() override;
+        void factoryReset() override;
+        void task() override;
+        void logConfig() override;
+        void failsafe() override;
+        
         void reboot();
         void overrideCmdMap(const char* trigger, const char* cmd);
         void trigger(const char* trigger);
 
     private:
-        const char* name;
+        droid::services::System* system;
 #ifdef BUILD_FOR_DEBUGGER
         droid::services::NoPWMService pwmService;
 #else
         droid::services::PCA9685PWM pwmService;
 #endif
-        droid::services::System system;
-        droid::services::Config* config;
-        droid::services::Logger* logger;
 #ifdef BUILD_FOR_DEBUGGER
         droid::controller::StubController controller;
 #else
         droid::controller::DualSonyMoveController controller;
 #endif
-        droid::motor::DRV8871Driver motorDriver;
+        droid::motor::DRV8871Driver domeMotorDriver;
+        droid::motor::SabertoothDriver driveMotorDriver;
         DomeMgr domeMgr;
         droid::command::ActionMgr actionMgr;
         droid::audio::HCRDriver audioDriver;
         droid::audio::AudioMgr audioMgr;
+        droid::brain::DriveMgr driveMgr;
+
+        std::vector<droid::services::ActiveComponent*> componentList;
 
         char inputBuf[100];
         uint8_t bufIndex = 0;

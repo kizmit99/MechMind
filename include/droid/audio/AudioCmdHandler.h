@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include "droid/command/CmdHandler.h"
-#include "droid/services/System.h"
+#include "droid/services/PassiveComponent.h"
 #include "droid/audio/AudioMgr.h"
 
 namespace droid::audio {
@@ -11,8 +11,6 @@ namespace droid::audio {
         bool process(const char* device, const char* command);
 
     private:
-        const char* name;
-        droid::services::Logger* logger;
         AudioMgr* audioMgr;
 
         bool parseCmd(const char* command);

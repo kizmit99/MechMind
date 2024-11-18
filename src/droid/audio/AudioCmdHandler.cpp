@@ -30,8 +30,7 @@
 
 namespace droid::audio {
     AudioCmdHandler::AudioCmdHandler(const char* name, droid::services::System* system, AudioMgr* audioMgr) :
-        name(name),
-        logger(system->getLogger()),
+        CmdHandler(name, system),
         audioMgr(audioMgr) {}
     
     bool AudioCmdHandler::process(const char* device, const char* command) {

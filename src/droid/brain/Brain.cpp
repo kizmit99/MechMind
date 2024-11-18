@@ -4,34 +4,56 @@
 #include "droid/command/CmdLogger.h"
 #include "droid/brain/LocalCmdHandler.h"
 #include "droid/audio/AudioCmdHandler.h"
+#include "droid/services/ActiveComponent.h"
 
-#define CONFIG_KEY_BRAIN_INITIALIZED    "initialized"
+#define CONFIG_KEY_BRAIN_INITIALIZED     "Initialized"
+#define CONFIG_KEY_BRAIN_STICK_ENABLE    "StartDriveOn"
+#define CONFIG_KEY_BRAIN_TURBO_ENABLE    "StartTurboOn"
+#define CONFIG_KEY_BRAIN_AUTODOME_ENABLE "StartDomeOn"
+
+#define CONFIG_DEFAULT_BRAIN_INITIALIZED     true
+#define CONFIG_DEFAULT_BRAIN_STICK_ENABLE    true
+#define CONFIG_DEFAULT_BRAIN_TURBO_ENABLE    false
+#define CONFIG_DEFAULT_BRAIN_AUTODOME_ENABLE false
 
 namespace droid::brain {
-    Brain::Brain(const char* name) : 
-        name(name),
+    Brain::Brain(const char* name, droid::services::System* system) : 
+        ActiveComponent(name, system),
+        system(system),
 #ifdef BUILD_FOR_DEBUGGER
-        pwmService(),
-        controller("StubCtrl", &system),
+        pwmService("StubPWM", system),
+        controller("StubCtrl", system),
 #else
-        pwmService(PCA9685_I2C_ADDRESS, PCA9685_OUTPUT_ENABLE_PIN),
-        controller("DualSony", &system),
+        pwmService("PCA9685", system, PCA9685_I2C_ADDRESS, PCA9685_OUTPUT_ENABLE_PIN),
+        controller("DualSony", system),
 #endif
-        system(name, &LOGGER_STREAM, DEBUG, &pwmService),
-        motorDriver("DRV8871", &system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2),
-        domeMgr("DomeMgr", &system, &controller, &motorDriver),
-        actionMgr("ActionMgr", &system, &controller),
-        audioDriver(&HCR_STREAM),
-        audioMgr("AudioMgr", &system, &audioDriver) {
+        domeMotorDriver("DRV8871", system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2),
+        domeMgr("DomeMgr", system, &controller, &domeMotorDriver),
+        actionMgr("ActionMgr", system, &controller),
+        audioDriver("HCRDriver", system, &HCR_STREAM),
+        audioMgr("AudioMgr", system, &audioDriver),
+        driveMotorDriver("Sabertooth", system, (byte) 128, SABERTOOTH_STREAM),
+        driveMgr("DriveMgr", system, &controller, &driveMotorDriver) {
 
-        config = system.getConfig();
-        logger = system.getLogger();
-        actionMgr.addCmdHandler(new droid::command::CmdLogger("CmdLogger", &system));
+        system->setPWMService(&pwmService);  //Necessary to avoid circular reference at initialization
+
+        actionMgr.addCmdHandler(new droid::command::CmdLogger("CmdLogger", system));
+
         //TODO Implement configurable Serial ports
-        actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Dome", &system, &DOME_STREAM));
-        actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Body", &system, &BODY_STREAM));
-        actionMgr.addCmdHandler(new droid::audio::AudioCmdHandler("HCR", &system, &audioMgr));
-        actionMgr.addCmdHandler(new droid::brain::LocalCmdHandler("Brain", &system, this));
+        actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Dome", system, &DOME_STREAM));
+        actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Body", system, &BODY_STREAM));
+        actionMgr.addCmdHandler(new droid::audio::AudioCmdHandler("HCR", system, &audioMgr));
+        actionMgr.addCmdHandler(new droid::brain::LocalCmdHandler("Brain", system, this));
+
+        //Setup list of all ActiveComponents
+        componentList.push_back(&pwmService);
+        componentList.push_back(&controller);
+        componentList.push_back(&domeMotorDriver);
+        componentList.push_back(&driveMotorDriver);
+        componentList.push_back(&domeMgr);
+        componentList.push_back(&driveMgr);
+        componentList.push_back(&audioMgr);
+        componentList.push_back(&actionMgr);
     }
 
     void Brain::init() {
@@ -40,22 +62,30 @@ namespace droid::brain {
             logger->log(name, INFO, "Brain has not been initialized, performing a factory reset.");
             factoryReset();
         }
-        pwmService.init();
+        droidState->stickEnable = config->getBool(name, CONFIG_KEY_BRAIN_STICK_ENABLE, CONFIG_DEFAULT_BRAIN_STICK_ENABLE);
+        droidState->turboSpeed = config->getBool(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, CONFIG_DEFAULT_BRAIN_TURBO_ENABLE);
+        droidState->autoDomeEnable = config->getBool(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, CONFIG_DEFAULT_BRAIN_AUTODOME_ENABLE);
+        for (droid::services::ActiveComponent* component : componentList) {
+            component->init();
+        }
         pwmService.setOscFreq(PCA9685_OSC_FREQUENCY);
-        controller.init();
         controller.setDeadband(CONTROLLER_DEADBAND);
-        motorDriver.init();
-        domeMgr.init();
-        actionMgr.init();
-        audioMgr.init();
     }
 
     void Brain::factoryReset() {
-        config->putBool(name, CONFIG_KEY_BRAIN_INITIALIZED, true);
-        controller.factoryReset();
-        motorDriver.factoryReset();
-        actionMgr.factoryReset();
-        audioMgr.factoryReset();
+        config->putBool(name, CONFIG_KEY_BRAIN_INITIALIZED, CONFIG_DEFAULT_BRAIN_INITIALIZED);
+        config->putBool(name, CONFIG_KEY_BRAIN_STICK_ENABLE, CONFIG_DEFAULT_BRAIN_STICK_ENABLE);
+        config->putBool(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, CONFIG_DEFAULT_BRAIN_TURBO_ENABLE);
+        config->putBool(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, CONFIG_DEFAULT_BRAIN_AUTODOME_ENABLE);
+        for (droid::services::ActiveComponent* component : componentList) {
+            component->factoryReset();
+        }
+    }
+
+    void Brain::failsafe() {
+        for (droid::services::ActiveComponent* component : componentList) {
+            component->failsafe();
+        }
     }
 
     void Brain::reboot() {
@@ -106,25 +136,23 @@ namespace droid::brain {
 
     void Brain::task() {
         processCmdInput(&LOGGER_STREAM);
-        controller.task();
-        domeMgr.task();
-        actionMgr.task();
-        motorDriver.task();
-        audioMgr.task();
+        for (droid::services::ActiveComponent* component : componentList) {
+            component->task();
+        }
 
         if (logger->getMaxLevel() >= ERROR) {
-            pwmService.failsafe();
-            controller.failsafe();
-            motorDriver.failsafe();
+            failsafe();
             logger->clear();
         }
     }
 
     void Brain::logConfig() {
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_INITIALIZED, config->getString(name, CONFIG_KEY_BRAIN_INITIALIZED, "0"));
-        controller.logConfig();
-        motorDriver.logConfig();
-        audioMgr.logConfig();
-        actionMgr.logConfig();
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_STICK_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_STICK_ENABLE, "0"));
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_TURBO_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, "0"));
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_AUTODOME_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, "0"));
+        for (droid::services::ActiveComponent* component : componentList) {
+            component->logConfig();
+        }
     }
 }

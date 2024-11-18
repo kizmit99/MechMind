@@ -15,15 +15,13 @@
 #define CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW  50
 
 namespace droid::controller {
-    DualSonyMoveController::DualSonyMoveController(const char* name, droid::services::System* sys) :
-        name(name),
+    DualSonyMoveController::DualSonyMoveController(const char* name, droid::services::System* system) :
+        Controller(name, system),
         Usb(),
         Btd(&Usb),
         PS3Right(&Btd),
         PS3Left(&Btd) {
 
-        config = sys->getConfig();
-        logger = sys->getLogger();
         if (DualSonyMoveController::instance != NULL) {
             logger->log(name, droid::services::Logger::Level::FATAL, "Constructor for DualSonyMoveController called more than once!\n");
             while (1);  //TODO Better way to handle this???

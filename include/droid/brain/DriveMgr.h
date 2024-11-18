@@ -4,9 +4,9 @@
 #include "droid/motor/MotorDriver.h"
 
 namespace droid::brain {
-    class DomeMgr : public droid::services::ActiveComponent {
+    class DriveMgr : public droid::services::ActiveComponent {
     public:
-        DomeMgr(const char* name, droid::services::System* system, droid::controller::Controller*, droid::motor::MotorDriver*);
+        DriveMgr(const char* name, droid::services::System* system, droid::controller::Controller*, droid::motor::MotorDriver*);
 
         //Override virtual methods from ActiveComponent
         void init() override;
@@ -17,9 +17,11 @@ namespace droid::brain {
 
     private:
         droid::controller::Controller* controller;
-        droid::motor::MotorDriver* domeMotor;
+        droid::motor::MotorDriver* driveMotor;
 
-        int8_t speed;
+        int8_t normalSpeed;
+        int8_t turboSpeed;
+        int8_t turnSpeed;
         int8_t deadband;
     };
 }

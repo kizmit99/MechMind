@@ -7,7 +7,8 @@
 
 
 namespace droid::audio {
-    DFMiniDriver::DFMiniDriver(Stream* out) : 
+    DFMiniDriver::DFMiniDriver(const char* name, droid::services::System* system, Stream* out) : 
+        AudioDriver(name, system),
         out(out) {
         initSuccess = dfPlayer.begin(*out, false, true);
         dfPlayer.EQ(DFMINI_EQ_NORMAL);

@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include "droid/command/CmdHandler.h"
-#include "droid/services/System.h"
+#include "droid/services/PassiveComponent.h"
 #include "droid/brain/Brain.h"
 
 namespace droid::brain {
@@ -11,10 +11,6 @@ namespace droid::brain {
         bool process(const char* device, const char* command);
 
     private:
-        const char* name;
-        droid::services::Logger* logger;
-        droid::services::Config* config;
-        droid::services::DroidState* droidState;
         Brain* brain;
     };
 }

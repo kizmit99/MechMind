@@ -1,17 +1,20 @@
 #pragma once
 #include <Arduino.h>
-#include "droid/services/System.h"
+#include "droid/services/ActiveComponent.h"
 #include "droid/audio/AudioDriver.h"
 #include "droid/util/InstructionList.h"
 
 namespace droid::audio {
-    class AudioMgr {
+    class AudioMgr : public droid::services::ActiveComponent {
     public:
         AudioMgr(const char* name, droid::services::System* system, AudioDriver* driver);
-        void init();
-        void task();
-        void factoryReset();
-        void logConfig();
+
+        //Override virtual methods from ActiveComponent
+        void init() override;
+        void factoryReset() override;
+        void task() override;
+        void logConfig() override;
+        void failsafe() override;
 
         void setMaxVolume(float maxVolume);
         float getMaxVolume();
@@ -29,10 +32,6 @@ namespace droid::audio {
         uint32_t getRandomMaxMs();
 
     private:
-        const char* name;
-        droid::services::Logger* logger;
-        droid::services::Config* config;
-        droid::services::DroidState* droidState;
         AudioDriver* driver;
         droid::util::InstructionList audioCmdList;
         char cmdBuffer[INSTRUCTIONLIST_COMMAND_LEN] = {0};

@@ -2,8 +2,7 @@
 
 namespace droid::command {
     CmdLogger::CmdLogger(const char* name, droid::services::System* system) :
-        name(name),
-        logger(system->getLogger()) {}
+        CmdHandler(name, system) {}
 
     bool CmdLogger::process(const char* device, const char* command) {
         logger->log(name, INFO, "Device: %s, Command: %s\n", device, command);

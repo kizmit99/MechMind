@@ -66,11 +66,8 @@ namespace {
 
 namespace droid::brain {
     LocalCmdHandler::LocalCmdHandler(const char* name, droid::services::System* system, Brain* brain) :
-        name(name),
-        brain(brain),
-        logger(system->getLogger()),
-        config(system->getConfig()),
-        droidState(system->getDroidState()) {}
+        CmdHandler(name, system),
+        brain(brain) {}
 
     bool LocalCmdHandler::process(const char* device, const char* command) {
         char cmd[ACTION_MAX_SEQUENCE_LEN] = {0};
