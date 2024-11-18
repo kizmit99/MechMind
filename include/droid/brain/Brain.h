@@ -1,7 +1,5 @@
 #pragma once
-#include <Arduino.h>
-#include "droid/core/hardware.h"
-#include "droid/core/System.h"
+#include "droid/core/ActiveComponent.h"
 #include "droid/services/NoPWMService.h"
 #include "droid/services/PCA9685PWM.h"
 #include "droid/controller/DualSonyMoveController.h"
@@ -13,7 +11,6 @@
 #include "droid/audio/AudioMgr.h"
 #include "droid/audio/HCRDriver.h"
 #include "droid/brain/DriveMgr.h"
-#include "droid/core/ActiveComponent.h"
 
 namespace droid::brain {
     class Brain : droid::core::ActiveComponent {

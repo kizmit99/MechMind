@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 #include "droid/core/ActiveComponent.h"
 #include "droid/controller/Controller.h"
 #include "droid/command/CmdHandler.h"

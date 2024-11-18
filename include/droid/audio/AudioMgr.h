@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 #include "droid/core/ActiveComponent.h"
 #include "droid/audio/AudioDriver.h"
 #include "droid/core/InstructionList.h"

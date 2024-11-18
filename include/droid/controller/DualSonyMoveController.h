@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 #include <PS3BT.h>
 
 #include "droid/controller/Controller.h"

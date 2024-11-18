@@ -1,4 +1,3 @@
-//#include <Arduino.h>
 #include "droid/brain/DomeMgr.h"
 
 #define CONFIG_KEY_DOMEMGR_SPEED        "Speed"

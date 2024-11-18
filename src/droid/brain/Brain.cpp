@@ -1,5 +1,5 @@
-#include <Arduino.h>
 #include "droid/brain/Brain.h"
+#include "droid/core/hardware.h"
 #include "droid/command/StreamCmdHandler.h"
 #include "droid/command/CmdLogger.h"
 #include "droid/brain/LocalCmdHandler.h"

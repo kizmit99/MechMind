@@ -144,7 +144,8 @@ namespace droid::brain {
                     config->putString((const char*) &parm1, (const char*) &parm2a, (const char*) &parm3);
                 }
 
-            } else if (strcasecmp(cmd, "Help") == 0) {
+            } else if ((strcasecmp(cmd, "Help") == 0) ||
+                       (strcasecmp(cmd, "?") == 0)) {
                 //Provide help on using Local Commands
                 printHelp();
 
@@ -160,7 +161,7 @@ namespace droid::brain {
     void LocalCmdHandler::printHelp() {
         logger->printf("\n");
         logger->printf("Commands:");
-        printCmdHelp("Help", "Print this list of commands");
+        printCmdHelp("Help or ?", "Print this list of commands");
         printCmdHelp("StickOn", "Enable the Drive joystick");
         printCmdHelp("StickOff", "Disable the Drive joystick");
         printCmdHelp("StickToggle", "Toggle the enabled state of the Drive joystick");
@@ -181,6 +182,7 @@ namespace droid::brain {
         printParmHelp("namespace", "The namespace of the configuration entry to update (see ListConfig for valid options)");
         printParmHelp("key", "The key name of the configuration entry to update (see ListConfig for valid options)");
         printParmHelp("newValue", "The new value for the specified configuration namespace/key");
+        logger->printf("\n");
     }
 
     void LocalCmdHandler::printCmdHelp(const char* cmdName, const char* cmdDescription) {

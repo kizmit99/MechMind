@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 #include "CmdHandler.h"
 
 namespace droid::command {

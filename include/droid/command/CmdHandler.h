@@ -1,5 +1,4 @@
 #pragma once
-#include <Arduino.h>
 #include "droid/core/PassiveComponent.h"
 
 namespace droid::command {
