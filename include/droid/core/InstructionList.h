@@ -22,7 +22,7 @@ namespace droid::core {
         Instruction* deleteInstruction(Instruction*);  //Note, this method returns the NEXT Instruction* in the list
         Instruction* initLoop();
         Instruction* getNext(Instruction*);
-        void dump(const char *name, droid::services::Logger* logger);
+        void dump(const char *name, Logger* logger);
 
     private:
         Instruction list[INSTRUCTIONLIST_QUEUE_SIZE];

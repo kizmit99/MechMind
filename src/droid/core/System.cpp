@@ -1,15 +1,19 @@
 #include "droid/core/System.h"
 
 namespace droid::core {
-    System::System(Stream* logStream, droid::services::Logger::Level defaultLogLevel) :
-        logger(logStream, defaultLogLevel) {
+    System::System(Stream* logStream, LogLevel defaultLogLevel) :
+        logger(logStream, defaultLogLevel),
+        config() {
+        
+        logger.setConfig(&config);
+        config.setLogger(&logger);
     }
 
-    droid::services::Config* System::getConfig() {
+    Config* System::getConfig() {
         return &config;
     }
 
-    droid::services::Logger* System::getLogger() {
+    Logger* System::getLogger() {
         return &logger;
     }
 

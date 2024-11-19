@@ -2,7 +2,7 @@
 
 namespace droid::core {
 
-    void InstructionList::dump(const char* name, droid::services::Logger* logger) {
+    void InstructionList::dump(const char* name, Logger* logger) {
         int i = 0;
         Instruction* instruction = head;
         while (instruction != NULL) {

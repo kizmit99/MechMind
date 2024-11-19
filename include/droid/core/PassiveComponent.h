@@ -14,8 +14,8 @@ namespace droid::core {
     protected:
         const char* name;
         droid::core::System* system;
-        droid::services::Logger* logger;
-        droid::services::Config* config;
+        Logger* logger;
+        Config* config;
         droid::services::DroidState* droidState;
     };
 }
