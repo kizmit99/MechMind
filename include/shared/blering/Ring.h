@@ -14,6 +14,7 @@ namespace blering {
         NimBLEAddress bleAddress;
         volatile bool waitingFor;
         volatile bool connectTo;
+        bool connected = false;
 
         Ring() {}
 

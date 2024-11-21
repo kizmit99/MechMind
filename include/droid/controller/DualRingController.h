@@ -23,6 +23,9 @@ namespace droid::controller {
     private:
         static DualRingController* instance;
 
-        uint32_t timeoutWindow = 10000;
+        int8_t deadband;
+        bool faultState = true;
+
+        void faultCheck();
     };
 }

@@ -2,14 +2,6 @@
 #include "droid/core/System.h"
 #include "shared/blering/DualRingBLE.h"
 
-// #define PREFERENCE_PS3_FOOT_MAC        "ps3footmac"
-// #define PREFERENCE_PS3_DOME_MAC        "ps3domemac"
-// #define PS3_CONTROLLER_DEFAULT_MAC     "XX:XX:XX:XX:XX:XX"
-// #define PS3_CONTROLLER_FOOT_MAC        PS3_CONTROLLER_DEFAULT_MAC
-// #define PS3_CONTROLLER_DOME_MAC        PS3_CONTROLLER_DEFAULT_MAC
-// #define PS3_CONTROLLER_BACKUP_FOOT_MAC PS3_CONTROLLER_DEFAULT_MAC
-// #define PS3_CONTROLLER_BACKUP_DOME_MAC PS3_CONTROLLER_DEFAULT_MAC
-
 constexpr blering::DualRingBLE::Controller DualRingBLE_Drive = blering::DualRingBLE::Controller::Drive; 
 constexpr blering::DualRingBLE::Controller DualRingBLE_Dome = blering::DualRingBLE::Controller::Dome; 
 constexpr blering::DualRingBLE::Modifier DualRingBLE_A = blering::DualRingBLE::Modifier::A; 
@@ -49,23 +41,31 @@ namespace droid::controller {
 
     void DualRingController::task() {
         rings.task();
+        faultCheck();
     }
 
     void DualRingController::failsafe() {
-        //TODO
+        //NOOP
     }
 
     void DualRingController::setCritical(bool isCritical) {
-        //TODO
-        if (isCritical) {
-            timeoutWindow = 10000;
-        } else {
-            timeoutWindow = 100;
-        }
+        //NOOP
     }
 
     void DualRingController::setDeadband(int8_t deadband) {
-        //TODO
+        this->deadband = abs(deadband);
+    }
+
+    void DualRingController::faultCheck() {
+        if ((!faultState) &&
+            (!rings.isConnected())) {
+            faultState = true;
+            logger->log(name, ERROR, "Controller has lost connection to one of the Rings\n");
+        }
+        if ((faultState) &&
+            (rings.isConnected())) {
+            faultState = false;
+        }
     }
 
     int8_t DualRingController::getJoystickPosition(Controller::Joystick controller, Controller::Axis axis) {
@@ -83,7 +83,12 @@ namespace droid::controller {
         } else {
             mappedAxis = DualRingBLE_X;
         }
-        return rings.getJoystick(mappedController, mappedAxis);
+
+        int8_t value = rings.getJoystick(mappedController, mappedAxis);
+        if (abs(value) <= deadband) {
+            value = 0;
+        }
+        return value;
     }
 
     String DualRingController::getTrigger() {

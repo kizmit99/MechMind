@@ -242,22 +242,9 @@ namespace blering {
 
         ring->bleAddress = pClient->getPeerAddress();
 
-        char buf[100];
-        std::__cxx11::string addr = pClient->getPeerAddress().toString();
-        strncpy(buf, pClient->getPeerAddress().toString().c_str(), 100);
-        buf[99] = '\0';
-        Serial.printf("****buf1: %s ***\n", buf);
-        strncpy(buf, addr.c_str(), 100);
-        buf[99] = '\0';
-        Serial.printf("****buf2: %s ***\n", buf);
-
-//        strncpy(ring->address, pClient->getPeerAddress().toString().c_str(), sizeof(ring->address));
-        strncpy(ring->address, buf, sizeof(ring->address));
+        strncpy(ring->address, pClient->getPeerAddress().toString().c_str(), sizeof(ring->address));
         ring->address[sizeof(ring->address) - 1] = '\0';
-        Serial.printf("****ring->address: %s ***\n", ring->address);
-
-        rings.log("Connected to: %s**\n", ring->address);
-        rings.log("Connected to: %s***\n", buf);
+        rings.log("Connected to: %s\n", ring->address);
 
         NimBLERemoteService *hidService = pClient->getService(HID_SERVICE);
 
@@ -449,14 +436,8 @@ namespace blering {
     }
 
     bool DualRingBLE::isConnected() {
-        if (driveRing.waitingFor || 
-            driveRing.connectTo ||
-            domeRing.waitingFor ||
-            domeRing.connectTo) {
-            return false;
-        } else {
-            return true;
-        }
+        return (driveRing.connected &&
+                domeRing.connected);
     }
 
     bool DualRingBLE::hasFault() {

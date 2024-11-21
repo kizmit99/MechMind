@@ -4,7 +4,7 @@
 
 namespace blering {
     void Ring::onConnect() {
-        //TODO
+        connected = true;
     }
 
     void Ring::onDisconnect() {
@@ -12,6 +12,7 @@ namespace blering {
         myRing.disconnect();
         waitingFor = true;
         connectTo = false;
+        connected = false;
     }
 
     void Ring::onReport(uint8_t* pData, size_t length) {
