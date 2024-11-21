@@ -92,49 +92,49 @@ namespace droid::controller {
     }
 
     String DualRingController::getTrigger() {
-        if (rings.isButtonClicked(DualRingBLE_Drive, DualRingBLE_L1)) return "FTbtnDown_MD";
+        if (rings.isButtonClicked(DualRingBLE_Drive, DualRingBLE_L1)) return "MarchingAnts";
 
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "btnUP_CROSS_MD";
+            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "VolumeUp";
 
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "btnDown_CROSS_MD";
+            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "VolumeDown";
 
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "FTbtnDown_CROSS_MD";
+            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "VolumeMid";
 
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "FTbtnUP_CROSS_MD";
+            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "VolumeMax";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "FTbtnUP_L1_MD";
+            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "OpenDomeP1";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "FTbtnDown_L1_MD";
+            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "CloseDomeP1";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "btnDown_L1_MD";
+            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "LeiaMessage";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
@@ -146,121 +146,121 @@ namespace droid::controller {
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "btnUP_MD";
+            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "FullAwake";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "btnDown_MD";
+            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "QuietMode";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "btnLeft_MD";
+            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "MidAwake";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "btnRight_MD";
+            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "FullAware";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "FTbtnUP_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "BeepCantina";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "btnUP_L1_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "CantinaDance";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "btnDown_L1_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "LeiaMessage";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "btnUP_CIRCLE_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "Scream";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "btnDown_CIRCLE_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "Disco";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "btnRight_CIRCLE_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "ShortCircuit";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "btnLeft_CIRCLE_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "FastSmirk";
 
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "btnLeft_L1_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "Wave";
 
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "FTbtnUP_L1_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "OpenDomeP1";
 
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "FTbtnDown_L1_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "CloseDomeP1";
 
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "FTbtnLeft_L1_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "OpenDomeP2";
 
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "FTbtnRight_L1_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "CloseDomeP2";
 
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "FTbtnUP_PS_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "OpenDomeP3";
 
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "FTbtnDown_PS_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "CloseDomeP3";
 
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "FTbtnLeft_PS_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "OpenDomeP4";
 
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "FTbtnRight_PS_MD";
+            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "CloseDomeP4";
 
         return "";
     }
