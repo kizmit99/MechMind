@@ -46,10 +46,10 @@ namespace blering {
 
             logger->log(name, DEBUG, "%s:", __func__);
             for (size_t i = 0; i < newReport->report_len; i++) {
-                logger->printf(" %02x", newReport->report[i]);
+                logger->printf(name, DEBUG, " %02x", newReport->report[i]);
             }
             //DBG_printf(", head: %d, tail: %d, count: %d, empty: %d, full: %d", reportQueueHead, reportQueueTail, reportQueueCount, reportQueueEmpty(), reportQueueFull());
-            logger->printf("\n");
+            logger->printf(name, DEBUG, "\n");
 
             bool l2Before = myRing.isButtonPressed(MagicseeR1::L2);
             myRing.handleReport(newReport->report, newReport->report_len);

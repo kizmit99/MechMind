@@ -20,9 +20,9 @@ namespace blering {
     void MagicseeR1::unexpected(volatile void *report, size_t length) {
         logger->log(name, DEBUG, "Unexpected message in Mode-%s: ", modeString(getMode()));
         for (int i = 0; i < length; i++) {
-            logger->printf("%02x", ((byte*) report)[i]);
+            logger->printf(name, DEBUG, "%02x", ((byte*) report)[i]);
         }
-        logger->printf("\n");
+        logger->printf(name, DEBUG, "\n");
     }
 
     void MagicseeR1::clearAllButtons() {
@@ -365,16 +365,16 @@ namespace blering {
 
     void MagicseeR1::printState() {
         logger->log(name, DEBUG, "Ring state: MODE-%s : ", modeString(getMode()));
-        if (isButtonPressed(MagicseeR1::A)) logger->printf("A."); else logger->printf(" .");
-        if (isButtonPressed(MagicseeR1::B)) logger->printf("B."); else logger->printf(" .");
-        if (isButtonPressed(MagicseeR1::C)) logger->printf("C."); else logger->printf(" .");
-        if (isButtonPressed(MagicseeR1::D)) logger->printf("D."); else logger->printf(" .");
-        if (isButtonPressed(MagicseeR1::L1)) logger->printf("L1."); else logger->printf("  .");
-        if (isButtonPressed(MagicseeR1::L2)) logger->printf("L2."); else logger->printf("  .");
-        if (isButtonPressed(MagicseeR1::UP)) logger->printf("UP."); else logger->printf("  .");
-        if (isButtonPressed(MagicseeR1::DOWN)) logger->printf("DOWN."); else logger->printf("    .");
-        if (isButtonPressed(MagicseeR1::LEFT)) logger->printf("LEFT."); else logger->printf("    .");
-        if (isButtonPressed(MagicseeR1::RIGHT)) logger->printf("RIGHT"); else logger->printf("     ");
-        logger->printf("\n");
+        if (isButtonPressed(MagicseeR1::A)) logger->printf(name, DEBUG, "A."); else logger->printf(name, DEBUG, " .");
+        if (isButtonPressed(MagicseeR1::B)) logger->printf(name, DEBUG, "B."); else logger->printf(name, DEBUG, " .");
+        if (isButtonPressed(MagicseeR1::C)) logger->printf(name, DEBUG, "C."); else logger->printf(name, DEBUG, " .");
+        if (isButtonPressed(MagicseeR1::D)) logger->printf(name, DEBUG, "D."); else logger->printf(name, DEBUG, " .");
+        if (isButtonPressed(MagicseeR1::L1)) logger->printf(name, DEBUG, "L1."); else logger->printf(name, DEBUG, "  .");
+        if (isButtonPressed(MagicseeR1::L2)) logger->printf(name, DEBUG, "L2."); else logger->printf(name, DEBUG, "  .");
+        if (isButtonPressed(MagicseeR1::UP)) logger->printf(name, DEBUG, "UP."); else logger->printf(name, DEBUG, "  .");
+        if (isButtonPressed(MagicseeR1::DOWN)) logger->printf(name, DEBUG, "DOWN."); else logger->printf(name, DEBUG, "    .");
+        if (isButtonPressed(MagicseeR1::LEFT)) logger->printf(name, DEBUG, "LEFT."); else logger->printf(name, DEBUG, "    .");
+        if (isButtonPressed(MagicseeR1::RIGHT)) logger->printf(name, DEBUG, "RIGHT"); else logger->printf(name, DEBUG, "     ");
+        logger->printf(name, DEBUG, "\n");
     }
 }

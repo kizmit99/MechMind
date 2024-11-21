@@ -15,6 +15,9 @@ void setup() {
     HCR_STREAM_SETUP;
     SABERTOOTH_STREAM_SETUP;
     delay(500);
+        
+    sys.getLogger()->setConfig(sys.getConfig());
+    sys.getConfig()->setLogger(sys.getLogger());
     brain.init();
     brain.logConfig();
 }

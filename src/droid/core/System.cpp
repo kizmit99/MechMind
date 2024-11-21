@@ -5,8 +5,8 @@ namespace droid::core {
         logger(logStream, defaultLogLevel),
         config() {
         
-        logger.setConfig(&config);
-        config.setLogger(&logger);
+        // logger.setConfig(&config);
+        // config.setLogger(&logger);
     }
 
     Config* System::getConfig() {

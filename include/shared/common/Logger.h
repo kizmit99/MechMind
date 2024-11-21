@@ -4,18 +4,22 @@
 //Forward declaration of Config class
 class Config;
 
+#define LOGGER_NAME     "Logger"
+#define LOGGER_NAME_KEY "Names"
+
 enum LogLevel {
-        DEBUG, INFO, WARN, ERROR, FATAL};
+        FORCE, DEBUG, INFO, WARN, ERROR, FATAL};
 
 struct LogConfigEntry {
 public:
-    LogConfigEntry(const char* compName, LogLevel level, LogConfigEntry* prev) :
-        compName(compName),
+    LogConfigEntry(const char* compName, LogLevel level) :
         level(level),
-        prev(prev) {};
-    LogConfigEntry* prev;
-    LogConfigEntry* next = NULL;
-    const char* compName;
+        next(NULL) {
+        strncpy(this->compName, compName, sizeof(this->compName));
+        this->compName[sizeof(this->compName) - 1] = '\0';
+    };
+    LogConfigEntry* next;
+    char compName[16];
     LogLevel level;
 };
 
@@ -23,13 +27,13 @@ class Logger {
 public:
     Logger(Print* out, LogLevel defaultLevel) :
         out(out) {
-        logConfigList = new LogConfigEntry("Logger", defaultLevel, NULL);
+        logConfigList = new LogConfigEntry(LOGGER_NAME, defaultLevel);
     }
 
     void log(const char* compName, LogLevel level, const char *format, ...)  __attribute__ ((format (printf, 4, 5))) {
         updateLevel(level);
         if (out) {
-            if (level >= getLogLevel(compName)) {
+            if ((level == 0) || (level >= getLogLevel(compName))) {
                 out->printf("%s : %d : %s : ", levelStr[level], millis(), compName);
                 va_list args; 
                 va_start(args, format); 
@@ -40,17 +44,20 @@ public:
         }
     }
 
-    void printf(const char *format, ...) __attribute__ ((format (printf, 2, 3))) {
+    void printf(const char* compName, LogLevel level, const char *format, ...) __attribute__ ((format (printf, 4, 5))) {
+        updateLevel(level);
         if (out) {
-            va_list args; 
-            va_start(args, format); 
-            vsnprintf(buf, sizeof(buf), format, args); 
-            va_end(args);
-            out->print(buf);
+            if ((level == 0) || (level >= getLogLevel(compName))) {
+                va_list args; 
+                va_start(args, format); 
+                vsnprintf(buf, sizeof(buf), format, args); 
+                va_end(args);
+                out->print(buf);
+            }
         }
     }
 
-    void setLogLevel(const char* compName, LogLevel level) {
+    void setLogLevel(const char* compName, LogLevel level, bool save = true) {
         LogConfigEntry* head = logConfigList;
         LogConfigEntry* entry = head;
         while (entry != NULL) {
@@ -60,11 +67,14 @@ public:
             entry = entry->next;
         }
         if (entry == NULL) {
-            entry = new LogConfigEntry(compName, level, head);
+            entry = new LogConfigEntry(compName, level);
             entry->next = head->next;
             head->next = entry;
         }
         entry->level = level;
+        if (save) {
+            saveLogLevel(compName, level);
+        }
     }
 
     LogLevel getLogLevel(const char* compName) {
@@ -76,11 +86,10 @@ public:
             }
             entry = entry->next;
         }
-        if (entry != NULL) {
-            return entry->level;
-        } else {
-            return head->level;
+        if (entry == NULL) {
+            entry = head;
         }
+        return entry->level;
     }
 
     LogLevel getMaxLevel() {
@@ -93,11 +102,16 @@ public:
 
     void setConfig(Config* config) {
         this->config = config;
+        loadLogConfig();
     }
 
+    void logConfig();
+
+    void factoryReset();
+
 private:
-    const char* const levelStr[6] = {
-        "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
+    const char* const levelStr[7] = {
+        "FORCE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
     Print* out;
     char buf[256];
     LogLevel maxLevel;
@@ -109,6 +123,76 @@ private:
             maxLevel = newLevel;
         }
     }
+
+    LogLevel logLevelFromString(String level) {
+        for (int i = 0; i < 7; i++) {
+            if (level == levelStr[i]) {
+                return static_cast<LogLevel>(i);
+            }
+        }
+        return logConfigList->level;
+    }
+
+    void loadLogConfig();
+
+    void saveLogLevel(const char* compName, LogLevel level);
 };
 
 #include "shared/common/Config.h"
+
+inline void Logger::factoryReset() {
+    if (!config) {return;}
+    config->clear(LOGGER_NAME);
+}
+
+inline void Logger::logConfig() {
+    if (!config) {return;}
+    String keys = config->getString(LOGGER_NAME, LOGGER_NAME_KEY, "");
+    log(LOGGER_NAME, INFO, "Config %s = %s\n", LOGGER_NAME_KEY, keys.c_str());
+    keys.trim();
+    char buf[keys.length() + 1];
+    keys.toCharArray(buf, keys.length() + 1);
+    char* token = strtok(buf, ":");
+    while (token != NULL) {
+        log(LOGGER_NAME, INFO, "Config %s = %s\n", token, config->getString(LOGGER_NAME, token, ""));
+        token = strtok(NULL, ":");
+    }
+}
+
+inline void Logger::loadLogConfig() {
+    if (!config) {return;}
+    String keys = config->getString(LOGGER_NAME, LOGGER_NAME_KEY, "");
+    keys.trim();
+    char buf[keys.length() + 1];
+    keys.toCharArray(buf, keys.length() + 1);
+    char* token = strtok(buf, ":");
+    while (token != NULL) {
+        String level = config->getString(LOGGER_NAME, token, "");
+        if (level != "") {
+            setLogLevel(token, logLevelFromString(level), false);
+        }
+        token = strtok(NULL, ":");
+    }
+}
+
+inline void Logger::saveLogLevel(const char* compName, LogLevel level) {
+    if (!config) {return;}
+    String keys = config->getString(LOGGER_NAME, LOGGER_NAME_KEY, "");
+    keys.trim();
+    char buf[keys.length() + 1];
+    keys.toCharArray(buf, keys.length() + 1);
+    char* token = strtok(buf, ":");
+    bool found = false;
+    while (token != NULL) {
+        if (strcmp(compName, token) == 0) {
+            found = true;
+            break;
+        }
+        token = strtok(NULL, ":");
+    }
+    if (!found) {
+        String newKeys = keys + ":" + compName;
+        config->putString(LOGGER_NAME, LOGGER_NAME_KEY, newKeys.c_str());
+    }
+    config->putString(LOGGER_NAME, compName, levelStr[(int) level]);
+}

@@ -105,7 +105,7 @@ namespace droid::brain {
                 //Restart the controller.
                 brain->reboot();
 
-            } else if (strcasecmp(cmd, "Reset") == 0) {
+            } else if (strcasecmp(cmd, "FactoryReset") == 0) {
                 //Delete all preferences, reset button triggers to sketch defaults, unpair controllers.
                 logger->log(name, WARN, "Initiating factory reset...\n");
                 brain->factoryReset();
@@ -159,8 +159,8 @@ namespace droid::brain {
     }
 
     void LocalCmdHandler::printHelp() {
-        logger->printf("\n");
-        logger->printf("Commands:");
+        logger->printf(name, FORCE, "\n");
+        logger->printf(name, FORCE, "Commands:");
         printCmdHelp("Help or ?", "Print this list of commands");
         printCmdHelp("StickOn", "Enable the Drive joystick");
         printCmdHelp("StickOff", "Disable the Drive joystick");
@@ -169,7 +169,7 @@ namespace droid::brain {
         printCmdHelp("AutoDomeOff", "Disable the Auto Dome functionality");
         printCmdHelp("AutoDomeToggle", "Toggle the enabled state of the Auto Dome Functionality");
         printCmdHelp("Restart", "Perform a complete system restart");
-        printCmdHelp("Reset", "Restore all configuration parameters to defaults and restart the system");
+        printCmdHelp("FactoryReset", "Restore all configuration parameters to defaults and restart the system");
         printCmdHelp("ListConfig", "Print out all of the configuration parameters");
         printCmdHelp("SetTrigger <trigger> <action>", "Configure the Action associated with the specified Trigger");
         printParmHelp("trigger", "The Trigger to override");
@@ -182,16 +182,16 @@ namespace droid::brain {
         printParmHelp("namespace", "The namespace of the configuration entry to update (see ListConfig for valid options)");
         printParmHelp("key", "The key name of the configuration entry to update (see ListConfig for valid options)");
         printParmHelp("newValue", "The new value for the specified configuration namespace/key");
-        logger->printf("\n");
+        logger->printf(name, FORCE, "\n");
     }
 
     void LocalCmdHandler::printCmdHelp(const char* cmdName, const char* cmdDescription) {
-        logger->printf("\n");
-        logger->printf("  %s\n", cmdName);
-        logger->printf("    %s\n", cmdDescription);
+        logger->printf(name, FORCE, "\n");
+        logger->printf(name, FORCE, "  %s\n", cmdName);
+        logger->printf(name, FORCE, "    %s\n", cmdDescription);
     }
 
     void LocalCmdHandler::printParmHelp(const char* parmName, const char* parmDescription) {
-        logger->printf("    -- %s: %s\n", parmName, parmDescription);
+        logger->printf(name, FORCE, "    -- %s: %s\n", parmName, parmDescription);
     }
 }

@@ -66,9 +66,18 @@ namespace droid::brain {
         droidState->stickEnable = config->getBool(name, CONFIG_KEY_BRAIN_STICK_ENABLE, CONFIG_DEFAULT_BRAIN_STICK_ENABLE);
         droidState->turboSpeed = config->getBool(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, CONFIG_DEFAULT_BRAIN_TURBO_ENABLE);
         droidState->autoDomeEnable = config->getBool(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, CONFIG_DEFAULT_BRAIN_AUTODOME_ENABLE);
+
+        //Initialize the Logger log levels for all ActiveComponents
+        logger->setLogLevel(name, logger->getLogLevel(name));
+        for (droid::core::ActiveComponent* component : componentList) {
+            logger->setLogLevel(component->name, logger->getLogLevel(component->name));
+        }
+
+        //Initialize all ActiveComponents
         for (droid::core::ActiveComponent* component : componentList) {
             component->init();
         }
+
         pwmService.setOscFreq(PCA9685_OSC_FREQUENCY);
         controller.setDeadband(CONTROLLER_DEADBAND);
     }
@@ -78,8 +87,11 @@ namespace droid::brain {
         config->putBool(name, CONFIG_KEY_BRAIN_STICK_ENABLE, CONFIG_DEFAULT_BRAIN_STICK_ENABLE);
         config->putBool(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, CONFIG_DEFAULT_BRAIN_TURBO_ENABLE);
         config->putBool(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, CONFIG_DEFAULT_BRAIN_AUTODOME_ENABLE);
+        logger->factoryReset();
+        logger->setLogLevel(name, logger->getLogLevel(name));
         for (droid::core::ActiveComponent* component : componentList) {
             component->factoryReset();
+            logger->setLogLevel(component->name, logger->getLogLevel(component->name));
         }
     }
 
@@ -148,10 +160,11 @@ namespace droid::brain {
     }
 
     void Brain::logConfig() {
-        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_INITIALIZED, config->getString(name, CONFIG_KEY_BRAIN_INITIALIZED, "0"));
-        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_STICK_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_STICK_ENABLE, "0"));
-        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_TURBO_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, "0"));
-        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_AUTODOME_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, "0"));
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_INITIALIZED, config->getString(name, CONFIG_KEY_BRAIN_INITIALIZED, ""));
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_STICK_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_STICK_ENABLE, ""));
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_TURBO_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, ""));
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_AUTODOME_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, ""));
+        logger->logConfig();
         for (droid::core::ActiveComponent* component : componentList) {
             component->logConfig();
         }

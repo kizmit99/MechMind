@@ -301,9 +301,9 @@ namespace blering {
         this->logger = logger;
         this->config = config;
 
-        driveRing.init("driveRing", logger);
-        domeRing.init("domeRing", logger);
-        clientCB.init("clientCB", logger);
+        driveRing.init(name, logger);
+        domeRing.init(name, logger);
+        clientCB.init(name, logger);
         driveRing.setOtherRing(&domeRing);
         domeRing.setOtherRing(&driveRing);
 
