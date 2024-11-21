@@ -3,6 +3,7 @@
 #include "droid/services/NoPWMService.h"
 #include "droid/services/PCA9685PWM.h"
 #include "droid/controller/DualSonyMoveController.h"
+#include "droid/controller/DualRingController.h"
 #include "droid/controller/StubController.h"
 #include "droid/motor/DRV8871Driver.h"
 #include "droid/motor/SabertoothDriver.h"
@@ -38,7 +39,8 @@ namespace droid::brain {
 #ifdef BUILD_FOR_DEBUGGER
         droid::controller::StubController controller;
 #else
-        droid::controller::DualSonyMoveController controller;
+//        droid::controller::DualSonyMoveController controller;
+        droid::controller::DualRingController controller;
 #endif
         droid::motor::DRV8871Driver domeMotorDriver;
         droid::motor::SabertoothDriver driveMotorDriver;

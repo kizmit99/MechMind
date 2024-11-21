@@ -128,5 +128,6 @@ inline void Config::log(const char* nspace, const char *format, ...) {
         va_list args; 
         va_start(args, format); 
         logger->log(nspace, LogLevel::WARN, format, args);
+        va_end(args);
     }
 }

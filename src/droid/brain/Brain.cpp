@@ -25,7 +25,8 @@ namespace droid::brain {
         controller("StubCtrl", system),
 #else
         pwmService("PCA9685", system, PCA9685_I2C_ADDRESS, PCA9685_OUTPUT_ENABLE_PIN),
-        controller("DualSony", system),
+//        controller("DualSony", system),
+        controller("DualRing", system),
 #endif
         domeMotorDriver("DRV8871", system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2),
         domeMgr("DomeMgr", system, &controller, &domeMotorDriver),

@@ -88,7 +88,7 @@ namespace droid::command {
             lastTriggerTime = now;
             lastTrigger = trigger;
             if (trigger != "") {
-                logger->log(name, DEBUG, "Trigger: %s, Cmd: %s\n", trigger, cmdMap[trigger].c_str());
+                logger->log(name, DEBUG, "Trigger: %s, Cmd: %s\n", trigger.c_str(), cmdMap[trigger].c_str());
                 fireTrigger(trigger.c_str());
             }
         }
