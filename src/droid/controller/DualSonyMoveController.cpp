@@ -1,5 +1,6 @@
-#include "droid/controller/DualSonyMoveController.h"
+#include <Arduino.h>
 #include "droid/core/hardware.h"
+#include "droid/controller/DualSonyMoveController.h"
 #include <string>
 #include <stdexcept>
 

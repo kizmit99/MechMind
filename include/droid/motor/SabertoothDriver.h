@@ -6,7 +6,7 @@
 namespace droid::motor {
     class SabertoothDriver : public MotorDriver {
     public:
-        SabertoothDriver(const char* name, droid::core::System* system, byte address, Stream& port);
+        SabertoothDriver(const char* name, droid::core::System* system, byte address, Stream* port);
 
         //Override virtual methods from MotorDriver/ActiveComponent
         void init() override;
@@ -21,6 +21,7 @@ namespace droid::motor {
 
     private:
         ::SabertoothDriver wrapped;
+        Stream* port;
 
         int8_t lastMotorSpeed[2] = {0};
     };

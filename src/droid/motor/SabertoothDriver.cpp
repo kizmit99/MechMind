@@ -29,9 +29,10 @@
 #define CONFIG_DEFAULT_SABERTOOTH_MAX_VOLTAGE  144
 
 namespace droid::motor {
-    SabertoothDriver::SabertoothDriver(const char* name, droid::core::System* system, byte address, Stream& port) :
+    SabertoothDriver::SabertoothDriver(const char* name, droid::core::System* system, byte address, Stream* port) :
+        port(port),
         MotorDriver(name, system),
-        wrapped(address, port) {}
+        wrapped(address, *port) {}
 
     void SabertoothDriver::init() {
         uint32_t timeoutMs = config->getInt(name, CONFIG_KEY_SABERTOOTH_TIMEOUT, CONFIG_DEFAULT_SABERTOOTH_TIMEOUT);

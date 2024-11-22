@@ -80,7 +80,9 @@ namespace droid::audio {
     }
 
     bool HCRDriver::executeCmd(const char* deviceCmd) {
-        out->print(deviceCmd);
+        if (out != NULL) {
+            out->print(deviceCmd);
+        }
         return true;
     }
 }

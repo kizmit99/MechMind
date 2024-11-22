@@ -28,7 +28,7 @@ namespace droid::controller {
     }
 
     void DualRingController::init() {
-        rings.init(name, logger, config);
+        rings.init("DualRingBLE", logger, config);
     }
 
     void DualRingController::factoryReset() {

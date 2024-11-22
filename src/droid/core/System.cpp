@@ -3,11 +3,7 @@
 namespace droid::core {
     System::System(Stream* logStream, LogLevel defaultLogLevel) :
         logger(logStream, defaultLogLevel),
-        config() {
-        
-        // logger.setConfig(&config);
-        // config.setLogger(&logger);
-    }
+        config("Config", &logger) {}
 
     Config* System::getConfig() {
         return &config;

@@ -1,3 +1,4 @@
+#pragma once
 //#define BUILD_FOR_DEBUGGER
 
 //PCA9685PWM Config
@@ -11,15 +12,17 @@
 #define DOMEMOTOR_POWER_RAMP 10.0
 
 //Stream configurations
-#define LOGGER_STREAM Serial
+#define LOGGER_STREAM &Serial
 #define LOGGER_STREAM_SETUP Serial.begin(115200)
-#define DOME_STREAM LOGGER_STREAM
+#define CONSOLE_STREAM &Serial
+#define CONSOLE_STREAM_SETUP
+#define DOME_STREAM &Serial
 #define DOME_STREAM_SETUP
-#define SABERTOOTH_STREAM Serial2
+#define SABERTOOTH_STREAM &Serial2
 #define SABERTOOTH_STREAM_SETUP Serial2.begin(9600)
-#define BODY_STREAM LOGGER_STREAM
+#define BODY_STREAM &Serial
 #define BODY_STREAM_SETUP
-#define HCR_STREAM LOGGER_STREAM
+#define HCR_STREAM &Serial
 #define HCR_STREAM_SETUP
 
 //DualSonyMoveController

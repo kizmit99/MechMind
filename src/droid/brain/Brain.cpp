@@ -31,7 +31,7 @@ namespace droid::brain {
         domeMotorDriver("DRV8871", system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2),
         domeMgr("DomeMgr", system, &controller, &domeMotorDriver),
         actionMgr("ActionMgr", system, &controller),
-        audioDriver("HCRDriver", system, &HCR_STREAM),
+        audioDriver("HCRDriver", system, HCR_STREAM),
         audioMgr("AudioMgr", system, &audioDriver),
         driveMotorDriver("Sabertooth", system, (byte) 128, SABERTOOTH_STREAM),
         driveMgr("DriveMgr", system, &controller, &driveMotorDriver) {
@@ -41,10 +41,10 @@ namespace droid::brain {
         actionMgr.addCmdHandler(new droid::command::CmdLogger("CmdLogger", system));
 
         //TODO Implement configurable Serial ports
-        actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Dome", system, &DOME_STREAM));
-        actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Body", system, &BODY_STREAM));
+        actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Dome", system, DOME_STREAM));
+        actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Body", system, BODY_STREAM));
         actionMgr.addCmdHandler(new droid::audio::AudioCmdHandler("HCR", system, &audioMgr));
-        actionMgr.addCmdHandler(new droid::brain::LocalCmdHandler("Brain", system, this));
+        actionMgr.addCmdHandler(new droid::brain::LocalCmdHandler("Brain", system, this, CONSOLE_STREAM));
 
         //Setup list of all ActiveComponents
         componentList.push_back(&pwmService);
@@ -67,11 +67,9 @@ namespace droid::brain {
         droidState->turboSpeed = config->getBool(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, CONFIG_DEFAULT_BRAIN_TURBO_ENABLE);
         droidState->autoDomeEnable = config->getBool(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, CONFIG_DEFAULT_BRAIN_AUTODOME_ENABLE);
 
-        //Initialize the Logger log levels for all ActiveComponents
-        logger->setLogLevel(name, logger->getLogLevel(name));
-        for (droid::core::ActiveComponent* component : componentList) {
-            logger->setLogLevel(component->name, logger->getLogLevel(component->name));
-        }
+        //Initialize the Logger log levels for all Components
+        #define LOGGER logger
+        #include "droid/core/LoggerLevels.h"
 
         //Initialize all ActiveComponents
         for (droid::core::ActiveComponent* component : componentList) {
@@ -87,8 +85,6 @@ namespace droid::brain {
         config->putBool(name, CONFIG_KEY_BRAIN_STICK_ENABLE, CONFIG_DEFAULT_BRAIN_STICK_ENABLE);
         config->putBool(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, CONFIG_DEFAULT_BRAIN_TURBO_ENABLE);
         config->putBool(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, CONFIG_DEFAULT_BRAIN_AUTODOME_ENABLE);
-        logger->factoryReset();
-        logger->setLogLevel(name, logger->getLogLevel(name));
         for (droid::core::ActiveComponent* component : componentList) {
             component->factoryReset();
             logger->setLogLevel(component->name, logger->getLogLevel(component->name));
@@ -148,7 +144,9 @@ namespace droid::brain {
     }
 
     void Brain::task() {
-        processCmdInput(&LOGGER_STREAM);
+        if (CONSOLE_STREAM != NULL) {
+            processCmdInput(CONSOLE_STREAM);
+        }
         for (droid::core::ActiveComponent* component : componentList) {
             component->task();
         }
@@ -164,7 +162,6 @@ namespace droid::brain {
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_STICK_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_STICK_ENABLE, ""));
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_TURBO_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, ""));
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_AUTODOME_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, ""));
-        logger->logConfig();
         for (droid::core::ActiveComponent* component : componentList) {
             component->logConfig();
         }

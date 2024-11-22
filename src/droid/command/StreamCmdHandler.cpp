@@ -8,7 +8,9 @@ namespace droid::command {
     bool StreamCmdHandler::process(const char* device, const char* command) {
         if ((strcmp(name, device) == 0) &&
             (command != NULL)) {
-            stream->printf("%s\r", command);
+            if (stream != NULL) {
+                stream->printf("%s\r", command);
+            }
             return true;
         } else {
             return false;

@@ -1,12 +1,12 @@
 #pragma once
 #include <Preferences.h>
-
-//Forward declaration of Logger class
-class Logger;
+#include "shared/common/Logger.h"
 
 class Config {
 public:
-    Config() {}
+    Config(const char* name, Logger* logger) :
+        name(name),
+        logger(logger) {}
 
     void putInt(const char* nspace, const char* key, int value) {
         char buf[20];
@@ -23,7 +23,7 @@ public:
         char* endPtr;
         value = strtol(cValue, &endPtr, 10);
         if ((endPtr == cValue) || (*endPtr != '\0')) {   //parse error
-            log("Parse ERROR in Config.getInt(%s, %s, %d) value from store: '%s'\n", nspace, key, defaultValue, cValue);
+            logger->log(name, WARN, "Parse ERROR in Config.getInt(%s, %s, %d) value from store: '%s'\n", nspace, key, defaultValue, cValue);
             value = defaultValue;
         }
         return value;
@@ -44,7 +44,7 @@ public:
         char* endPtr;
         value = (bool) strtol(cValue, &endPtr, 10);
         if ((endPtr == cValue) || (*endPtr != '\0')) {   //parse error
-            log("Parse ERROR in Config.getBool(%s, %s, %d) value from store: '%s'\n", nspace, key, defaultValue, cValue);
+            logger->log(name, WARN, "Parse ERROR in Config.getBool(%s, %s, %d) value from store: '%s'\n", nspace, key, defaultValue, cValue);
             value = defaultValue;
         }
         return value;
@@ -65,7 +65,7 @@ public:
         char* endPtr;
         value = strtof(cValue, &endPtr);
         if ((endPtr == cValue) || (*endPtr != '\0')) {   //parse error
-            log("Parse ERROR in Config.getFloat(%s, %s, %.3f) value from store: '%s'\n", nspace, key, defaultValue, cValue);
+            logger->log(name, WARN, "Parse ERROR in Config.getFloat(%s, %s, %.3f) value from store: '%s'\n", nspace, key, defaultValue, cValue);
             value = defaultValue;
         }
         return value;
@@ -110,24 +110,8 @@ public:
         return isKey;
     }
 
-    void setLogger(Logger* logger) {
-        this->logger = logger;
-    }
-
 private:
-    void log(const char* nspace, const char *format, ...)  __attribute__ ((format (printf, 3, 4)));
-
     Preferences preferences;
+    const char* name;
     Logger* logger;
 };
-
-#include "shared/common/Logger.h"
-
-inline void Config::log(const char* nspace, const char *format, ...) {
-    if (logger) {
-        va_list args; 
-        va_start(args, format); 
-        logger->log(nspace, LogLevel::WARN, format, args);
-        va_end(args);
-    }
-}

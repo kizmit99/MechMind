@@ -6,11 +6,12 @@
 namespace droid::brain {
     class LocalCmdHandler : public droid::command::CmdHandler {
     public:
-        LocalCmdHandler(const char* name, droid::core::System* system, Brain* brain);
+        LocalCmdHandler(const char* name, droid::core::System* system, Brain* brain, Stream* console);
         bool process(const char* device, const char* command);
 
     private:
         Brain* brain;
+        Stream* console;
 
         void printHelp();
         void printCmdHelp(const char* cmdName, const char* cmdDescription);
