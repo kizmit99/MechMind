@@ -6,10 +6,11 @@
 #include <HardwareSerial.h>
 #include "droid/core/hardware.h"
 
-droid::core::System sys(LOGGER_STREAM, DEBUG);
-droid::brain::Brain brain("R2D2", &sys);
+droid::core::System* sys;
+droid::brain::Brain* brain;
 
 void setup() {
+
     LOGGER_STREAM_SETUP;
     CONSOLE_STREAM_SETUP; 
     DOME_STREAM_SETUP;
@@ -19,10 +20,13 @@ void setup() {
     
     delay(500);
         
-    brain.init();
-    brain.logConfig();
+    sys = new droid::core::System(LOGGER_STREAM, DEBUG);
+    brain = new droid::brain::Brain("R2D2", sys);
+
+    brain->init();
+    brain->logConfig();
 }
 
 void loop() {
-    brain.task();
+    brain->task();
 }

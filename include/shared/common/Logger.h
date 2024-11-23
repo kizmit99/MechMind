@@ -10,12 +10,11 @@ struct LogConfigEntry {
 public:
     LogConfigEntry(const char* compName, LogLevel level) :
         level(level),
+        name(compName),
         next(NULL) {
-        strncpy(this->compName, compName, sizeof(this->compName));
-        this->compName[sizeof(this->compName) - 1] = '\0';
     };
     LogConfigEntry* next;
-    char compName[16];
+    const char* name;
     LogLevel level;
 };
 
@@ -57,7 +56,7 @@ public:
         LogConfigEntry* head = logConfigList;
         LogConfigEntry* entry = head;
         while (entry != NULL) {
-            if (strcmp(entry->compName, compName) == 0) {
+            if (strcmp(entry->name, compName) == 0) {
                 break;
             }
             entry = entry->next;
@@ -74,7 +73,7 @@ public:
         LogConfigEntry* head = logConfigList;
         LogConfigEntry* entry = head;
         while (entry != NULL) {
-            if (strcmp(entry->compName, compName) == 0) {
+            if (strcmp(entry->name, compName) == 0) {
                 break;
             }
             entry = entry->next;

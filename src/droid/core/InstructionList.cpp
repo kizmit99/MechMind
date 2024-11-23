@@ -2,11 +2,11 @@
 
 namespace droid::core {
 
-    void InstructionList::dump(const char* name, Logger* logger) {
+    void InstructionList::dump(const char* name, Logger* logger, LogLevel level) {
         int i = 0;
         Instruction* instruction = head;
         while (instruction != NULL) {
-            logger->log(name, INFO, "InstructionList[%d] device: %s, cmd: %s\n", i, instruction->device, instruction->command);
+            logger->log(name, level, "InstructionList[%d] device: %s, cmd: %s\n", i, instruction->device, instruction->command);
             i++;
             instruction = instruction->next;
         }
@@ -14,7 +14,7 @@ namespace droid::core {
 
     Instruction* InstructionList::addInstruction() {
         Instruction* freeRec = NULL;
-        uint8_t index = 0;
+        uint8_t index;
         for (index = 0; index < INSTRUCTIONLIST_QUEUE_SIZE; index++) {
             if (!list[index].isActive) {
                 freeRec = &list[index];

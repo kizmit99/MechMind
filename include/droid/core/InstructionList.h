@@ -10,10 +10,10 @@ namespace droid::core {
     struct Instruction {
         char device[INSTRUCTIONLIST_DEVICE_LEN] = {0};
         char command[INSTRUCTIONLIST_COMMAND_LEN] = {0};
-        unsigned long executeTime; // Time when the instruction should be executed
-        bool isActive;
-        Instruction* next;
-        Instruction* prev;
+        unsigned long executeTime = 0; // Time when the instruction should be executed
+        bool isActive = 0;
+        Instruction* next = NULL;
+        Instruction* prev = NULL;
     };
 
     class InstructionList {
@@ -22,11 +22,11 @@ namespace droid::core {
         Instruction* deleteInstruction(Instruction*);  //Note, this method returns the NEXT Instruction* in the list
         Instruction* initLoop();
         Instruction* getNext(Instruction*);
-        void dump(const char *name, Logger* logger);
+        void dump(const char *name, Logger* logger, LogLevel level);
 
     private:
         Instruction list[INSTRUCTIONLIST_QUEUE_SIZE];
-        Instruction* head = 0;
-        Instruction* tail = 0;
+        Instruction* head = NULL;
+        Instruction* tail = NULL;
     };
 }

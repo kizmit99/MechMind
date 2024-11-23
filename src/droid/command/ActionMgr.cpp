@@ -131,6 +131,11 @@ namespace droid::command {
 
     void ActionMgr::queueCommand(const char* device, const char* command, unsigned long executeTime) {
         droid::core::Instruction* newInstruction = instructionList.addInstruction();
+        if (newInstruction == NULL) {
+            logger->log(name, WARN, "Command Queue is FULL, dropping command: %s\n", command);
+            instructionList.dump(name, logger, WARN);
+            return;
+        }
         strncpy(newInstruction->device, device, INSTRUCTIONLIST_DEVICE_LEN);
         strncpy(newInstruction->command, command, INSTRUCTIONLIST_COMMAND_LEN);
         newInstruction->executeTime = executeTime;

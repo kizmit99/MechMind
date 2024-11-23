@@ -211,6 +211,11 @@ namespace droid::audio {
     void AudioMgr::queueCommand(const char* command, unsigned long delayMs) {
         logger->log(name, DEBUG, "queueCommand(%s, %d)\n", command, delayMs);
         droid::core::Instruction* newAudioCmd = audioCmdList.addInstruction();
+        if (newAudioCmd == NULL) {
+            logger->log(name, WARN, "Command Queue is Full.  Dropping command: %s\n", command);
+            audioCmdList.dump(name, logger, WARN);
+            return;
+        }
         strncpy(newAudioCmd->command, command, INSTRUCTIONLIST_COMMAND_LEN);
         newAudioCmd->executeTime = millis() + delayMs;
     }
