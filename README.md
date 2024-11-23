@@ -64,7 +64,7 @@ To get started with the Droid Brain Program, follow the steps below:
 
 This source code is open-source and can be freely used, modified, and distributed for any non-commercial purposes. For commercial use, please obtain a license from the author.
 
-Author: Ralph Roland
+Author: Kizmit99
 License: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
 
 For more information, visit [Droid Brain GitHub Repository](https://github.com/kizmit99/DroidBrain).
