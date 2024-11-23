@@ -5,7 +5,8 @@ While the author took inspiration from several existing projects, including:
 - [PenumbraShadowMD](https://github.com/reeltwo/PenumbraShadowMD)
 - [SHADOW MD](https://astromech.net/droidwiki/SHADOW_MD)
 - [PADAWAN360](https://astromech.net/droidwiki/PADAWAN360)
-The Droid Brain has been designed and implemented from the ground-up to act as the central processing unit for a droid, accepting input stimuli from various sources, interpreting that input, and generating output commands to various actuators.
+- 
+The Droid Brain has been designed and implemented from the ground-up to act as the central processing unit for a droid, accepting input stimuli from various sources, interpreting that input, and generating output commands to various actuators.  It is designed to run exclusively on ESP32 based microcontrollers and to be compiled from the PlatformIO development environment.  This is a departure from many previous projects that attempt to embed everything into a single sketch.  While adding some complexity to the build process, it also provides an opportunity to provide flexibility that has been missing up to this point.
 
 ## Key Features
 
@@ -16,13 +17,12 @@ The Droid Brain has been designed and implemented from the ground-up to act as t
     - Generic Xbox Bluetooth Controllers
     - Widely available Bluetooth Low Energy Ring style "VR controllers"
     - Custom ESPNow based controllers (Future implementation)
-  - Unlike existing control software, which often supports only one specific controller, Droid Brain offers broader compatibility.
+  - Unlike existing control software, which often supports only one specific controller, Droid Brain allows you to pick the controller that best suites your particular situation.
 
 - **Actuator Control**:
-  - Designed to leverage existing solutions such as:
+  - Designed to leverage several existing solutions external actuator solutions such as:
     - Marcduino boards
     - AstroPixel boards
-    - Adafruit PCA9685 Servo/PWM drivers
     - Various sound boards:
       - Teensy based Human-Cyborg Relations sound generator
       - Sparkfun MP3 Trigger
@@ -32,11 +32,13 @@ The Droid Brain has been designed and implemented from the ground-up to act as t
       - Syren single motor drivers
       - Widely available DRV8871 single motor drivers
       - Additional drivers coming soon...
+  - Also provides direct support for:
+    - Adafruit PCA9685 Servo/PWM drivers
 
 - **Platform**:
   - Exclusively designed for ESP32 based boards.
-  - Supports both standard breakout boards and USB Host Mode builds.
-  - Recommended board for USB Host Mode: Penumbra ESP32 (sold by [Astromech.net user skelmir](https://astromech.net/forums/showthread.php?43249-Penumbra-ESP32-with-integrated-USB-host-shield))
+  - Supports both standard breakout boards and the Penumbra ESP32 board.
+  - The Penumbra ESP32 is required if you plan to use a controller that requires a USB/Bluetooth dongle such as the Sony, PS3 or XBox controllers.  The Penumbra ESP32 with USB Host Mode support is sold by [Astromech.net user skelmir](https://astromech.net/forums/showthread.php?43249-Penumbra-ESP32-with-integrated-USB-host-shield))
 
 ## Getting Started
 
