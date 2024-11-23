@@ -284,295 +284,201 @@ namespace droid::controller {
         } 
     }
 
-    
     String DualSonyMoveController::getTrigger() {
-        //Logic for Dual Sony Triggers pulled almost directly from PenumbraShadowMD
-        //------------------------------------ 
-        // Send triggers for the base buttons 
-        //------------------------------------
-        if (PS3Right.ps3BT.getButtonPress(ButtonEnum::UP) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::L1) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::PS))
-        {
-            if (PS3Left.ps3BT.PS3NavigationConnected && (PS3Left.ps3BT.getButtonPress(ButtonEnum::CROSS) || PS3Left.ps3BT.getButtonPress(ButtonEnum::CIRCLE) || PS3Left.ps3BT.getButtonPress(ButtonEnum::PS)))
-            {
-                // Skip this section
-            }
-            else
-            {
-                return "FullAwake";
-            }
+        //Button definitions for Dual Sony Triggers to mimic PenumbraShadowMD
+
+        // Helper function to check for individual button presses
+        auto isButtonPressed = [this](PS3BT* thisController, ButtonEnum button) {
+            return thisController->getButtonPress(button) &&
+                !thisController->getButtonPress(ButtonEnum::CROSS) &&
+                !thisController->getButtonPress(ButtonEnum::CIRCLE) &&
+                !thisController->getButtonPress(ButtonEnum::L1) &&
+                !thisController->getButtonPress(ButtonEnum::PS);
+        };
+
+        // Helper function to check for ANY modifier button press on 'other' controller
+        auto isOtherModifierPressed = [this](PS3BT* otherController) {
+            return otherController->PS3NavigationConnected &&
+                (otherController->getButtonPress(ButtonEnum::CROSS) ||
+                    otherController->getButtonPress(ButtonEnum::CIRCLE) ||
+                    otherController->getButtonPress(ButtonEnum::PS));
+        };
+
+        // Helper function to check for a button + modifier combo
+        // Note that if two controllers are active the modifier must be pressed on the 'other' controller
+        auto checkCombo = [this](PS3BT* thisController, PS3BT* otherController, ButtonEnum button, ButtonEnum modifier) {
+            return ((!otherController->PS3NavigationConnected && thisController->getButtonPress(button) && thisController->getButtonPress(modifier)) ||
+                    (otherController->PS3NavigationConnected && thisController->getButtonPress(button) && otherController->getButtonPress(modifier)));
+        };
+
+        // Helper function to check for a button + L1 combo
+        // Note that this is only looking for L1 on 'this' controller (not the 'other' one)
+        auto checkL1Combo = [this](PS3BT* thisController, ButtonEnum button) {
+            return (thisController->getButtonPress(button) && thisController->getButtonPress(ButtonEnum::L1));
+        };
+
+        // Base button on Right controller
+        if (isButtonPressed(&PS3Right.ps3BT, ButtonEnum::UP) && !isOtherModifierPressed(&PS3Left.ps3BT)) {
+            return "FullAwake";
         }
-    
-        if (PS3Right.ps3BT.getButtonPress(ButtonEnum::DOWN) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::L1) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::PS))
-        {
-            if (PS3Left.ps3BT.PS3NavigationConnected && (PS3Left.ps3BT.getButtonPress(ButtonEnum::CROSS) || PS3Left.ps3BT.getButtonPress(ButtonEnum::CIRCLE) || PS3Left.ps3BT.getButtonPress(ButtonEnum::PS)))
-            {
-                // Skip this section
-            }
-            else
-            {     
-                return "QuietMode";
-            }
+        if (isButtonPressed(&PS3Right.ps3BT, ButtonEnum::DOWN) && !isOtherModifierPressed(&PS3Left.ps3BT)) {
+            return "QuietMode";
         }
-    
-        if (PS3Right.ps3BT.getButtonPress(ButtonEnum::LEFT) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::L1) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::PS))
-        {
-            if (PS3Left.ps3BT.PS3NavigationConnected && (PS3Left.ps3BT.getButtonPress(ButtonEnum::CROSS) || PS3Left.ps3BT.getButtonPress(ButtonEnum::CIRCLE) || PS3Left.ps3BT.getButtonPress(ButtonEnum::PS)))
-            {
-                // Skip this section
-            }
-            else
-            {           
-                return "MidAwake";
-            }
+        if (isButtonPressed(&PS3Right.ps3BT, ButtonEnum::LEFT) && !isOtherModifierPressed(&PS3Left.ps3BT)) {
+            return "MidAwake";
+        }
+        if (isButtonPressed(&PS3Right.ps3BT, ButtonEnum::RIGHT) && !isOtherModifierPressed(&PS3Left.ps3BT)) {
+            return "FullAware";
         }
 
-        if (PS3Right.ps3BT.getButtonPress(ButtonEnum::RIGHT) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::L1) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::PS))
-        {
-            if (PS3Left.ps3BT.PS3NavigationConnected && (PS3Left.ps3BT.getButtonPress(ButtonEnum::CROSS) || PS3Left.ps3BT.getButtonPress(ButtonEnum::CIRCLE) || PS3Left.ps3BT.getButtonPress(ButtonEnum::PS)))
-            {
-                // Skip this section
-            }
-            else
-            {     
-                return "FullAware";
-            }
-        }
-    
-        //------------------------------------ 
-        // Send triggers for the CROSS + base buttons 
-        //------------------------------------
-        if (((!PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::UP) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS)) || (PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::UP) && PS3Left.ps3BT.getButtonPress(ButtonEnum::CROSS))))
-        {
+        // CROSS + base buttons on Right controller
+        if (checkCombo(&PS3Right.ps3BT, &PS3Left.ps3BT, ButtonEnum::UP, ButtonEnum::CROSS)) {
             return "VolumeUp";
         }
-        
-        if (((!PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::DOWN) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS)) || (PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::DOWN) && PS3Left.ps3BT.getButtonPress(ButtonEnum::CROSS))))
-        {      
+        if (checkCombo(&PS3Right.ps3BT, &PS3Left.ps3BT, ButtonEnum::DOWN, ButtonEnum::CROSS)) {
             return "VolumeDown";
         }
-        
-        if (((!PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::LEFT) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS)) || (PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::LEFT) && PS3Left.ps3BT.getButtonPress(ButtonEnum::CROSS))))
-        {
+        if (checkCombo(&PS3Right.ps3BT, &PS3Left.ps3BT, ButtonEnum::LEFT, ButtonEnum::CROSS)) {
             return "HolosOn";
         }
-
-        if (((!PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::RIGHT) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS)) || (PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::RIGHT) && PS3Left.ps3BT.getButtonPress(ButtonEnum::CROSS))))
-        {
+        if (checkCombo(&PS3Right.ps3BT, &PS3Left.ps3BT, ButtonEnum::RIGHT, ButtonEnum::CROSS)) {
             return "HolosOff";
         }
 
-        //------------------------------------ 
-        // Send triggers for the CIRCLE + base buttons 
-        //------------------------------------
-        if (((!PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::UP) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE)) || (PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::UP) && PS3Left.ps3BT.getButtonPress(ButtonEnum::CIRCLE))))
-        {
+        // CIRCLE + base buttons on Right controller
+        if (checkCombo(&PS3Right.ps3BT, &PS3Left.ps3BT, ButtonEnum::UP, ButtonEnum::CIRCLE)) {
             return "Scream";
         }
-        
-        if (((!PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::DOWN) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE)) || (PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::DOWN) && PS3Left.ps3BT.getButtonPress(ButtonEnum::CIRCLE))))
-        {
+        if (checkCombo(&PS3Right.ps3BT, &PS3Left.ps3BT, ButtonEnum::DOWN, ButtonEnum::CIRCLE)) {
             return "Disco";
         }
-        
-        if (((!PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::LEFT) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE)) || (PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::LEFT) && PS3Left.ps3BT.getButtonPress(ButtonEnum::CIRCLE))))
-        {
+        if (checkCombo(&PS3Right.ps3BT, &PS3Left.ps3BT, ButtonEnum::LEFT, ButtonEnum::CIRCLE)) {
             return "FastSmirk";
         }
-
-        if (((!PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::RIGHT) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE)) || (PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::RIGHT) && PS3Left.ps3BT.getButtonPress(ButtonEnum::CIRCLE))))
-        {
+        if (checkCombo(&PS3Right.ps3BT, &PS3Left.ps3BT, ButtonEnum::RIGHT, ButtonEnum::CIRCLE)) {
             return "ShortCircuit";
         }
-    
-        //------------------------------------ 
-        // Send triggers for the L1 + base buttons 
-        //------------------------------------
-        if (PS3Right.ps3BT.getButtonPress(ButtonEnum::UP) && PS3Right.ps3BT.getButtonPress(ButtonEnum::L1))
-        {
+
+        // L1 + base buttons on Right controller
+        if (checkL1Combo(&PS3Right.ps3BT, ButtonEnum::UP)) {
             return "CantinaDance";
         }
-        
-        if (PS3Right.ps3BT.getButtonPress(ButtonEnum::DOWN) && PS3Right.ps3BT.getButtonPress(ButtonEnum::L1))
-        {
+        if (checkL1Combo(&PS3Right.ps3BT, ButtonEnum::DOWN)) {
             return "LeiaMessage";
         }
-        
-        if (PS3Right.ps3BT.getButtonPress(ButtonEnum::LEFT) && PS3Right.ps3BT.getButtonPress(ButtonEnum::L1))
-        {
+        if (checkL1Combo(&PS3Right.ps3BT, ButtonEnum::LEFT)) {
             return "Wave";
         }
-
-        if (PS3Right.ps3BT.getButtonPress(ButtonEnum::RIGHT) && PS3Right.ps3BT.getButtonPress(ButtonEnum::L1))
-        {
+        if (checkL1Combo(&PS3Right.ps3BT, ButtonEnum::RIGHT)) {
             return "Wave2";
         }
-    
-        //------------------------------------ 
-        // Send triggers for the PS + base buttons 
-        //------------------------------------
-        if (((!PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::UP) && PS3Right.ps3BT.getButtonPress(ButtonEnum::PS)) || (PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::UP) && PS3Left.ps3BT.getButtonPress(ButtonEnum::PS))))
-        {
+
+        // PS + base buttons on Right controller
+        if (checkCombo(&PS3Right.ps3BT, &PS3Left.ps3BT, ButtonEnum::UP, ButtonEnum::PS)) {
             return "Custom1";
         }
-        
-        if (((!PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::DOWN) && PS3Right.ps3BT.getButtonPress(ButtonEnum::PS)) || (PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::DOWN) && PS3Left.ps3BT.getButtonPress(ButtonEnum::PS))))
-        {
+        if (checkCombo(&PS3Right.ps3BT, &PS3Left.ps3BT, ButtonEnum::DOWN, ButtonEnum::PS)) {
             return "Custom2";
         }
-        
-        if (((!PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::LEFT) && PS3Right.ps3BT.getButtonPress(ButtonEnum::PS)) || (PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::LEFT) && PS3Left.ps3BT.getButtonPress(ButtonEnum::PS))))
-        {
+        if (checkCombo(&PS3Right.ps3BT, &PS3Left.ps3BT, ButtonEnum::LEFT, ButtonEnum::PS)) {
             return "Custom3";
         }
-
-        if (((!PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::RIGHT) && PS3Right.ps3BT.getButtonPress(ButtonEnum::PS)) || (PS3Left.ps3BT.PS3NavigationConnected && PS3Right.ps3BT.getButtonPress(ButtonEnum::RIGHT) && PS3Left.ps3BT.getButtonPress(ButtonEnum::PS))))
-        {
+        if (checkCombo(&PS3Right.ps3BT, &PS3Left.ps3BT, ButtonEnum::RIGHT, ButtonEnum::PS)) {
             return "Custom4";
         }
 
-        //------------------------------------ 
-        // Send triggers for the base buttons 
-        //------------------------------------
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::UP) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::CROSS) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::CIRCLE) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::L1) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::PS) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::PS))
-        {
+        // Base button on Left controller
+        if (isButtonPressed(&PS3Left.ps3BT, ButtonEnum::UP) && !isOtherModifierPressed(&PS3Right.ps3BT)) {
             return "BeepCantina";
         }
-        
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::DOWN) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::CROSS) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::CIRCLE) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::L1) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::PS) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::PS))
-        {
+        if (isButtonPressed(&PS3Left.ps3BT, ButtonEnum::DOWN) && !isOtherModifierPressed(&PS3Right.ps3BT)) {
             return "MarchingAnts";
         }
-        
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::LEFT) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::CROSS) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::CIRCLE) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::L1) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::PS) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::PS))
-        {
+        if (isButtonPressed(&PS3Left.ps3BT, ButtonEnum::LEFT) && !isOtherModifierPressed(&PS3Right.ps3BT)) {
             return "OpenBodyP1";
         }
-
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::RIGHT) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::CROSS) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::CIRCLE) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::L1) && !PS3Left.ps3BT.getButtonPress(ButtonEnum::PS) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE) && !PS3Right.ps3BT.getButtonPress(ButtonEnum::PS))
-        {
+        if (isButtonPressed(&PS3Left.ps3BT, ButtonEnum::RIGHT) && !isOtherModifierPressed(&PS3Right.ps3BT)) {
             return "CloseBodyP1";
         }
-    
-        //------------------------------------ 
-        // Send triggers for the CROSS + base buttons 
-        //------------------------------------
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::UP) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS))
-        {
+
+        // CROSS + base buttons on Left controller
+        if (checkCombo(&PS3Left.ps3BT, &PS3Right.ps3BT, ButtonEnum::UP, ButtonEnum::CROSS)) {
             return "VolumeMax";
         }
-        
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::DOWN) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS))
-        {
+        if (checkCombo(&PS3Left.ps3BT, &PS3Right.ps3BT, ButtonEnum::DOWN, ButtonEnum::CROSS)) {
             return "VolumeMid";
         }
-        
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::LEFT) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS))
-        {
+        if (checkCombo(&PS3Left.ps3BT, &PS3Right.ps3BT, ButtonEnum::LEFT, ButtonEnum::CROSS)) {
             return "CloseDomeAll";
         }
-
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::RIGHT) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS))
-        {
+        if (checkCombo(&PS3Left.ps3BT, &PS3Right.ps3BT, ButtonEnum::RIGHT, ButtonEnum::CROSS)) {
             return "OpenDomeAll";
         }
 
-        //------------------------------------ 
-        // Send triggers for the CIRCLE + base buttons 
-        //------------------------------------
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::UP) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE))
-        {
+        // CIRCLE + base buttons on Left controller
+        if (checkCombo(&PS3Left.ps3BT, &PS3Right.ps3BT, ButtonEnum::UP, ButtonEnum::CIRCLE)) {
             return "HoloMoveOn";
         }
-        
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::DOWN) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE))
-        {
+        if (checkCombo(&PS3Left.ps3BT, &PS3Right.ps3BT, ButtonEnum::DOWN, ButtonEnum::CIRCLE)) {
             return "HoloReset";
         }
-        
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::LEFT) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE))
-        {
+        if (checkCombo(&PS3Left.ps3BT, &PS3Right.ps3BT, ButtonEnum::LEFT, ButtonEnum::CIRCLE)) {
             return "HoloLightsOn";
         }
-
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::RIGHT) && PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE))
-        {
+        if (checkCombo(&PS3Left.ps3BT, &PS3Right.ps3BT, ButtonEnum::RIGHT, ButtonEnum::CIRCLE)) {
             return "HoloLightsOff";
         }
-    
-        //------------------------------------ 
-        // Send triggers for the L1 + base buttons 
-        //------------------------------------
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::UP) && PS3Left.ps3BT.getButtonPress(ButtonEnum::L1))
-        {
+
+        // L1 + base buttons on Left controller
+        if (checkL1Combo(&PS3Left.ps3BT, ButtonEnum::UP)) {
             return "OpenDomeP1";
         }
-        
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::DOWN) && PS3Left.ps3BT.getButtonPress(ButtonEnum::L1))
-        {
+        if (checkL1Combo(&PS3Left.ps3BT, ButtonEnum::DOWN)) {
             return "CloseDomeP1";
         }
-        
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::LEFT) && PS3Left.ps3BT.getButtonPress(ButtonEnum::L1))
-        {
+        if (checkL1Combo(&PS3Left.ps3BT, ButtonEnum::LEFT)) {
             return "OpenDomeP2";
         }
-
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::RIGHT) && PS3Left.ps3BT.getButtonPress(ButtonEnum::L1))
-        {
+        if (checkL1Combo(&PS3Left.ps3BT, ButtonEnum::RIGHT)) {
             return "CloseDomeP2";
         }
-    
-        //------------------------------------ 
-        // Send triggers for the PS + base buttons 
-        //------------------------------------
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::UP) && PS3Right.ps3BT.getButtonPress(ButtonEnum::PS))
-        {
+
+        // PS + base buttons on Left controller
+        if (checkCombo(&PS3Left.ps3BT, &PS3Right.ps3BT, ButtonEnum::UP, ButtonEnum::PS)) {
             return "OpenDomeP3";
         }
-        
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::DOWN) && PS3Right.ps3BT.getButtonPress(ButtonEnum::PS))
-        {
+        if (checkCombo(&PS3Left.ps3BT, &PS3Right.ps3BT, ButtonEnum::DOWN, ButtonEnum::PS)) {
             return "CloseDomeP3";
         }
-        
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::LEFT) && PS3Right.ps3BT.getButtonPress(ButtonEnum::PS))
-        {
-            return "OpenDomeP3";
+        if (checkCombo(&PS3Left.ps3BT, &PS3Right.ps3BT, ButtonEnum::LEFT, ButtonEnum::PS)) {
+            return "OpenDomeP4";
+        }
+        if (checkCombo(&PS3Left.ps3BT, &PS3Right.ps3BT, ButtonEnum::RIGHT, ButtonEnum::PS)) {
+            return "CloseDomeP4";
         }
 
-        if (PS3Left.ps3BT.getButtonPress(ButtonEnum::RIGHT) && PS3Right.ps3BT.getButtonPress(ButtonEnum::PS))
-        {
-            return "CloseDomeP3";
-        }
+        // Triggers for command toggles
 
-        //------------------------------------
-        // Send triggers for command toggles
-        //------------------------------------
         // enable / disable drive stick
-        if (PS3Right.ps3BT.getButtonPress(ButtonEnum::PS) && PS3Right.ps3BT.getButtonClick(ButtonEnum::CROSS))
-        {
+        if (PS3Right.ps3BT.getButtonPress(ButtonEnum::PS) && PS3Right.ps3BT.getButtonClick(ButtonEnum::CROSS)) {
             return "StickDisable";
         }
         
-        if(PS3Right.ps3BT.getButtonPress(ButtonEnum::PS) && PS3Right.ps3BT.getButtonClick(ButtonEnum::CIRCLE))
-        {
+        if(PS3Right.ps3BT.getButtonPress(ButtonEnum::PS) && PS3Right.ps3BT.getButtonClick(ButtonEnum::CIRCLE)){
             return "StickEnable";
         }
         
         // Enable and Disable Overspeed
-        if (PS3Right.ps3BT.getButtonPress(L3) && PS3Right.ps3BT.getButtonPress(ButtonEnum::L1))
-        {
+        if (PS3Right.ps3BT.getButtonPress(L3) && PS3Right.ps3BT.getButtonPress(ButtonEnum::L1)) {
             return "ToggleSpeed";
         }
     
         // Enable Disable Dome Automation
-        if(PS3Right.ps3BT.getButtonPress(ButtonEnum::L2) && PS3Right.ps3BT.getButtonClick(ButtonEnum::CROSS))
-        {
+        if(PS3Right.ps3BT.getButtonPress(ButtonEnum::L2) && PS3Right.ps3BT.getButtonClick(ButtonEnum::CROSS)) {
             return "AutoDomeOff";
         } 
 
-        if(PS3Right.ps3BT.getButtonPress(ButtonEnum::L2) && PS3Right.ps3BT.getButtonClick(ButtonEnum::CIRCLE))
-        {
+        if(PS3Right.ps3BT.getButtonPress(ButtonEnum::L2) && PS3Right.ps3BT.getButtonClick(ButtonEnum::CIRCLE)) {
             return "AutoDomeOn";
         } 
 

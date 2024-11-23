@@ -12,12 +12,12 @@ The Droid Brain has been designed and implemented from the ground-up to act as t
 
 - **Extensible Controller Support**:
   - Supports multiple game controllers including:
-    - Single/Dual Sony Move Controllers (Bluetooth)
-    - Generic PS3 Bluetooth controllers
-    - Generic Xbox Bluetooth Controllers
+    - Single/Dual Bluetooth Sony Move Controllers
+    - Generic PS3 Bluetooth controllers (Coming soon)
+    - Generic Xbox Bluetooth Controllers (Coming soon)
     - Widely available Bluetooth Low Energy Ring style "VR controllers"
     - Custom ESPNow based controllers (Future implementation)
-  - Unlike existing control software, which often supports only one specific controller, Droid Brain allows you to pick the controller that best suites your particular situation.
+  - Unlike existing control software, which often supports only one specific controller, Droid Brain allows you to pick the controller that best suits your particular situation.
 
 - **Actuator/Light Control**:
   - Designed to leverage several existing external solutions such as:
