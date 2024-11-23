@@ -1,9 +1,15 @@
-//#include "../test/DRV8871Driver.test"
-//#include "../test/CmdParser.test"
+/*
+ * Droid Brain Program
+ * Author: Kizmit99
+ * License: CC BY-NC-SA 4.0
+ *
+ * This source code is open-source for non-commercial use. 
+ * For commercial use, please obtain a license from the author.
+ * For more information, visit https://github.com/kizmit99/DroidBrain
+ */
 
 #include "droid/brain/Brain.h"
 #include "droid/core/System.h"
-#include <HardwareSerial.h>
 #include "droid/core/hardware.h"
 
 droid::core::System* sys;
