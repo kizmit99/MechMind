@@ -52,6 +52,16 @@ public:
         }
     }
 
+    /**
+     * @brief Set the minumum LogLevel that will be logged, for the given component name
+     * Note that the compName* must be specified as a literal string ("someName") or at
+     * the very least as a char* that is pointing to a char[] that will be available and 
+     * constant through the life of the program.  This method will not copy the contents
+     * of the string, it only maintains the pointer you provide.
+     * 
+     * @param compName 
+     * @param level 
+     */
     void setLogLevel(const char* compName, LogLevel level) {
         LogConfigEntry* head = logConfigList;
         LogConfigEntry* entry = head;

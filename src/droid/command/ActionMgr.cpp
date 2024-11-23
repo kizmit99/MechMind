@@ -97,7 +97,6 @@ namespace droid::command {
 
     // Parse the command sequence and store commands with their execute times
     void ActionMgr::parseCommands(const char* sequence) {
-        // instructionList.dump("parseBegin", logger);
         char buf[ACTION_MAX_SEQUENCE_LEN];
         strncpy(buf, sequence, sizeof(buf));  // Create a copy of the sequence to avoid modifying the original
         char* token = strtok(buf, ";");
@@ -126,7 +125,6 @@ namespace droid::command {
             }
             token = strtok(NULL, ";");
         }
-        // instructionList.dump("parseEnd", logger);
     }
 
     void ActionMgr::queueCommand(const char* device, const char* command, unsigned long executeTime) {

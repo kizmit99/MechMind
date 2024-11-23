@@ -8,7 +8,7 @@ namespace blering {
 
     ReportRecord *ReportQueue::getNextFreeReportBuffer() {
         if (isFull()) {
-            logger->log(name, DEBUG, "Report Buffer overrun!\n");
+            logger->log(name, WARN, "Report Buffer overrun!\n");
             return NULL;
         }
         int8_t index = head;
@@ -19,7 +19,7 @@ namespace blering {
 
     ReportRecord *ReportQueue::getNextReport() {
         if (isEmpty()) {
-            logger->log(name, DEBUG, "getNextReport called on EMPTY queue!\n");
+            logger->log(name, WARN, "getNextReport called on EMPTY queue!\n");
             return NULL;
         }
         return &buffer[tail];
@@ -27,7 +27,7 @@ namespace blering {
 
     void ReportQueue::releaseReportBuffer() {
         if (isEmpty()) {
-            logger->log(name, DEBUG, "Report Buffer released when empty!\n");
+            logger->log(name, WARN, "Report Buffer released when empty!\n");
         } else {
             tail = (tail + 1) % REPORT_BUFFER_SIZE;
             count--;

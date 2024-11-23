@@ -46,7 +46,7 @@ namespace blering {
         void clearMACMap();
 
         //helper method for embedded global functions without direct access to Logger
-        void log(const char *format, ...) __attribute__ ((format (printf, 2, 3)));
+        void log(LogLevel level, const char *format, ...) __attribute__ ((format (printf, 3, 4)));
 
     private:
         const char* name;

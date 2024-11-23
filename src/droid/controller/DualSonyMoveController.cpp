@@ -126,7 +126,7 @@ namespace droid::controller {
                 disconnect(controller);
                 controller->waitingForReconnect = true;
                 logger->log(name, ERROR, "Timeout while controller inactive\n");
-                logger->log(name, INFO, "msgLag: %d, inactiveTimeout: %d, lastMsg: %d, origLastMsgTime: %d, deviceLastmsgTime: %d\n", msgLagTime, inactiveTimeout, holdLastMsgTime, origLastMsgTime, reportedLastMsgTime);
+                logger->log(name, ERROR, "msgLag: %d, inactiveTimeout: %d, lastMsg: %d, origLastMsgTime: %d, deviceLastmsgTime: %d\n", msgLagTime, inactiveTimeout, holdLastMsgTime, origLastMsgTime, reportedLastMsgTime);
                 return;
             }
 

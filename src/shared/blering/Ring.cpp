@@ -4,6 +4,7 @@
 
 namespace blering {
     void Ring::onConnect() {
+        logger->log(name, DEBUG, "Ring.onConnect: %s\n", address);
         connected = true;
     }
 
@@ -17,7 +18,7 @@ namespace blering {
 
     void Ring::onReport(uint8_t* pData, size_t length) {
         if (reportQueue.isFull()) {
-            logger->log(name, DEBUG, "Report Buffer is full(%s), dropping a report, current dropped count: %u\n", address, ++droppedReports);
+            logger->log(name, WARN, "Report Buffer is full(%s), dropping a report, current dropped count: %u\n", address, ++droppedReports);
         } else {
             volatile ReportRecord* newRecord = reportQueue.getNextFreeReportBuffer();
             newRecord->report_len = length;
@@ -48,7 +49,6 @@ namespace blering {
             for (size_t i = 0; i < newReport->report_len; i++) {
                 logger->printf(name, DEBUG, " %02x", newReport->report[i]);
             }
-            //DBG_printf(", head: %d, tail: %d, count: %d, empty: %d, full: %d", reportQueueHead, reportQueueTail, reportQueueCount, reportQueueEmpty(), reportQueueFull());
             logger->printf(name, DEBUG, "\n");
 
             bool l2Before = myRing.isButtonPressed(MagicseeR1::L2);
@@ -59,7 +59,6 @@ namespace blering {
                 otherRing->unpress(MagicseeR1::A);
                 otherRing->unpress(MagicseeR1::B);
             }
-    //        myRing.printState();
         }
     }
 

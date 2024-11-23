@@ -54,16 +54,14 @@ namespace blering {
 
         void onDisconnect(NimBLEClient* pClient) {
             const char* peerAddress = pClient->getPeerAddress().toString().c_str();
-            logger->log(name, INFO, "%s Disconnected\r\n", peerAddress);
+            logger->log(name, INFO, "%s Disconnected\n", peerAddress);
             Ring* driveRing = rings.getRing(DualRingBLE::Drive);
             Ring* domeRing = rings.getRing(DualRingBLE::Dome);
             if (!strncmp(domeRing->address, peerAddress, sizeof(domeRing->address))) {
-                //DBG_printf("onDisconnect dome(%s, %s)\r\n",domeRing->address, peerAddress);
                 domeRing->onDisconnect();
                 domeRing->waitingFor = true;
             }
             if (!strncmp(driveRing->address, peerAddress, sizeof(driveRing->address))) {
-                //DBG_printf("onDisconnect drive(%s, %s)\r\n",driveRing->address, peerAddress);
                 driveRing->onDisconnect();
                 driveRing->waitingFor = true;
             }
@@ -76,7 +74,7 @@ namespace blering {
         /** Pairing process complete, we can check the results in ble_gap_conn_desc */
         void onAuthenticationComplete(ble_gap_conn_desc* desc){
             if(!desc->sec_state.encrypted) {
-                logger->log(name, WARN, "Encrypt connection failed - disconnecting");
+                logger->log(name, WARN, "Encrypt connection failed - disconnecting\n");
                 /** Find the client with the connection handle provided in desc */
                 NimBLEDevice::getClientByID(desc->conn_handle)->disconnect();
                 return;
@@ -107,57 +105,58 @@ namespace blering {
             if ((advType == BLE_HCI_ADV_TYPE_ADV_DIRECT_IND_HD) ||
                 (advType == BLE_HCI_ADV_TYPE_ADV_DIRECT_IND_LD) ||
                 (advertisedDevice->haveServiceUUID() && advertisedDevice->isAdvertisingService(NimBLEUUID(HID_SERVICE)))) {
-                logger->log(name, DEBUG, "Advertised HID Device found: %s\r\n", advertisedDevice->toString().c_str());
-                logger->log(name, DEBUG, "Name = %s\r\n", advertisedDevice->getName().c_str());
-                logger->log(name, DEBUG, "Name we're looking for = %s\r\n", "Magicsee R1");
+                logger->log(name, DEBUG, "Advertised HID Device found: %s\n", advertisedDevice->toString().c_str());
+                logger->log(name, DEBUG, "Name = %s\n", advertisedDevice->getName().c_str());
 
                 Ring* driveRing = rings.getRing(DualRingBLE::Drive);
                 Ring* domeRing = rings.getRing(DualRingBLE::Dome);
 
                 if (strstr(advertisedDevice->getName().c_str(), "Magicsee R1") != NULL) {
-                    logger->log(name, DEBUG, "Match found! (type=%d)\n", advertisedDevice->getAddress().getType());
+                    const char* peerAddress = advertisedDevice->getAddress().toString().c_str();
+                    logger->log(name, INFO, "Found matching device with address: %s\n", peerAddress);
+
                     if (!strncmp(DriveMAC, advertisedDevice->getAddress().toString().c_str(), sizeof(DriveMAC))) {
                         //Found Drive Ring by saved MAC
                         if (driveRing->waitingFor) {
-                            logger->log(name, DEBUG, "Reassigning to Drive\n");
+                            logger->log(name, INFO, "Reassigning to Drive\n");
                             driveRing->waitingFor = false;
                             driveRing->advertisedDevice = advertisedDevice;
                             driveRing->connectTo = true;
                         } else {
-                            logger->log(name, DEBUG, "Drive Ring already assigned!\n");
+                            logger->log(name, INFO, "Drive Ring already assigned!\n");
                         }
                     } else if (!strncmp(DomeMAC, advertisedDevice->getAddress().toString().c_str(), sizeof(DomeMAC))) {
                         //Found Dome Ring by saved MAC
                         if (domeRing->waitingFor) {
-                            logger->log(name, DEBUG, "Reassigning to Dome\n");
+                            logger->log(name, INFO, "Reassigning to Dome\n");
                             domeRing->waitingFor = false;
                             domeRing->advertisedDevice = advertisedDevice;
                             domeRing->connectTo = true;
                         } else {
-                            logger->log(name, DEBUG, "Dome Ring already assigned!\n");
+                            logger->log(name, INFO, "Dome Ring already assigned!\n");
                         }
                     } else {
                         //We have an unknown Ring
                         if ((driveRing->waitingFor) &&
                             (DriveMAC[0] == 'X')) {
                             //Unrecognized Ring and Drive Ring doesn't have an assigned address yet
-                            logger->log(name, DEBUG, "Assigning to Drive\n");
+                            logger->log(name, INFO, "Assigning to Drive\n");
                             driveRing->waitingFor = false;
                             driveRing->advertisedDevice = advertisedDevice;
                             driveRing->connectTo = true;
                         } else if ((domeRing->waitingFor) &&
                                 (DomeMAC[0] == 'X')) {
                             //Unrecognized Ring and Dome Ring doesn't have an assigned address yet
-                            logger->log(name, DEBUG, "Assigning to Dome\n");
+                            logger->log(name, INFO, "Assigning to Dome\n");
                             domeRing->waitingFor = false;
                             domeRing->advertisedDevice = advertisedDevice;
                             domeRing->connectTo = true;
                         } else {
-                            logger->log(name, DEBUG, "Neither ring claimed the connection\n");
+                            logger->log(name, INFO, "Neither ring claimed the connection\n");
                         }
                     }
                 } else {
-                    logger->log(name, DEBUG, "Not a Match");
+                    logger->log(name, INFO, "Not a Match.  Device name: s\n", advertisedDevice->getName().c_str());
                 }
                 if ((!driveRing->waitingFor && !domeRing->waitingFor) && 
                     NimBLEDevice::getScan()->isScanning()) {
@@ -183,7 +182,7 @@ namespace blering {
             } else if (peerAddress == domeRing->bleAddress) {
                 domeRing->onReport(pData, length);
             } else {
-                rings.log("Unexpected report from peer: %s\n", peerAddress);
+                rings.log(WARN, "Unexpected report from peer: %s\n", peerAddress.toString().c_str());
             }
         }
     };
@@ -198,10 +197,10 @@ namespace blering {
             pClient = NimBLEDevice::getClientByPeerAddress(ring->advertisedDevice->getAddress());
             if (pClient && (pClient->getPeerAddress() == ring->bleAddress)) {
                 if (!pClient->connect(ring->advertisedDevice, false)) {
-                    rings.log("Reconnect failed\n");
+                    rings.log(DEBUG, "Reconnect failed\n");
                     return false;
                 }
-                rings.log("Reconnected client\n");
+                rings.log(DEBUG, "Reconnected client\n");
                 reconnected = true;
             } else {
                 // We don't already have a client that knows this device,
@@ -213,12 +212,12 @@ namespace blering {
         /** No client to reuse? Create a new one. */
         if (pClient == NULL) {
             if (NimBLEDevice::getClientListSize() >= NIMBLE_MAX_CONNECTIONS) {
-                rings.log("Max clients reached - no more connections available\n");
+                rings.log(WARN, "Max clients reached - no more connections available\n");
                 return false;
             }
 
             pClient = NimBLEDevice::createClient();
-            rings.log("New client created\n");
+            rings.log(DEBUG, "New client created\n");
 
             pClient->setClientCallbacks(&clientCB, false);
             pClient->setConnectionParams(12,12,0,51);
@@ -228,14 +227,14 @@ namespace blering {
             if (!pClient->connect(ring->advertisedDevice)) {
                 /** Created a client but failed to connect, don't need to keep it as it has no data */
                 NimBLEDevice::deleteClient(pClient);
-                rings.log("Failed to connect, deleted client\n");
+                rings.log(DEBUG, "Failed to connect, deleted client\n");
                 return false;
             }
         }
 
         if (!pClient->isConnected()) {
             if (!pClient->connect(ring->advertisedDevice)) {
-                rings.log("Failed to connect\n");
+                rings.log(DEBUG, "Failed to connect\n");
                 return false;
             }
         }
@@ -244,7 +243,7 @@ namespace blering {
 
         strncpy(ring->address, pClient->getPeerAddress().toString().c_str(), sizeof(ring->address));
         ring->address[sizeof(ring->address) - 1] = '\0';
-        rings.log("Connected to: %s\n", ring->address);
+        rings.log(INFO, "Connected to: %s\n", ring->address);
 
         NimBLERemoteService *hidService = pClient->getService(HID_SERVICE);
 
@@ -260,10 +259,10 @@ namespace blering {
                 } else if (it->getUUID() == HID_REPORT_DATA_UUID) {
                     if (it->canNotify()) {
                         if (it->subscribe(true, notifyCB)) {
-                            rings.log("subscribe notification OK\n");
+                            rings.log(DEBUG, "subscribe notification OK\n");
                         } else {
                             /** Disconnect if subscribe failed */
-                            rings.log("subscribe notification failed\n");
+                            rings.log(WARN, "subscribe notification failed\n");
                             pClient->disconnect();
                             return false;
                         }
@@ -272,27 +271,27 @@ namespace blering {
             }
         }
 
-        rings.log("Done with this device!\n");
+        rings.log(DEBUG, "Done with this device!\n");
         return true;
     }
 
     /** Callback to process the results of the last scan */
     void scanEndedCB(NimBLEScanResults results){
-        rings.log("Scan Ended\n");
+        rings.log(DEBUG, "Scan Ended\n");
     }
 
     void DualRingBLE::clearMACMap() {
         config->clear(name);
     }
 
-    void DualRingBLE::log(const char *format, ...) {
+    void DualRingBLE::log(LogLevel level, const char *format, ...) {
         char buf[100];
         if (logger) {
             va_list args; 
             va_start(args, format); 
             vsnprintf(buf, sizeof(buf), format, args);
             va_end(args);
-            logger->log(name, DEBUG, buf);
+            logger->log(name, level, buf);
         }
     }
 
@@ -359,11 +358,8 @@ namespace blering {
             if (!connectToServer(&driveRing)) {
                 driveRing.waitingFor = true;
             } else {
-                //logger->log(name, DEBUG, "After Drive Connect, before NVStore, DriveMAC: %s, DriveAddr: %s\n", DriveMAC, driveRing.address);
                 if (strncmp(DriveMAC, driveRing.address, sizeof(DriveMAC))) {
                     config->putString(name, CONFIG_KEY_BLERING_DRIVEMAC, driveRing.address);
-                } else {
-                    //logger->log(name, DEBUG, "Not storing to NVRAM\n");
                 }
             }
         }
@@ -372,11 +368,8 @@ namespace blering {
             if (!connectToServer(&domeRing)) {
                 domeRing.waitingFor = true;
             } else {
-                //logger->log(name, DEBUG, "After Dome Connect, before NVStore, DomeMAC: %s, DomeAddr: %s\n", DomeMAC, domeRing.address);
                 if (strncmp(DomeMAC, domeRing.address, sizeof(DomeMAC))) {
                     config->putString(name, CONFIG_KEY_BLERING_DOMEMAC, domeRing.address);
-                } else {
-                    //logger->log(name, DEBUG, "Not storing to NVRAM\n");
                 }
             }
         }

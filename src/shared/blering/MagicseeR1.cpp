@@ -18,11 +18,11 @@ namespace blering {
     }
 
     void MagicseeR1::unexpected(volatile void *report, size_t length) {
-        logger->log(name, DEBUG, "Unexpected message in Mode-%s: ", modeString(getMode()));
+        logger->log(name, WARN, "Unexpected message in Mode-%s: ", modeString(getMode()));
         for (int i = 0; i < length; i++) {
-            logger->printf(name, DEBUG, "%02x", ((byte*) report)[i]);
+            logger->printf(name, WARN, "%02x", ((byte*) report)[i]);
         }
-        logger->printf(name, DEBUG, "\n");
+        logger->printf(name, WARN, "\n");
     }
 
     void MagicseeR1::clearAllButtons() {
