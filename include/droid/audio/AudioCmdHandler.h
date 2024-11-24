@@ -11,7 +11,6 @@
 
 #pragma once
 #include "droid/command/CmdHandler.h"
-#include "droid/core/PassiveComponent.h"
 #include "droid/audio/AudioMgr.h"
 
 namespace droid::audio {

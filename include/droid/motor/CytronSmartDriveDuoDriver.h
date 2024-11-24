@@ -20,7 +20,7 @@ namespace droid::motor {
 
         CytronSmartDriveDuoDriver(const char* name, droid::core::System* system, byte address, Stream& port, uint8_t initialByte = 0x80);
 
-        //Override virtual methods from MotorDriver/ActiveComponent
+        //Override virtual methods from MotorDriver/BaseComponent
         void init() override;
         void factoryReset() override;
         void task() override;

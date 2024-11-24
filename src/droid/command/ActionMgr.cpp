@@ -13,7 +13,7 @@
 
 namespace droid::command {
     ActionMgr::ActionMgr(const char* name, droid::core::System* system, droid::controller::Controller* controller) :
-        ActiveComponent(name, system),
+        BaseComponent(name, system),
         controller(controller) {}
 
     void ActionMgr::init() {

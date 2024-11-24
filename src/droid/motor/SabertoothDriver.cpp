@@ -40,8 +40,8 @@
 
 namespace droid::motor {
     SabertoothDriver::SabertoothDriver(const char* name, droid::core::System* system, byte address, Stream* port) :
-        port(port),
         MotorDriver(name, system),
+        port(port),
         wrapped(address, *port) {}
 
     void SabertoothDriver::init() {

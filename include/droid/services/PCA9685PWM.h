@@ -20,7 +20,7 @@ namespace droid::services {
         PCA9685PWM(const char* name, droid::core::System* system, const uint8_t I2CAddress, uint8_t outputEnablePin = 0);
         PCA9685PWM(const char* name, droid::core::System* system, const uint8_t I2CAddress, TwoWire &i2c, uint8_t outputEnablePin = 0);
 
-        //Override virtual methods from PWMService/ActiveComponent
+        //Override virtual methods from PWMService/BaseComponent
         void init() override;
         void factoryReset() override;
         void task() override;

@@ -14,7 +14,6 @@
 #include "droid/command/CmdLogger.h"
 #include "droid/brain/LocalCmdHandler.h"
 #include "droid/audio/AudioCmdHandler.h"
-#include "droid/core/ActiveComponent.h"
 
 #define CONFIG_KEY_BRAIN_INITIALIZED     "Initialized"
 #define CONFIG_KEY_BRAIN_STICK_ENABLE    "StartDriveOn"
@@ -28,7 +27,7 @@
 
 namespace droid::brain {
     Brain::Brain(const char* name, droid::core::System* system) : 
-        ActiveComponent(name, system),
+        BaseComponent(name, system),
         system(system),
 #ifdef BUILD_FOR_DEBUGGER
         pwmService("StubPWM", system),
@@ -50,13 +49,13 @@ namespace droid::brain {
 
         actionMgr.addCmdHandler(new droid::command::CmdLogger("CmdLogger", system));
 
-        //TODO Implement configurable Serial ports
         actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Dome", system, DOME_STREAM));
         actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Body", system, BODY_STREAM));
         actionMgr.addCmdHandler(new droid::audio::AudioCmdHandler("HCR", system, &audioMgr));
         actionMgr.addCmdHandler(new droid::brain::LocalCmdHandler("Brain", system, this, CONSOLE_STREAM));
+        actionMgr.addCmdHandler(new droid::brain::PanelCmdHandler("Panel", system));
 
-        //Setup list of all ActiveComponents
+        //Setup list of all Active BaseComponents
         componentList.push_back(&pwmService);
         componentList.push_back(&controller);
         componentList.push_back(&domeMotorDriver);
@@ -81,8 +80,8 @@ namespace droid::brain {
         #define LOGGER logger
         #include "droid/core/LoggerLevels.h"
 
-        //Initialize all ActiveComponents
-        for (droid::core::ActiveComponent* component : componentList) {
+        //Initialize all BaseComponents
+        for (droid::core::BaseComponent* component : componentList) {
             component->init();
         }
 
@@ -95,14 +94,14 @@ namespace droid::brain {
         config->putBool(name, CONFIG_KEY_BRAIN_STICK_ENABLE, CONFIG_DEFAULT_BRAIN_STICK_ENABLE);
         config->putBool(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, CONFIG_DEFAULT_BRAIN_TURBO_ENABLE);
         config->putBool(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, CONFIG_DEFAULT_BRAIN_AUTODOME_ENABLE);
-        for (droid::core::ActiveComponent* component : componentList) {
+        for (droid::core::BaseComponent* component : componentList) {
             component->factoryReset();
             logger->setLogLevel(component->name, logger->getLogLevel(component->name));
         }
     }
 
     void Brain::failsafe() {
-        for (droid::core::ActiveComponent* component : componentList) {
+        for (droid::core::BaseComponent* component : componentList) {
             component->failsafe();
         }
     }
@@ -121,7 +120,7 @@ namespace droid::brain {
         actionMgr.fireTrigger(trigger);
     }
 
-    void Brain::processCmdInput(Stream* cmdStream) {
+    void Brain::processConsoleInput(Stream* cmdStream) {
         //Check for incoming serial commands
         while (cmdStream->available()) {
             char in = cmdStream->read();
@@ -155,9 +154,9 @@ namespace droid::brain {
 
     void Brain::task() {
         if (CONSOLE_STREAM != NULL) {
-            processCmdInput(CONSOLE_STREAM);
+            processConsoleInput(CONSOLE_STREAM);
         }
-        for (droid::core::ActiveComponent* component : componentList) {
+        for (droid::core::BaseComponent* component : componentList) {
             component->task();
         }
 
@@ -172,7 +171,7 @@ namespace droid::brain {
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_STICK_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_STICK_ENABLE, ""));
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_TURBO_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, ""));
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_BRAIN_AUTODOME_ENABLE, config->getString(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, ""));
-        for (droid::core::ActiveComponent* component : componentList) {
+        for (droid::core::BaseComponent* component : componentList) {
             component->logConfig();
         }
     }

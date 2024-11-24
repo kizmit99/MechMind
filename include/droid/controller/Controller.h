@@ -9,10 +9,10 @@
  */
 
 #pragma once
-#include "droid/core/ActiveComponent.h"
+#include "droid/core/BaseComponent.h"
 
 namespace droid::controller {
-    class Controller : public droid::core::ActiveComponent {
+    class Controller : public droid::core::BaseComponent {
     public:
         enum Axis {
             X, Y};
@@ -21,9 +21,9 @@ namespace droid::controller {
             LEFT, RIGHT};
 
         Controller(const char* name, droid::core::System* system) :
-            ActiveComponent(name, system) {}
+            BaseComponent(name, system) {}
         
-        //Virtual methods from ActiveComponent redeclared here for clarity
+        //Virtual methods from BaseComponent redeclared here for clarity
         virtual void init() = 0;
         virtual void factoryReset() = 0;
         virtual void task() = 0;

@@ -32,7 +32,7 @@ namespace {
 
 namespace droid::brain {
     DriveMgr::DriveMgr(const char* name, droid::core::System* system, droid::controller::Controller* controller, droid::motor::MotorDriver* driveMotor) : 
-        ActiveComponent(name, system),
+        BaseComponent(name, system),
         controller(controller),
         driveMotor(driveMotor) {}
 
@@ -82,6 +82,6 @@ namespace droid::brain {
     }
 
     void DriveMgr::failsafe() {
-        //NOOP - other ActiveComponents will be notified directly
+        //NOOP - other BaseComponents will be notified directly
     }
 }

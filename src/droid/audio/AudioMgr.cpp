@@ -31,7 +31,7 @@
 
 namespace droid::audio {
     AudioMgr::AudioMgr(const char* name, droid::core::System* system, AudioDriver* driver) :
-        ActiveComponent(name, system),
+        BaseComponent(name, system),
         driver(driver) {}
 
     void AudioMgr::init() {

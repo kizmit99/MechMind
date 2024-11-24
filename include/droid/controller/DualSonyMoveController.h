@@ -33,7 +33,7 @@ namespace droid::controller {
     public:
         DualSonyMoveController(const char* name, droid::core::System* system);
 
-        //Override virtual methods from ActiveComponent
+        //Override virtual methods from BaseComponent
         void init() override;
         void factoryReset() override;
         void task() override;

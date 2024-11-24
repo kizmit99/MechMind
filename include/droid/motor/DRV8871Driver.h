@@ -16,7 +16,7 @@ namespace droid::motor {
     public:
         DRV8871Driver(const char* name, droid::core::System* system, uint8_t out1, uint8_t out2);
 
-        //Override virtual methods from MotorDriver/ActiveComponent
+        //Override virtual methods from MotorDriver/BaseComponent
         void init() override;
         void factoryReset() override;
         void task() override;

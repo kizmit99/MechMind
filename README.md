@@ -6,7 +6,9 @@ While the author took inspiration from several existing projects, including:
 - [SHADOW MD](https://astromech.net/droidwiki/SHADOW_MD)
 - [PADAWAN360](https://astromech.net/droidwiki/PADAWAN360)
 
-The Droid Brain has been designed and implemented from the ground-up to act as the central processing unit for a droid, accepting input stimuli from various sources, interpreting that input, and generating output commands to various actuators or light controllers.  It is designed to run exclusively on ESP32 based microcontrollers and to be compiled from the PlatformIO development environment.  This is a departure from many previous projects that attempt to embed everything into a single sketch.  While adding some complexity to the build process, it also provides an opportunity to provide flexibility that has been missing up to this point.
+The Droid Brain has been designed and implemented from the ground-up to act as the central processing unit for a droid, accepting input stimuli from various sources, interpreting that input, and generating output commands to various actuators or light controllers.  Some of these commands are executed locally, but most are delegated to external subsystems.  
+
+It is designed to run exclusively on ESP32 based microcontrollers and to be compiled from the PlatformIO development environment.  This is a departure from many previous projects that attempt to embed everything into a single sketch.  While adding some complexity to the build process, it also provides an opportunity to provide flexibility that has been missing up to this point.
 
 ## Key Features
 

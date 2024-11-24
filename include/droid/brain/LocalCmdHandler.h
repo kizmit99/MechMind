@@ -10,7 +10,6 @@
 
 #pragma once
 #include "droid/command/CmdHandler.h"
-#include "droid/core/PassiveComponent.h"
 #include "droid/brain/Brain.h"
 
 namespace droid::brain {

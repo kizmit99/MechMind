@@ -9,13 +9,20 @@
  */
 
 #pragma once
-#include "droid/core/PassiveComponent.h"
+#include "droid/core/BaseComponent.h"
 
 namespace droid::command {
-    class CmdHandler : public droid::core::PassiveComponent {
+    class CmdHandler : public droid::core::BaseComponent {
     public:
         CmdHandler(const char* name, droid::core::System* system) :
-            PassiveComponent(name, system) {}
+            BaseComponent(name, system) {}
+
+        //Virtual methods required by BaseComponent declared here as NOOPs for concrete sub-classes
+        void init() {}
+        void factoryReset() {}
+        void task() {}
+        void logConfig() {}
+        void failsafe() {}
 
         virtual bool process(const char* device, const char* command) = 0;
     };

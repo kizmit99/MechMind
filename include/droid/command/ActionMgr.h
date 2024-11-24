@@ -9,7 +9,7 @@
  */
 
 #pragma once
-#include "droid/core/ActiveComponent.h"
+#include "droid/core/BaseComponent.h"
 #include "droid/controller/Controller.h"
 #include "droid/command/CmdHandler.h"
 #include "droid/core/InstructionList.h"
@@ -19,11 +19,11 @@
 #define ACTION_MAX_SEQUENCE_LEN 200
 
 namespace droid::command {
-    class ActionMgr : public droid::core::ActiveComponent {
+    class ActionMgr : public droid::core::BaseComponent {
     public:
         ActionMgr(const char* name, droid::core::System* system, droid::controller::Controller*);
 
-        //Override virtual methods from ActiveComponent
+        //Override virtual methods from BaseComponent
         void init() override;
         void factoryReset() override;
         void task() override;

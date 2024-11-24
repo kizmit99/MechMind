@@ -18,7 +18,7 @@ namespace droid::motor {
     public:
         SabertoothDriver(const char* name, droid::core::System* system, byte address, Stream* port);
 
-        //Override virtual methods from MotorDriver/ActiveComponent
+        //Override virtual methods from MotorDriver/BaseComponent
         void init() override;
         void factoryReset() override;
         void task() override;

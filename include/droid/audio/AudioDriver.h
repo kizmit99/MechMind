@@ -9,7 +9,7 @@
  */
 
 #pragma once
-#include "droid/core/PassiveComponent.h"
+#include "droid/core/BaseComponent.h"
 
 /***********************************************************
  *  On the Sparkfun MP3, there are a maximum of 255 sound files
@@ -42,22 +42,29 @@
 
 // for the random sounds, needs to know max sounds of first 5 banks
 // only important for sounds below cutoff
-#define MP3_BANK1_SOUNDS 19 // gen sounds, numbered 001 to 025
-#define MP3_BANK2_SOUNDS 18 // chat sounds, numbered 026 to 050
-#define MP3_BANK3_SOUNDS 7  // happy sounds, numbered 051 to 075
-#define MP3_BANK4_SOUNDS 4  // sad sounds, numbered 076 to 100
-#define MP3_BANK5_SOUNDS 3  // whistle sounds, numbered 101 to 125
-#define MP3_BANK6_SOUNDS MP3_MAX_SOUNDS_PER_BANK    // scream sounds, numbered 126 to 150
-#define MP3_BANK7_SOUNDS MP3_MAX_SOUNDS_PER_BANK    // Leia sounds, numbered 151 to 175
-#define MP3_BANK8_SOUNDS MP3_MAX_SOUNDS_PER_BANK    // sing sounds (deprecated, not used by R2 Touch)
-#define MP3_BANK9_SOUNDS MP3_MAX_SOUNDS_PER_BANK // mus sounds, numbered 201 t0 225
+#define MP3_BANK1_SOUND_COUNT 19 // gen sounds, numbered 001 to 025
+#define MP3_BANK2_SOUND_COUNT 18 // chat sounds, numbered 026 to 050
+#define MP3_BANK3_SOUND_COUNT 7  // happy sounds, numbered 051 to 075
+#define MP3_BANK4_SOUND_COUNT 4  // sad sounds, numbered 076 to 100
+#define MP3_BANK5_SOUND_COUNT 3  // whistle sounds, numbered 101 to 125
+#define MP3_BANK6_SOUND_COUNT MP3_MAX_SOUNDS_PER_BANK    // scream sounds, numbered 126 to 150
+#define MP3_BANK7_SOUND_COUNT MP3_MAX_SOUNDS_PER_BANK    // Leia sounds, numbered 151 to 175
+#define MP3_BANK8_SOUND_COUNT MP3_MAX_SOUNDS_PER_BANK    // sing sounds (deprecated, not used by R2 Touch)
+#define MP3_BANK9_SOUND_COUNT MP3_MAX_SOUNDS_PER_BANK // mus sounds, numbered 201 t0 225
 
 namespace droid::audio {
-    class AudioDriver : public droid::core::PassiveComponent {
+    class AudioDriver : public droid::core::BaseComponent {
     public:
         AudioDriver(const char* name, droid::core::System* system) :
-            PassiveComponent(name, system) {}
+            BaseComponent(name, system) {}
             
+        //Virtual methods required by BaseComponent declared here as NOOPs for concrete sub-classes
+        void init() {}
+        void factoryReset() {}
+        void task() {}
+        void logConfig() {}
+        void failsafe() {}
+
         virtual const char* getPlaySoundCmd(char* cmdBuf, size_t buflen, uint8_t bank, uint8_t sound) = 0;
         virtual const char* getSetVolumeCmd(char* cmdBuf, size_t buflen, float newVolume) = 0;
         virtual const char* getStopCmd(char* cmdBuf, size_t buflen) = 0;
@@ -67,15 +74,15 @@ namespace droid::audio {
         virtual bool executeCmd(const char* deviceCmd) = 0;
 
         const uint8_t maxSounds[MP3_MAX_BANKS] = {
-            MP3_BANK1_SOUNDS,
-            MP3_BANK2_SOUNDS,
-            MP3_BANK3_SOUNDS,
-            MP3_BANK4_SOUNDS,
-            MP3_BANK5_SOUNDS,
-            MP3_BANK6_SOUNDS,
-            MP3_BANK7_SOUNDS,
-            MP3_BANK8_SOUNDS,
-            MP3_BANK9_SOUNDS};
+            MP3_BANK1_SOUND_COUNT,
+            MP3_BANK2_SOUND_COUNT,
+            MP3_BANK3_SOUND_COUNT,
+            MP3_BANK4_SOUND_COUNT,
+            MP3_BANK5_SOUND_COUNT,
+            MP3_BANK6_SOUND_COUNT,
+            MP3_BANK7_SOUND_COUNT,
+            MP3_BANK8_SOUND_COUNT,
+            MP3_BANK9_SOUND_COUNT};
 
     protected:
         uint8_t decodeFilenum(uint8_t bank, uint8_t sound) {

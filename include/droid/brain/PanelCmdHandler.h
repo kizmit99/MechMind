@@ -9,14 +9,13 @@
  */
 
 #pragma once
-#include "droid/core/BaseComponent.h"
-#include "droid/controller/Controller.h"
-#include "droid/motor/MotorDriver.h"
+#include "droid/command/CmdHandler.h"
 
 namespace droid::brain {
-    class DriveMgr : public droid::core::BaseComponent {
+    class PanelCmdHandler : public droid::command::CmdHandler {
     public:
-        DriveMgr(const char* name, droid::core::System* system, droid::controller::Controller*, droid::motor::MotorDriver*);
+        PanelCmdHandler(const char* name, droid::core::System* system);
+        bool process(const char* device, const char* command);
 
         //Override virtual methods from BaseComponent
         void init() override;
@@ -26,12 +25,5 @@ namespace droid::brain {
         void failsafe() override;
 
     private:
-        droid::controller::Controller* controller;
-        droid::motor::MotorDriver* driveMotor;
-
-        int8_t normalSpeed;
-        int8_t turboSpeed;
-        int8_t turnSpeed;
-        int8_t deadband;
     };
 }

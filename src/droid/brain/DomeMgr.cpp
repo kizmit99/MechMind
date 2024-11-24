@@ -27,7 +27,7 @@ namespace {
 
 namespace droid::brain {
     DomeMgr::DomeMgr(const char* name, droid::core::System* system, droid::controller::Controller* controller, droid::motor::MotorDriver* domeMotor) : 
-        ActiveComponent(name, system),
+        BaseComponent(name, system),
         controller(controller),
         domeMotor(domeMotor) {}
 
@@ -58,6 +58,6 @@ namespace droid::brain {
     }
 
     void DomeMgr::failsafe() {
-        //NOOP - other ActiveComponents will be notified directly
+        //NOOP - other BaseComponents will be notified directly
     }
 }

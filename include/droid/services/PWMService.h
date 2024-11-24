@@ -9,15 +9,15 @@
  */
 
 #pragma once
-#include "droid/core/ActiveComponent.h"
+#include "droid/core/BaseComponent.h"
 
 namespace droid::services {
-    class PWMService : public droid::core::ActiveComponent {
+    class PWMService : public droid::core::BaseComponent {
     public:
         PWMService(const char* name, droid::core::System* system) :
-            droid::core::ActiveComponent(name, system) {}
+            droid::core::BaseComponent(name, system) {}
 
-        //Virtual methods from ActiveComponent redeclared here for clarity
+        //Virtual methods from BaseComponent redeclared here for clarity
         virtual void init() = 0;
         virtual void factoryReset() = 0;
         virtual void task() = 0;

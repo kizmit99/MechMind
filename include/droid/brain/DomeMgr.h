@@ -9,16 +9,16 @@
  */
 
 #pragma once
-#include "droid/core/ActiveComponent.h"
+#include "droid/core/BaseComponent.h"
 #include "droid/controller/Controller.h"
 #include "droid/motor/MotorDriver.h"
 
 namespace droid::brain {
-    class DomeMgr : public droid::core::ActiveComponent {
+    class DomeMgr : public droid::core::BaseComponent {
     public:
         DomeMgr(const char* name, droid::core::System* system, droid::controller::Controller*, droid::motor::MotorDriver*);
 
-        //Override virtual methods from ActiveComponent
+        //Override virtual methods from BaseComponent
         void init() override;
         void factoryReset() override;
         void task() override;

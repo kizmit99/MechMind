@@ -9,16 +9,16 @@
  */
 
 #pragma once
-#include "droid/core/ActiveComponent.h"
+#include "droid/core/BaseComponent.h"
 #include "droid/audio/AudioDriver.h"
 #include "droid/core/InstructionList.h"
 
 namespace droid::audio {
-    class AudioMgr : public droid::core::ActiveComponent {
+    class AudioMgr : public droid::core::BaseComponent {
     public:
         AudioMgr(const char* name, droid::core::System* system, AudioDriver* driver);
 
-        //Override virtual methods from ActiveComponent
+        //Override virtual methods from BaseComponent
         void init() override;
         void factoryReset() override;
         void task() override;

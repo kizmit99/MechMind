@@ -9,7 +9,7 @@
  */
 
 #pragma once
-#include "droid/core/ActiveComponent.h"
+#include "droid/core/BaseComponent.h"
 #include "droid/services/NoPWMService.h"
 #include "droid/services/PCA9685PWM.h"
 #include "droid/controller/DualSonyMoveController.h"
@@ -22,13 +22,14 @@
 #include "droid/audio/AudioMgr.h"
 #include "droid/audio/HCRDriver.h"
 #include "droid/brain/DriveMgr.h"
+#include "droid/brain/PanelCmdHandler.h"
 
 namespace droid::brain {
-    class Brain : droid::core::ActiveComponent {
+    class Brain : droid::core::BaseComponent {
     public:
         Brain(const char* name, droid::core::System* system);
 
-        //Override virtual methods from ActiveComponent
+        //Override virtual methods from BaseComponent
         void init() override;
         void factoryReset() override;
         void task() override;
@@ -60,11 +61,11 @@ namespace droid::brain {
         droid::audio::AudioMgr audioMgr;
         droid::brain::DriveMgr driveMgr;
 
-        std::vector<droid::core::ActiveComponent*> componentList;
+        std::vector<droid::core::BaseComponent*> componentList;
 
         char inputBuf[100];
         uint8_t bufIndex = 0;
 
-        void processCmdInput(Stream* cmdStream);
+        void processConsoleInput(Stream* cmdStream);
     };
 }

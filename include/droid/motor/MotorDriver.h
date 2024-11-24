@@ -9,15 +9,15 @@
  */
 
 #pragma once
-#include "droid/core/ActiveComponent.h"
+#include "droid/core/BaseComponent.h"
 
 namespace droid::motor {
-    class MotorDriver : public droid::core::ActiveComponent {
+    class MotorDriver : public droid::core::BaseComponent {
     public:
         MotorDriver(const char* name, droid::core::System* system) :
-            ActiveComponent(name, system) {}
+            BaseComponent(name, system) {}
             
-        //Virtual methods from ActiveComponent redeclared here for clarity
+        //Virtual methods from BaseComponent redeclared here for clarity
         virtual void init() = 0;
         virtual void factoryReset() = 0;
         virtual void task() = 0;
