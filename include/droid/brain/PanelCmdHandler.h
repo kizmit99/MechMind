@@ -10,6 +10,7 @@
 
 #pragma once
 #include "droid/command/CmdHandler.h"
+#include "droid/core/hardware.h"
 
 namespace droid::brain {
     class PanelCmdHandler : public droid::command::CmdHandler {
@@ -17,7 +18,7 @@ namespace droid::brain {
         PanelCmdHandler(const char* name, droid::core::System* system);
         bool process(const char* device, const char* command);
 
-        //Override virtual methods from BaseComponent
+        //Override default methods from CmdHandler
         void init() override;
         void factoryReset() override;
         void task() override;
@@ -25,5 +26,12 @@ namespace droid::brain {
         void failsafe() override;
 
     private:
+        struct {
+            uint16_t openMicroSeconds;
+            uint16_t closeMicroSeconds;
+            uint16_t timeMilliSeconds;
+            uint8_t pwmOutput;
+            bool isOpen;
+        } panelDetails[LOCAL_PANEL_COUNT];
     };
 }
