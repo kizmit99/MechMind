@@ -26,14 +26,12 @@ namespace droid::controller {
         void failsafe() override;
 
         void setCritical(bool isCritical);
-        void setDeadband(int8_t deadband);
         int8_t getJoystickPosition(Joystick, Axis);
         String getTrigger();
 
     private:
         static DualRingController* instance;
 
-        int8_t deadband;
         bool faultState = true;
 
         void faultCheck();

@@ -18,6 +18,8 @@
 #define CONFIG_KEY_SONY_ALT_RIGHT_MAC       "RightAltMAC"
 #define CONFIG_KEY_SONY_LEFT_MAC            "LeftMAC"
 #define CONFIG_KEY_SONY_ALT_LEFT_MAC        "LeftAltMAC"
+#define CONFIG_KEY_SONY_DEADBAND_X          "DeadbandX"
+#define CONFIG_KEY_SONY_DEADBAND_Y          "DeadbandY"
 #define CONFIG_KEY_SONY_ACTIVE_TIMEOUT      "activeTimeout"
 #define CONFIG_KEY_SONY_INACTIVE_TIMEOUT    "inactiveTimeout"
 #define CONFIG_KEY_SONY_BAD_DATA_WINDOW     "badDataWindow"
@@ -52,6 +54,8 @@ namespace droid::controller {
         config->putInt(name, CONFIG_KEY_SONY_ACTIVE_TIMEOUT, CONFIG_DEFAULT_SONY_ACTIVE_TIMEOUT);
         config->putInt(name, CONFIG_KEY_SONY_INACTIVE_TIMEOUT, CONFIG_DEFAULT_SONY_INACTIVE_TIMEOUT);
         config->putInt(name, CONFIG_KEY_SONY_BAD_DATA_WINDOW, CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW);
+        config->putInt(name, CONFIG_KEY_SONY_DEADBAND_X, CONFIG_DEFAULT_SONY_DEADBAND);
+        config->putInt(name, CONFIG_KEY_SONY_DEADBAND_Y, CONFIG_DEFAULT_SONY_DEADBAND);
     }
 
     void DualSonyMoveController::init() {
@@ -63,6 +67,8 @@ namespace droid::controller {
         activeTimeout = config->getInt(name, CONFIG_KEY_SONY_ACTIVE_TIMEOUT, CONFIG_DEFAULT_SONY_ACTIVE_TIMEOUT);
         inactiveTimeout = config->getInt(name, CONFIG_KEY_SONY_INACTIVE_TIMEOUT, CONFIG_DEFAULT_SONY_INACTIVE_TIMEOUT);
         badDataWindow = config->getInt(name, CONFIG_KEY_SONY_BAD_DATA_WINDOW, CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW);
+        deadbandX = config->getInt(name, CONFIG_KEY_SONY_DEADBAND_X, CONFIG_DEFAULT_SONY_DEADBAND);
+        deadbandY = config->getInt(name, CONFIG_KEY_SONY_DEADBAND_Y, CONFIG_DEFAULT_SONY_DEADBAND);
         if (Usb.Init() != 0) {
             logger->log(name, FATAL, "Unable to init() the USB stack");
         }
@@ -83,6 +89,8 @@ namespace droid::controller {
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_ACTIVE_TIMEOUT, config->getString(name, CONFIG_KEY_SONY_ACTIVE_TIMEOUT, ""));
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_INACTIVE_TIMEOUT, config->getString(name, CONFIG_KEY_SONY_INACTIVE_TIMEOUT, ""));
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_BAD_DATA_WINDOW, config->getString(name, CONFIG_KEY_SONY_BAD_DATA_WINDOW, ""));
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_DEADBAND_X, config->getString(name, CONFIG_KEY_SONY_DEADBAND_X, ""));
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_DEADBAND_Y, config->getString(name, CONFIG_KEY_SONY_DEADBAND_Y, ""));
     }
 
     void DualSonyMoveController::failsafe() {
@@ -91,10 +99,6 @@ namespace droid::controller {
 
     void DualSonyMoveController::setCritical(bool isCritical) {
         this->isCritical = isCritical;
-    }
-
-    void DualSonyMoveController::setDeadband(int8_t deadband) {
-        this->deadband = abs(deadband);
     }
 
     void DualSonyMoveController::faultCheck(ControllerDetails* controller) {
@@ -192,6 +196,7 @@ namespace droid::controller {
         }
 
         int8_t rawPosition = 0;
+        int8_t deadband = 0;
 
         //If requested controller is present, use it
         if (request->isConnected) {
@@ -199,10 +204,12 @@ namespace droid::controller {
                 switch (axis) {
                     case X:
                         rawPosition = (127 - request->ps3BT.getAnalogHat(LeftHatY));
+                        deadband = deadbandX;
                         break;
 
                     case Y:
                         rawPosition = (request->ps3BT.getAnalogHat(LeftHatX) - 128);
+                        deadband = deadbandY;
                         break;
 
                     default:
@@ -217,10 +224,12 @@ namespace droid::controller {
                     switch (axis) {
                         case X:
                             rawPosition = (127 - other->ps3BT.getAnalogHat(LeftHatY));
+                            deadband = deadbandX;
                             break;
 
                         case Y:
                             rawPosition = (other->ps3BT.getAnalogHat(LeftHatX) - 128);
+                            deadband = deadbandY;
                             break;
 
                         default:

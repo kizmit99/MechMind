@@ -86,7 +86,6 @@ namespace droid::brain {
         }
 
         pwmService.setOscFreq(PCA9685_OSC_FREQUENCY);
-        controller.setDeadband(CONTROLLER_DEADBAND);
     }
 
     void Brain::factoryReset() {

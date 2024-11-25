@@ -31,7 +31,6 @@ namespace droid::controller {
         virtual void failsafe() = 0;
 
         virtual void setCritical(bool isCritical) = 0;
-        virtual void setDeadband(int8_t deadband) = 0;
         virtual int8_t getJoystickPosition(Joystick, Axis) = 0;
         virtual String getTrigger() = 0;
     };

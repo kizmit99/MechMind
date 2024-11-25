@@ -41,7 +41,6 @@ namespace droid::controller {
         void failsafe() override;
 
         void setCritical(bool isCritical);
-        void setDeadband(int8_t deadband);
         int8_t getJoystickPosition(Joystick, Axis);
         String getTrigger();
 
@@ -56,7 +55,8 @@ namespace droid::controller {
         uint32_t activeTimeout;
         uint32_t inactiveTimeout;
         uint32_t badDataWindow;
-        int8_t deadband;
+        int8_t deadbandX;
+        int8_t deadbandY;
 
         void onInitPS3(Joystick which);
         void faultCheck(ControllerDetails* controller);

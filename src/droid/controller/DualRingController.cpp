@@ -62,10 +62,6 @@ namespace droid::controller {
         //NOOP
     }
 
-    void DualRingController::setDeadband(int8_t deadband) {
-        this->deadband = abs(deadband);
-    }
-
     void DualRingController::faultCheck() {
         if ((!faultState) &&
             (!rings.isConnected())) {
@@ -95,9 +91,6 @@ namespace droid::controller {
         }
 
         int8_t value = rings.getJoystick(mappedController, mappedAxis);
-        if (abs(value) <= deadband) {
-            value = 0;
-        }
         return value;
     }
 
