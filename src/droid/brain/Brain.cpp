@@ -152,16 +152,26 @@ namespace droid::brain {
     }
 
     void Brain::task() {
+        unsigned long begin = millis();
         if (CONSOLE_STREAM != NULL) {
             processConsoleInput(CONSOLE_STREAM);
         }
         for (droid::core::BaseComponent* component : componentList) {
+            unsigned long compBegin = millis();
             component->task();
+            unsigned long compTime = millis() - compBegin;
+            if (compTime > 10) {
+                logger->log(component->name, WARN, "subTask took %d millis to execute!\n", compTime);
+            }
         }
 
         if (logger->getMaxLevel() >= ERROR) {
             failsafe();
             logger->clear();
+        }
+        unsigned long time = millis() - begin;
+        if (time > 30) {
+            logger->log(name, WARN, "Task took %d millis to execute!\n", time);
         }
     }
 

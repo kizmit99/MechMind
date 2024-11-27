@@ -17,7 +17,7 @@ LOGGER->setLogLevel("StubCtrl", DEBUG);
 LOGGER->setLogLevel("PCA9685", DEBUG);
 LOGGER->setLogLevel("DualSony", DEBUG);
 LOGGER->setLogLevel("DualRing", INFO);
-LOGGER->setLogLevel("DRV8871", DEBUG);
+LOGGER->setLogLevel("DRV8871", INFO);
 LOGGER->setLogLevel("DomeMgr", DEBUG);
 LOGGER->setLogLevel("ActionMgr", DEBUG);
 LOGGER->setLogLevel("HCRDriver", DEBUG);

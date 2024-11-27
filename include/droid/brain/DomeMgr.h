@@ -26,10 +26,33 @@ namespace droid::brain {
         void failsafe() override;
 
     private:
+        bool doAutoDome();
+
         droid::controller::Controller* controller;
         droid::motor::MotorDriver* domeMotor;
 
         int8_t speed;
+        int16_t rotationTimeMs;     //How long it takes for the dome to turn 360 degrees at max speed
         int8_t deadband;
+
+        //AutoDome config
+        bool autoEnabled;
+        bool autoAutoEnabled;
+        int32_t autoIdleMs;
+        int8_t autoMinSpeed;
+        int8_t autoMaxSpeed;
+        int32_t autoMinDelayMs;
+        int32_t autoMaxDelayMs;
+        // bool autoAudio = false;
+        // bool autoLights = false;
+
+        //AutoDome state
+        unsigned long lastManualMove = 0;
+        bool autoDomeActive = false;
+        bool autoDomeMoving = false;
+        int16_t autoDomeAngle = 0;
+        int8_t autoDomeSpeed = 0;
+        unsigned long autoDomeNextStop = 0;
+        unsigned long autoDomeNextMove = 0;
     };
 }

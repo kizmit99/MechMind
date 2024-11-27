@@ -34,5 +34,6 @@ namespace droid::motor {
         Stream* port;
 
         int8_t lastMotorSpeed[2] = {0};
+        unsigned long lastMotorUpdate[2] = {0};
     };
 }

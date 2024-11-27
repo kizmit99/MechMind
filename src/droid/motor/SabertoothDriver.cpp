@@ -38,6 +38,8 @@
 #define CONFIG_DEFAULT_SABERTOOTH_MIN_VOLTAGE  3
 #define CONFIG_DEFAULT_SABERTOOTH_MAX_VOLTAGE  144
 
+#define SABERTOOTH_UPDATE_THROTTLE 20
+
 namespace droid::motor {
     SabertoothDriver::SabertoothDriver(const char* name, droid::core::System* system, byte address, Stream* port) :
         MotorDriver(name, system),
@@ -90,7 +92,12 @@ namespace droid::motor {
         if (motor > 1) {return false;}
         if (speed > 127) {speed = 127;}
 
-        wrapped.motor(motor + 1, speed);
+        //Throttle motor updates when resending the same speed as last time
+        if ((speed != lastMotorSpeed[motor]) ||
+            (millis() > (lastMotorUpdate[motor] + SABERTOOTH_UPDATE_THROTTLE))) {
+            lastMotorUpdate[motor] = millis();
+            wrapped.motor(motor + 1, speed);
+        }
         if (speed != lastMotorSpeed[motor]) {
             logger->log(name, DEBUG, "setMotorSpeed(%d, %d)\n", motor, speed);
         }

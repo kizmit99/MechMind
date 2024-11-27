@@ -36,7 +36,7 @@ namespace droid::motor {
 
         uint16_t timeoutMs = 100;
         uint8_t deadband = 0;
-        float_t rampPowerPerMs = 0.1;
+        float_t rampPowerPerMs = 1.0;
         ulong lastCommandMs = 0;
         ulong lastUpdateMs = 0;
         int16_t requestedDutyCycle = 0;
