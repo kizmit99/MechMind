@@ -27,21 +27,20 @@ namespace droid::brain {
         droid::services::PWMService* pwmService = system->getPWMService();
         if ((strcmp(name, device)!= 0) ||
             (command == NULL) ||
-            (pwmService == NULL) ||
-            ((strlen(command) < 4) || (strlen(command) > 6))) {
+            (pwmService == NULL)) {
             return false;
         }
         //Parse the command
         if (command[0] != ':') {return false;}
-        int panel = atoi(&command[3]);
-        if (panel > LOCAL_PANEL_COUNT) {return false;}
-        uint8_t startIndex, endIndex = panel - 1;
-        if (panel == 0) {
-            startIndex = 0;
-            endIndex = LOCAL_PANEL_COUNT - 1;
-        }
         if (((command[1] == 'O') || (command[1] == 'o')) && 
             ((command[2] == 'P') || (command[1] == 'p'))) {
+            int panel = atoi(&command[3]);
+            if (panel > LOCAL_PANEL_COUNT) {return false;}
+            uint8_t startIndex, endIndex = panel - 1;
+            if (panel == 0) {
+                startIndex = 0;
+                endIndex = LOCAL_PANEL_COUNT - 1;
+            }
             for (uint8_t index = startIndex; index <= endIndex; index++) {
                 pwmService->setPWMuS(panelDetails[index].pwmOutput, 
                                         panelDetails[index].openMicroSeconds, 
@@ -52,12 +51,37 @@ namespace droid::brain {
         }
         if (((command[1] == 'C') || (command[1] == 'c')) && 
             ((command[2] == 'L') || (command[1] == 'l'))) {
+            int panel = atoi(&command[3]);
+            if (panel > LOCAL_PANEL_COUNT) {return false;}
+            uint8_t startIndex, endIndex = panel - 1;
+            if (panel == 0) {
+                startIndex = 0;
+                endIndex = LOCAL_PANEL_COUNT - 1;
+            }
             for (uint8_t index = startIndex; index <= endIndex; index++) {
                 pwmService->setPWMuS(panelDetails[index].pwmOutput, 
                                         panelDetails[index].closeMicroSeconds, 
                                         panelDetails[index].timeMilliSeconds);
                 panelDetails[index].isOpen = false;
             }
+            return true;
+        }
+        if (((command[1] == 'T') || (command[1] == 't')) && 
+            ((command[2] == 'P') || (command[1] == 'p'))) {
+            char buf[5];
+            buf[0] = command[3];
+            buf[1] = command[4];
+            buf[2] = command[5];
+            buf[3] = '\0';
+            uint8_t panel = atoi(buf);
+            if (panel > LOCAL_PANEL_COUNT) {return false;}
+            buf[0] = command[6];
+            buf[1] = command[7];
+            buf[2] = command[8];
+            buf[3] = command[9];
+            buf[4] = '\0';
+            uint16_t pos = atoi(buf);
+            pwmService->setPWMuS(panelDetails[panel - 1].pwmOutput, pos, 50);
             return true;
         }
         return false;

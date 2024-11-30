@@ -46,3 +46,6 @@
 //Local Panel Servo Config
 #define LOCAL_PANEL_COUNT             12
 #define PWMSERVICE_PANEL_FIRST_OUT    4
+
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)

@@ -155,6 +155,12 @@ namespace droid::brain {
                     config->putString((const char*) &parm1, (const char*) &parm2a, (const char*) &parm3);
                 }
 
+            } else if (strcasecmp(cmd, "TestPanel") == 0) {
+                //Test a panel
+                char buf[100];
+                snprintf(buf, sizeof(buf), "Panel>:TP%03d%04d", atoi(parm1), atoi(parm2));
+                brain->trigger(buf);
+
             } else if ((strcasecmp(cmd, "Help") == 0) ||
                        (strcasecmp(cmd, "?") == 0)) {
                 //Provide help on using Local Commands
@@ -190,10 +196,13 @@ namespace droid::brain {
             printParmHelp("command", "This can be a Trigger, or a list of instructions (see ListConfig for examples)");
             printCmdHelp("ResetTrigger <trigger>", "Restore the default Action associated with the specified Trigger");
             printParmHelp("trigger", "The Trigger to override");
-            printCmdHelp("SetConfig <anmespace> <key> <newValue>", "Update the specified configuration value");
+            printCmdHelp("SetConfig <namespace> <key> <newValue>", "Update the specified configuration value");
             printParmHelp("namespace", "The namespace of the configuration entry to update (see ListConfig for valid options)");
             printParmHelp("key", "The key name of the configuration entry to update (see ListConfig for valid options)");
             printParmHelp("newValue", "The new value for the specified configuration namespace/key");
+            printCmdHelp("testPanel <panel> <value>", "Test a panel by setting its servo controller to the specified (uS) value");
+            printParmHelp("panel", "Number identifying the panel to test (between 1 and " TOSTRING(LOCAL_PANEL_COUNT) ")");
+            printParmHelp("value", "The microSecond value to send to the PWM controlling the panel (generally between 500 and 2500)");
             console->print("\n");
         }
     }
