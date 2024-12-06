@@ -54,7 +54,8 @@ namespace droid::brain {
         droid::controller::DualRingController controller;
 #endif
         droid::motor::DRV8871Driver domeMotorDriver;
-        droid::motor::SabertoothDriver driveMotorDriver;
+//        droid::motor::SabertoothDriver driveMotorDriver;
+        droid::motor::DRV8871Driver driveMotorDriver;
         DomeMgr domeMgr;
         droid::command::ActionMgr actionMgr;
         droid::audio::HCRDriver audioDriver;

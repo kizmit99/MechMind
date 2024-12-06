@@ -14,7 +14,7 @@
 namespace droid::motor {
     class DRV8871Driver : public MotorDriver {
     public:
-        DRV8871Driver(const char* name, droid::core::System* system, uint8_t out1, uint8_t out2);
+        DRV8871Driver(const char* name, droid::core::System* system, int8_t M0_out1, int8_t M0_out2, int8_t M1_out1, int8_t M1_out2);
 
         //Override virtual methods from MotorDriver/BaseComponent
         void init() override;
@@ -28,18 +28,20 @@ namespace droid::motor {
         void stop();
 
     private:
-        void setMotorSpeed(int16_t speed);
+        void setDutyCycle(uint8_t motor, int16_t speed);
         
-        // Pin Numbers
-        uint8_t out1;  // PWM output used for OUT1
-        uint8_t out2;  // PWM output used for OUT2
+        struct {
+            // Pin Numbers
+            int8_t out1;  // PWM output used for OUT1
+            int8_t out2;  // PWM output used for OUT2
 
-        uint16_t timeoutMs = 100;
-        uint8_t deadband = 0;
-        float_t rampPowerPerMs = 1.0;
-        ulong lastCommandMs = 0;
-        ulong lastUpdateMs = 0;
-        int16_t requestedDutyCycle = 0;
-        int16_t currentDutyCycle = 0;
+            uint16_t timeoutMs = 100;
+            uint8_t deadband = 0;
+            float_t rampPowerPerMs = 1.0;
+            ulong lastCommandMs = 0;
+            ulong lastUpdateMs = 0;
+            int16_t requestedDutyCycle = 0;
+            int16_t currentDutyCycle = 0;
+        } motorDetails[2];
     };
 }

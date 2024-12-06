@@ -29,7 +29,6 @@ namespace droid::services {
 
         void setPWMuS(uint8_t outNum, uint16_t pulseMicroseconds, uint16_t durationMilliseconds = 0) override;
         void setPWMpercent(uint8_t outNum, uint8_t percent, uint16_t durationMilliseconds = 0) override;
-        void setOscFreq(uint32_t freq) override;
 
     private:
         Adafruit_PWMServoDriver pca9685Driver;

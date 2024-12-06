@@ -19,21 +19,30 @@
 #define CONFIG_DEFAULT_DRV8871_RAMP         1.0
 
 namespace droid::motor {
-    DRV8871Driver::DRV8871Driver(const char* name, droid::core::System* system, uint8_t out1, uint8_t out2) :
-        MotorDriver(name, system),
-        out1(out1),
-        out2(out2) {
+    DRV8871Driver::DRV8871Driver(const char* name, droid::core::System* system, int8_t M0_out1, int8_t M0_out2, int8_t M1_out1, int8_t M1_out2) :
+        MotorDriver(name, system) {
 
-        requestedDutyCycle = 0;
+        motorDetails[0].out1 = M0_out1;
+        motorDetails[0].out2 = M0_out2;
+        motorDetails[0].requestedDutyCycle = 0;
+
+        motorDetails[1].out1 = M1_out1;
+        motorDetails[1].out2 = M1_out2;
+        motorDetails[1].requestedDutyCycle = 0;
     }
 
     void DRV8871Driver::init() {
-        timeoutMs = config->getInt(name, CONFIG_KEY_DRV8871_TIMEOUT, CONFIG_DEFAULT_DRV8871_TIMEOUT);
-        deadband = config->getInt(name, CONFIG_KEY_DRV8871_DEADBAND, CONFIG_DEFAULT_DRV8871_DEADBAND);
-        rampPowerPerMs = config->getFloat(name, CONFIG_KEY_DRV8871_RAMP, CONFIG_DEFAULT_DRV8871_RAMP);
+        motorDetails[0].timeoutMs = config->getInt(name, CONFIG_KEY_DRV8871_TIMEOUT, CONFIG_DEFAULT_DRV8871_TIMEOUT);
+        motorDetails[0].deadband = config->getInt(name, CONFIG_KEY_DRV8871_DEADBAND, CONFIG_DEFAULT_DRV8871_DEADBAND);
+        motorDetails[0].rampPowerPerMs = config->getFloat(name, CONFIG_KEY_DRV8871_RAMP, CONFIG_DEFAULT_DRV8871_RAMP);
+        motorDetails[0].requestedDutyCycle = 0;
+        setDutyCycle(0, 0);
 
-        requestedDutyCycle = 0;
-        setMotorSpeed(0);
+        motorDetails[1].timeoutMs = motorDetails[0].timeoutMs;
+        motorDetails[1].deadband = motorDetails[0].deadband;
+        motorDetails[1].rampPowerPerMs = motorDetails[0].rampPowerPerMs;
+        motorDetails[1].requestedDutyCycle = 0;
+        setDutyCycle(1, 0);
     }
 
     void DRV8871Driver::factoryReset() {
@@ -50,27 +59,29 @@ namespace droid::motor {
     }
 
     void DRV8871Driver::failsafe() {
-        setMotorSpeed(0);
-        requestedDutyCycle = 0;
+        setDutyCycle(0, 0);
+        motorDetails[0].requestedDutyCycle = 0;
+
+        setDutyCycle(1, 0);
+        motorDetails[1].requestedDutyCycle = 0;
     }
 
     bool DRV8871Driver::setMotorSpeed(uint8_t motor, int8_t speed) {
-        if (motor != 0) {return false;}
-        if (abs(speed) <= deadband) {
+        if (motor > 1) {return false;}
+        if (abs(speed) <= motorDetails[motor].deadband) {
             speed = 0;
         }
 
-        lastCommandMs = millis();
+        motorDetails[motor].lastCommandMs = millis();
         if (speed == 0) {
-            requestedDutyCycle = 0;
+            motorDetails[motor].requestedDutyCycle = 0;
         } else {
-            requestedDutyCycle = map(speed, -128, 127, -100, 100);
+            motorDetails[motor].requestedDutyCycle = map(speed, -128, 127, -100, 100);
         }
         task();
         return true;
     }
 
-    //TODO not actually supported on this driver!
     bool DRV8871Driver::arcadeDrive(int8_t joystickX, int8_t joystickY) {
         // Scale joystick inputs to motor output ranges 
         int forward = joystickX; // Forward/backward control 
@@ -92,52 +103,62 @@ namespace droid::motor {
     
     void DRV8871Driver::stop() {
         setMotorSpeed(0, 0);
+        setMotorSpeed(1, 0);
     }
 
     void DRV8871Driver::task() {
         ulong now = millis();
-        if ((requestedDutyCycle != 0) && (now > (lastCommandMs + timeoutMs))) {
-            logger->log(name, WARN, "task - timeout happened now=%d, lastCmd=%d, timeout=%d\n", now, lastCommandMs, timeoutMs);
-            requestedDutyCycle = 0;
-            lastCommandMs = now;
-        }
-        if (lastUpdateMs > now) {
-            lastUpdateMs = now;
-        }
-        if (requestedDutyCycle != currentDutyCycle) {
-            logger->log(name, DEBUG, "task - requestedDutyCycle=%d, currentDutyCycle=%d\n", requestedDutyCycle, currentDutyCycle);
-            int16_t delta = abs(currentDutyCycle - requestedDutyCycle);
-            int16_t maxDelta = (int16_t) ((now - lastUpdateMs) * rampPowerPerMs);
-            if (delta > maxDelta) {
-                delta = maxDelta;
+        for (uint8_t motor = 0; motor < 2; motor++) {
+            if ((motorDetails[motor].requestedDutyCycle != 0) && (now > (motorDetails[motor].lastCommandMs + motorDetails[motor].timeoutMs))) {
+                logger->log(name, WARN, "task - timeout happened now=%d, lastCmd=%d, timeout=%d\n", now, motorDetails[motor].lastCommandMs, motorDetails[motor].timeoutMs);
+                motorDetails[motor].requestedDutyCycle = 0;
+                motorDetails[motor].lastCommandMs = now;
             }
-            logger->log(name, DEBUG, "task - delta=%d, maxDelta=%d\n", delta, maxDelta);
-            if (delta > 0) {
-                if (currentDutyCycle > requestedDutyCycle) {
-                    currentDutyCycle = max(-100, currentDutyCycle - delta);
-                } else {
-                    currentDutyCycle = min(100, currentDutyCycle + delta);
+            if (motorDetails[motor].lastUpdateMs > now) {
+                motorDetails[motor].lastUpdateMs = now;
+            }
+            if (motorDetails[motor].requestedDutyCycle != motorDetails[motor].currentDutyCycle) {
+                logger->log(name, DEBUG, "task - motor=%d, requestedDutyCycle=%d, currentDutyCycle=%d\n", motor, motorDetails[motor].requestedDutyCycle, motorDetails[motor].currentDutyCycle);
+                int16_t delta = abs(motorDetails[motor].currentDutyCycle - motorDetails[motor].requestedDutyCycle);
+                int16_t maxDelta = (int16_t) ((now - motorDetails[motor].lastUpdateMs) * motorDetails[motor].rampPowerPerMs);
+                if (delta > maxDelta) {
+                    delta = maxDelta;
                 }
-                setMotorSpeed(currentDutyCycle);
+                logger->log(name, DEBUG, "task - delta=%d, maxDelta=%d\n", delta, maxDelta);
+                if (delta > 0) {
+                    if (motorDetails[motor].currentDutyCycle > motorDetails[motor].requestedDutyCycle) {
+                        motorDetails[motor].currentDutyCycle = max(-100, motorDetails[motor].currentDutyCycle - delta);
+                    } else {
+                        motorDetails[motor].currentDutyCycle = min(100, motorDetails[motor].currentDutyCycle + delta);
+                    }
+                    setDutyCycle(motor, motorDetails[motor].currentDutyCycle);
+                    motorDetails[motor].lastUpdateMs = now;
+                }
+            } else {
+                if (now > (motorDetails[motor].lastUpdateMs + (motorDetails[motor].timeoutMs / 2))) {
+                    setDutyCycle(motor, motorDetails[motor].currentDutyCycle);
+                    motorDetails[motor].lastUpdateMs = now;
+                }
             }
         }
-        lastUpdateMs = now;
     }
 
-    void DRV8871Driver::setMotorSpeed(int16_t dutyCycle) {
-        logger->log(name, DEBUG, "setMotorSpeed %d\n", dutyCycle);
+    void DRV8871Driver::setDutyCycle(uint8_t motor, int16_t dutyCycle) {
+//        logger->log(name, DEBUG, "setDutyCycle motor: %d, dutyCycle: %d\n", motor, dutyCycle);
+        if ((motorDetails[motor].out1 < 0) || (motorDetails[motor].out2 < 0)) {
+            return;
+        }
         droid::services::PWMService* pwmService = system->getPWMService();
         if (pwmService) {
             if (dutyCycle == 0) {
-                //Braking
-                pwmService->setPWMpercent(out1, 100);
-                pwmService->setPWMpercent(out2, 100);
+                pwmService->setPWMpercent(motorDetails[motor].out1, 0);
+                pwmService->setPWMpercent(motorDetails[motor].out2, 0);
             } else if (dutyCycle > 0) {
-                pwmService->setPWMpercent(out2, 0);
-                pwmService->setPWMpercent(out1, abs(dutyCycle), timeoutMs);
+                pwmService->setPWMpercent(motorDetails[motor].out1, abs(dutyCycle), motorDetails[motor].timeoutMs);
+                pwmService->setPWMpercent(motorDetails[motor].out2, 0);
             } else {
-                pwmService->setPWMpercent(out1, 0);
-                pwmService->setPWMpercent(out2, abs(dutyCycle), timeoutMs);
+                pwmService->setPWMpercent(motorDetails[motor].out1, 0);
+                pwmService->setPWMpercent(motorDetails[motor].out2, abs(dutyCycle), motorDetails[motor].timeoutMs);
             }
         }
     }

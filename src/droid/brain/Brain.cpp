@@ -37,12 +37,13 @@ namespace droid::brain {
 //        controller("DualSony", system),
         controller("DualRing", system),
 #endif
-        domeMotorDriver("DRV8871", system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2),
+        domeMotorDriver("Dome_DRV8871", system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2, -1, -1),
         domeMgr("DomeMgr", system, &controller, &domeMotorDriver),
         actionMgr("ActionMgr", system, &controller),
         audioDriver("HCRDriver", system, HCR_STREAM),
         audioMgr("AudioMgr", system, &audioDriver),
-        driveMotorDriver("Sabertooth", system, (byte) 128, SABERTOOTH_STREAM),
+//        driveMotorDriver("Sabertooth", system, (byte) 128, SABERTOOTH_STREAM),
+        driveMotorDriver("Drive_DRV8871", system, PWMSERVICE_DRIVE_MOTOR0_OUT1, PWMSERVICE_DRIVE_MOTOR0_OUT2, PWMSERVICE_DRIVE_MOTOR1_OUT1, PWMSERVICE_DRIVE_MOTOR1_OUT2),
         driveMgr("DriveMgr", system, &controller, &driveMotorDriver) {
 
         system->setPWMService(&pwmService);  //Necessary to avoid circular reference at initialization
@@ -53,7 +54,8 @@ namespace droid::brain {
         actionMgr.addCmdHandler(new droid::command::StreamCmdHandler("Body", system, BODY_STREAM));
         actionMgr.addCmdHandler(new droid::audio::AudioCmdHandler("HCR", system, &audioMgr));
         actionMgr.addCmdHandler(new droid::brain::LocalCmdHandler("Brain", system, this, CONSOLE_STREAM));
-        actionMgr.addCmdHandler(new droid::brain::PanelCmdHandler("Panel", system));
+        droid::brain::PanelCmdHandler* panelCmdHandler = new droid::brain::PanelCmdHandler("Panel", system);
+        actionMgr.addCmdHandler(panelCmdHandler);
 
         //Setup list of all Active BaseComponents
         componentList.push_back(&pwmService);
@@ -64,6 +66,7 @@ namespace droid::brain {
         componentList.push_back(&driveMgr);
         componentList.push_back(&audioMgr);
         componentList.push_back(&actionMgr);
+        componentList.push_back(panelCmdHandler);
     }
 
     void Brain::init() {
@@ -84,8 +87,6 @@ namespace droid::brain {
         for (droid::core::BaseComponent* component : componentList) {
             component->init();
         }
-
-        pwmService.setOscFreq(PCA9685_OSC_FREQUENCY);
     }
 
     void Brain::factoryReset() {

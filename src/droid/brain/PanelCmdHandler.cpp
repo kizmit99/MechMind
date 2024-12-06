@@ -17,7 +17,7 @@
 #define CONFIG_KEY_PANEL_PWMOUT                   "Panel%dPWMOut"
 #define CONFIG_DEFAULT_PANEL_OPEN_MICROSECONDS    1800
 #define CONFIG_DEFAULT_PANEL_CLOSE_MICROSECONDS   800
-#define CONFIG_DEFAULT_PANEL_TIME_MILLISECONDS    20
+#define CONFIG_DEFAULT_PANEL_TIME_MILLISECONDS    1000
 
 namespace droid::brain {
     PanelCmdHandler::PanelCmdHandler(const char* name, droid::core::System* system) :
@@ -81,7 +81,7 @@ namespace droid::brain {
             buf[3] = command[9];
             buf[4] = '\0';
             uint16_t pos = atoi(buf);
-            pwmService->setPWMuS(panelDetails[panel - 1].pwmOutput, pos, 50);
+            pwmService->setPWMuS(panelDetails[panel - 1].pwmOutput, pos, 100);
             return true;
         }
         return false;
@@ -115,7 +115,7 @@ namespace droid::brain {
             snprintf(keyOpen, sizeof(keyOpen), CONFIG_KEY_PANEL_OPEN_MICROSECONDS, i+1);
             snprintf(keyClose, sizeof(keyClose), CONFIG_KEY_PANEL_CLOSE_MICROSECONDS, i+1);
             snprintf(keyTime, sizeof(keyTime), CONFIG_KEY_PANEL_TIME_MILLISECONDS, i+1);
-            snprintf(keyTime, sizeof(keyPWM), CONFIG_KEY_PANEL_PWMOUT, i+1);
+            snprintf(keyPWM, sizeof(keyPWM), CONFIG_KEY_PANEL_PWMOUT, i+1);
             config->putInt(name, keyOpen, CONFIG_DEFAULT_PANEL_OPEN_MICROSECONDS);
             config->putInt(name, keyClose, CONFIG_DEFAULT_PANEL_CLOSE_MICROSECONDS);
             config->putInt(name, keyTime, CONFIG_DEFAULT_PANEL_TIME_MILLISECONDS);
