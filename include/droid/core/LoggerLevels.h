@@ -1,5 +1,5 @@
 /*
- * Droid Brain Program
+ * MechMind Program
  * Author: Kizmit99
  * License: CC BY-NC-SA 4.0
  *
@@ -15,7 +15,7 @@ LOGGER->setLogLevel("R2D2", INFO);
 LOGGER->setLogLevel("StubPWM", INFO);
 LOGGER->setLogLevel("StubCtrl", INFO);
 LOGGER->setLogLevel("PCA9685", INFO);
-LOGGER->setLogLevel("DualSony", INFO);
+LOGGER->setLogLevel("DualSony", DEBUG);
 LOGGER->setLogLevel("DualRing", DEBUG);
 LOGGER->setLogLevel("Dome_DRV8871", INFO);
 LOGGER->setLogLevel("Drive_DRV8871", INFO);

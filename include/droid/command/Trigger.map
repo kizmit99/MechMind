@@ -1,5 +1,5 @@
 /*
- * Droid Brain Program
+ * MechMind Program
  * Author: Kizmit99
  * License: CC BY-NC-SA 4.0
  *
