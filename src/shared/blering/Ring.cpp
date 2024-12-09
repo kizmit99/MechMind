@@ -5,7 +5,7 @@
  *
  * This source code is open-source for non-commercial use. 
  * For commercial use, please obtain a license from the author.
- * For more information, visit https://github.com/kizmit99/DroidBrain
+ * For more information, visit https://github.com/kizmit99/MechMind
  */
 
 #include "shared/blering/Ring.h"
