@@ -15,9 +15,9 @@
 #define CONFIG_KEY_DRIVEMGR_TURNSPEED       "TurnSpeed"
 #define CONFIG_KEY_DRIVEMGR_DEADBAND        "Deadband"
 
-#define CONFIG_DEFAULT_DRIVEMGR_NORMALSPEED  70
+#define CONFIG_DEFAULT_DRIVEMGR_NORMALSPEED  90
 #define CONFIG_DEFAULT_DRIVEMGR_TURBOSPEED   100
-#define CONFIG_DEFAULT_DRIVEMGR_TURNSPEED    50
+#define CONFIG_DEFAULT_DRIVEMGR_TURNSPEED    70
 #define CONFIG_DEFAULT_DRIVEMGR_DEADBAND     16
 
 
@@ -26,7 +26,7 @@ namespace {
         if (in == 0) {
             return 0;   //Maintain zero
         }
-        return map(in, -127, 128, min, max);
+        return map(in, -100, 100, min, max);
     }
 }
 

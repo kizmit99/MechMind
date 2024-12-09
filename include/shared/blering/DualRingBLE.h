@@ -50,6 +50,7 @@ namespace blering {
         bool isModifierPressed(Controller controller, Modifier button);
         bool isButtonPressed(Controller controller, Button button);
         bool isButtonClicked(Controller controller, Clicker button);
+        //Joystick return value ranges from -128 to 127 (native joystick coordinates)
         int8_t getJoystick(Controller controller, Axis direction);
 
         Ring* getRing(Controller controller);

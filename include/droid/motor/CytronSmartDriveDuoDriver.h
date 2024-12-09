@@ -27,7 +27,9 @@ namespace droid::motor {
         void logConfig() override;
         void failsafe() override;
 
+        //Motor speed should be specified in a range from -100 to +100
         bool setMotorSpeed(uint8_t motor, int8_t speed);
+        //Joystick Positions should be a value between -100 and +100 for each axis
         bool arcadeDrive(int8_t joystickX, int8_t joystickY);
         void stop();
 

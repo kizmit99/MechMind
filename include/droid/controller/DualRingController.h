@@ -26,6 +26,7 @@ namespace droid::controller {
         void failsafe() override;
 
         void setCritical(bool isCritical);
+        //Joystick Position should be returned as a value between -100 and +100 for each axis
         int8_t getJoystickPosition(Joystick, Axis);
         String getTrigger();
 

@@ -175,6 +175,7 @@ namespace droid::controller {
         controller->isConnected = false;
     }
 
+    // Note this method return normalized Joystick positions in the range of -100 to +100
     int8_t DualSonyMoveController::getJoystickPosition(Joystick joystick, Axis axis) {
         //This class supports operating with either one or two controllers.
         //The general case is two controllers connected and this method returns the
@@ -241,9 +242,13 @@ namespace droid::controller {
         }
 
         if (abs(rawPosition) <= deadband) {
-            return 0;
+            rawPosition = 0;
         }
-        return rawPosition;
+        int8_t normalizedPosition = map(rawPosition, -128, 127, -100, 100);
+        if (rawPosition == 0) {
+            normalizedPosition = 0;
+        }
+        return normalizedPosition;
     }
 
     void DualSonyMoveController::onInitPS3(Joystick which) {

@@ -24,7 +24,9 @@ namespace droid::motor {
         virtual void logConfig() = 0;
         virtual void failsafe() = 0;
 
+        //Motor speed should be specified in a range from -100 to +100
         virtual bool setMotorSpeed(uint8_t motor, int8_t speed) = 0;
+        //Joystick Positions should be a value between -100 and +100 for each axis
         virtual bool arcadeDrive(int8_t joystickX, int8_t joystickY) = 0;
         virtual void stop() = 0;
     };

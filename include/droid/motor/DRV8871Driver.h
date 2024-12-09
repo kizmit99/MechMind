@@ -23,12 +23,14 @@ namespace droid::motor {
         void logConfig() override;
         void failsafe() override;
 
+        //Motor speed should be specified in a range from -100 to +100
         bool setMotorSpeed(uint8_t motor, int8_t speed);
+        //Joystick Positions should be a value between -100 and +100 for each axis
         bool arcadeDrive(int8_t joystickX, int8_t joystickY);
         void stop();
 
     private:
-        void setDutyCycle(uint8_t motor, int16_t speed);
+        void setDutyCycle(uint8_t motor, int8_t speed);
         
         struct {
             // Pin Numbers
@@ -40,8 +42,8 @@ namespace droid::motor {
             float_t rampPowerPerMs = 1.0;
             ulong lastCommandMs = 0;
             ulong lastUpdateMs = 0;
-            int16_t requestedDutyCycle = 0;
-            int16_t currentDutyCycle = 0;
+            int8_t requestedDutyCycle = 0;
+            int8_t currentDutyCycle = 0;
         } motorDetails[2];
     };
 }

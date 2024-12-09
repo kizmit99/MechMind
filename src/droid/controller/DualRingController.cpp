@@ -74,9 +74,8 @@ namespace droid::controller {
         }
     }
 
+    //This method return normalized joystick position (range -100 to +100)
     int8_t DualRingController::getJoystickPosition(Controller::Joystick controller, Controller::Axis axis) {
-        //Note that this method returns an int, not a uint!  Range is -128 to 127, not 0 to 255!
-
         blering::DualRingBLE::Controller mappedController;
         if (controller == Controller::RIGHT) {
             mappedController = DualRingBLE_Drive;
@@ -90,8 +89,12 @@ namespace droid::controller {
             mappedAxis = DualRingBLE_X;
         }
 
-        int8_t value = rings.getJoystick(mappedController, mappedAxis);
-        return value;
+        int8_t nativeValue = rings.getJoystick(mappedController, mappedAxis);
+        int8_t normalizedValue = map(nativeValue, -128, 127, -100, 100);
+        if (nativeValue == 0) {
+            normalizedValue = 0;
+        }
+        return normalizedValue;
     }
 
     String DualRingController::getTrigger() {

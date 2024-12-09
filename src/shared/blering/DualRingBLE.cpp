@@ -318,7 +318,7 @@ namespace blering {
 
         logger->log(name, DEBUG, "Before loading Prefs, Drive: %s, Dome: %s\n", DriveMAC, DomeMAC);
         strncpy(DriveMAC, config->getString(name, CONFIG_KEY_BLERING_DRIVEMAC, CONFIG_DEFAULT_BLERING_DRIVEMAC).c_str(), sizeof(DriveMAC));
-        strncpy(DriveMAC, config->getString(name, CONFIG_KEY_BLERING_DOMEMAC, CONFIG_DEFAULT_BLERING_DOMEMAC).c_str(), sizeof(DomeMAC));
+        strncpy(DomeMAC, config->getString(name, CONFIG_KEY_BLERING_DOMEMAC, CONFIG_DEFAULT_BLERING_DOMEMAC).c_str(), sizeof(DomeMAC));
         logger->log(name, DEBUG, "After  loading Prefs, Drive: %s, Dome: %s\n", DriveMAC, DomeMAC);
 
         NimBLEDevice::init(name);

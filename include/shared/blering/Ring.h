@@ -34,6 +34,7 @@ namespace blering {
 
         bool isButtonPressed(MagicseeR1::Button button);
         bool isButtonClicked(MagicseeR1::Button button);
+        //Joystick return value ranges from -128 to 127 (native joystick coordinates)
         int8_t getJoystick(MagicseeR1::Direction direction);
 
         void init(const char* name, Logger* logger);

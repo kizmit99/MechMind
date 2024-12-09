@@ -51,30 +51,45 @@ namespace droid::motor {
         stop();
     }
 
+    //Note that the motor param for this method refers to motor index (0 or 1), not (1 or 2)
+    // And speed should be specified in the normalized range from -100 to +100
     bool CytronSmartDriveDuoDriver::setMotorSpeed(uint8_t motor, int8_t speed) {
         if (motor > 1) {return false;}
+        if (speed < -100) {speed = -100;}
+        if (speed > 100) {speed = 100;}
         if (abs(speed) <= deadband) {
             speed = 0;
         }
         lastCommandMs = millis();
-        motorSpeed[motor] = speed;
+
+        int8_t nativeSpeed = map(speed, -100, 100, -128, 127);
+        if (speed == 0) {
+            nativeSpeed = 0;
+        }
+        motorSpeed[motor] = nativeSpeed;
+        
         wrapped.motor(motorSpeed[0], motorSpeed[1]);
         return true;
     }
 
+    //Joystick positions specified as normalized values between -100 and +100
     bool CytronSmartDriveDuoDriver::arcadeDrive(int8_t joystickX, int8_t joystickY) {
+        if (joystickX < -100) {joystickX = -100;}
+        if (joystickX > 100) {joystickX = 100;}
+        if (joystickY < -100) {joystickY = -100;}
+        if (joystickY > 100) {joystickY = 100;}
         lastCommandMs = millis();
         // Scale joystick inputs to motor output ranges 
-        int forward = joystickX; // Forward/backward control 
-        int turn = joystickY; // Left/right control 
+        int forward = joystickY; // Forward/backward control 
+        int turn = joystickX; // Left/right control 
         
         // Calculate the motor speeds based on joystick input 
         int leftMotorSpeed = forward + turn; 
         int rightMotorSpeed = forward - turn; 
         
         // Ensure the motor speeds are within the valid range (-127 to 128) 
-        leftMotorSpeed = std::max(-127, std::min(128, leftMotorSpeed)); 
-        rightMotorSpeed = std::max(-127, std::min(128, rightMotorSpeed));
+        leftMotorSpeed = std::max(-100, std::min(100, leftMotorSpeed)); 
+        rightMotorSpeed = std::max(-100, std::min(100, rightMotorSpeed));
 
         bool supported = true;
         supported &= setMotorSpeed(0, leftMotorSpeed);

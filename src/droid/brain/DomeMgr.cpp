@@ -23,14 +23,14 @@
 // #define CONFIG_KEY_DOMEMGR_AUTODOME_AUDIO       "AutoAudio"
 // #define CONFIG_KEY_DOMEMGR_AUTODOME_LIGHTS      "AutoLights"
 
-#define CONFIG_DEFAULT_DOMEMGR_SPEED                127
+#define CONFIG_DEFAULT_DOMEMGR_SPEED                100
 #define CONFIG_DEFAULT_DOMEMGR_360TIME              5000
 #define CONFIG_DEFAULT_DOMEMGR_DEADBAND             16
 #define CONFIG_DEFAULT_DOMEMGR_AUTODOME_ENABLE      true
 #define CONFIG_DEFAULT_DOMEMGR_AUTODOME_AUTOENABLE  true
 #define CONFIG_DEFAULT_DOMEMGR_AUTODOME_AUTO_IDLE   30000
 #define CONFIG_DEFAULT_DOMEMGR_AUTODOME_MIN_SPEED   30
-#define CONFIG_DEFAULT_DOMEMGR_AUTODOME_MAX_SPEED   90
+#define CONFIG_DEFAULT_DOMEMGR_AUTODOME_MAX_SPEED   80
 #define CONFIG_DEFAULT_DOMEMGR_AUTODOME_MIN_DELAY   3000
 #define CONFIG_DEFAULT_DOMEMGR_AUTODOME_MAX_DELAY   20000
 // #define CONFIG_DEFAULT_DOMEMGR_AUTODOME_AUDIO       true
@@ -41,7 +41,7 @@ namespace {     //Local helper methods
         if (in == 0) {
             return 0;   //Maintain zero
         }
-        return map(in, -127, 128, min, max);
+        return map(in, -100, 100, min, max);
     }
 
     long randomBetween(long min, long max) {

@@ -87,16 +87,22 @@ namespace droid::motor {
     }
     
 
-    //Note that the motor param for this method refers to motor index (0 or 1), not (1 or 2)!
+    //Note that the motor param for this method refers to motor index (0 or 1), not (1 or 2)
+    // And speed should be specified in the normalized range from -100 to +100
     bool SabertoothDriver::setMotorSpeed(uint8_t motor, int8_t speed) {
         if (motor > 1) {return false;}
-        if (speed > 127) {speed = 127;}
+        if (speed < -100) {speed = -100;}
+        if (speed > 100) {speed = 100;}
 
         //Throttle motor updates when resending the same speed as last time
         if ((speed != lastMotorSpeed[motor]) ||
             (millis() > (lastMotorUpdate[motor] + SABERTOOTH_UPDATE_THROTTLE))) {
             lastMotorUpdate[motor] = millis();
-            wrapped.motor(motor + 1, speed);
+            int8_t nativeSpeed = map(speed, -100, 100, -128, 127);
+            if (speed == 0) {
+                nativeSpeed = 0;
+            }
+            wrapped.motor(motor + 1, nativeSpeed);
         }
         if (speed != lastMotorSpeed[motor]) {
             logger->log(name, DEBUG, "setMotorSpeed(%d, %d)\n", motor, speed);
@@ -105,18 +111,23 @@ namespace droid::motor {
         return true;
     }
     
+    //Joystick positions specified as normalized values between -100 and +100
     bool SabertoothDriver::arcadeDrive(int8_t joystickX, int8_t joystickY) {
+        if (joystickX < -100) {joystickX = -100;}
+        if (joystickX > 100) {joystickX = 100;}
+        if (joystickY < -100) {joystickY = -100;}
+        if (joystickY > 100) {joystickY = 100;}
         // Scale joystick inputs to motor output ranges 
-        int forward = joystickX; // Forward/backward control 
-        int turn = joystickY; // Left/right control 
+        int forward = joystickY; // Forward/backward control 
+        int turn = joystickX; // Left/right control 
         
         // Calculate the motor speeds based on joystick input 
         int leftMotorSpeed = forward + turn; 
         int rightMotorSpeed = forward - turn; 
         
-        // Ensure the motor speeds are within the valid range (-127 to 128) 
-        leftMotorSpeed = std::max(-127, std::min(128, leftMotorSpeed)); 
-        rightMotorSpeed = std::max(-127, std::min(128, rightMotorSpeed));
+        // Ensure the motor speeds are within the valid range (-100 to 100) 
+        leftMotorSpeed = std::max(-100, std::min(100, leftMotorSpeed)); 
+        rightMotorSpeed = std::max(-100, std::min(100, rightMotorSpeed));
 
         bool supported = true;
         supported &= setMotorSpeed(0, leftMotorSpeed);

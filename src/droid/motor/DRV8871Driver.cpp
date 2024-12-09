@@ -66,34 +66,38 @@ namespace droid::motor {
         motorDetails[1].requestedDutyCycle = 0;
     }
 
+    //Speed should be specified in the range -100 to +100
     bool DRV8871Driver::setMotorSpeed(uint8_t motor, int8_t speed) {
         if (motor > 1) {return false;}
+        if (speed < -100) {speed = -100;}
+        if (speed > 100) {speed = 100;}
         if (abs(speed) <= motorDetails[motor].deadband) {
             speed = 0;
         }
 
         motorDetails[motor].lastCommandMs = millis();
-        if (speed == 0) {
-            motorDetails[motor].requestedDutyCycle = 0;
-        } else {
-            motorDetails[motor].requestedDutyCycle = map(speed, -128, 127, -100, 100);
-        }
+        motorDetails[motor].requestedDutyCycle = speed;
         task();
         return true;
     }
 
+    //Joystick positions should be passed as normalized (-100 to +100)
     bool DRV8871Driver::arcadeDrive(int8_t joystickX, int8_t joystickY) {
+        if (joystickX < -100) {joystickX = -100;}
+        if (joystickX > 100) {joystickX = 100;}
+        if (joystickY < -100) {joystickY = -100;}
+        if (joystickY > 100) {joystickY = 100;}
         // Scale joystick inputs to motor output ranges 
-        int forward = joystickX; // Forward/backward control 
-        int turn = joystickY; // Left/right control 
+        int forward = joystickY; // Forward/backward control 
+        int turn = joystickX; // Left/right control 
         
         // Calculate the motor speeds based on joystick input 
         int leftMotorSpeed = forward + turn; 
         int rightMotorSpeed = forward - turn; 
         
-        // Ensure the motor speeds are within the valid range (-127 to 128) 
-        leftMotorSpeed = std::max(-127, std::min(128, leftMotorSpeed)); 
-        rightMotorSpeed = std::max(-127, std::min(128, rightMotorSpeed));
+        // Ensure the motor speeds are within the valid range (-100 to 100) 
+        leftMotorSpeed = std::max(-100, std::min(100, leftMotorSpeed)); 
+        rightMotorSpeed = std::max(-100, std::min(100, rightMotorSpeed));
 
         bool supported = true;
         supported &= setMotorSpeed(0, leftMotorSpeed);
@@ -143,7 +147,7 @@ namespace droid::motor {
         }
     }
 
-    void DRV8871Driver::setDutyCycle(uint8_t motor, int16_t dutyCycle) {
+    void DRV8871Driver::setDutyCycle(uint8_t motor, int8_t dutyCycle) {
 //        logger->log(name, DEBUG, "setDutyCycle motor: %d, dutyCycle: %d\n", motor, dutyCycle);
         if ((motorDetails[motor].out1 < 0) || (motorDetails[motor].out2 < 0)) {
             return;
