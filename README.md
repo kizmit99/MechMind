@@ -45,6 +45,7 @@ It is designed to run exclusively on ESP32 based microcontrollers and to be comp
 ## Getting Started
 
 This needs to be rewritten to actually be helpful...
+
 To get started with the MechMind Program, follow the steps below:
 
 1. **Hardware Setup**:
