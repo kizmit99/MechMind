@@ -61,9 +61,7 @@ namespace droid::brain {
     void DriveMgr::task() {
         unsigned long begin = millis();
         int8_t joyX = controller->getJoystickPosition(droid::controller::Controller::Joystick::RIGHT, droid::controller::Controller::Axis::X);
-        if (millis() > begin + 20) {logger->log(name, WARN, ">20ms trip 1, %dms\n",(millis() - begin)); begin=millis();}
         int8_t joyY = controller->getJoystickPosition(droid::controller::Controller::Joystick::RIGHT, droid::controller::Controller::Axis::Y);
-        if (millis() > begin + 20) {logger->log(name, WARN, ">20ms trip 2, %dms\n",(millis() - begin)); begin=millis();}
         if (!droidState->stickEnable) {
             joyX = 0;
             joyY = 0;
@@ -74,19 +72,14 @@ namespace droid::brain {
         if (abs(joyY) <= deadband) {
             joyY = 0;
         }
-        if (millis() > begin + 20) {logger->log(name, WARN, ">20ms trip 3, %dms\n",(millis() - begin)); begin=millis();}
         if (droidState->turboSpeed) {
             joyX = scale(joyX, -turboSpeed, turboSpeed);
         } else {
             joyX = scale(joyX, -normalSpeed, normalSpeed);
         }
-        if (millis() > begin + 20) {logger->log(name, WARN, ">20ms trip 4, %dms\n",(millis() - begin)); begin=millis();}
         joyY = scale(joyY, -turnSpeed, turnSpeed);
-        if (millis() > begin + 20) {logger->log(name, WARN, ">20ms trip 5, %dms\n",(millis() - begin)); begin=millis();}
         controller->setCritical((abs(joyX) > 0) || (abs(joyY) > 0));
-        if (millis() > begin + 20) {logger->log(name, WARN, ">20ms trip 6, %dms\n",(millis() - begin)); begin=millis();}
         driveMotor->arcadeDrive(joyX, joyY);
-        if (millis() > begin + 20) {logger->log(name, WARN, ">20ms trip 7, %dms\n",(millis() - begin)); begin=millis();}
     }
 
     void DriveMgr::failsafe() {

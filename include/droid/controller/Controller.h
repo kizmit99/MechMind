@@ -14,6 +14,10 @@
 namespace droid::controller {
     class Controller : public droid::core::BaseComponent {
     public:
+
+        //Axis Orientation defined as:
+        //  X - Positive = Right, Negative = Left
+        //  Y - Positive = Forward, Negative = Reverse
         enum Axis {
             X, Y};
         
