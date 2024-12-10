@@ -11,9 +11,13 @@
 #include "droid/brain/Brain.h"
 #include "droid/core/System.h"
 #include "droid/core/hardware.h"
+#include "shared/common/BufferedStream.h"
+
+#define LOGNAME "Main"
 
 droid::core::System* sys;
 droid::brain::Brain* brain;
+BufferedStream* bufferedStream;
 
 void setup() {
 
@@ -25,14 +29,24 @@ void setup() {
     SABERTOOTH_STREAM_SETUP;
     
     delay(500);
-        
-    sys = new droid::core::System(LOGGER_STREAM, INFO);
+
+    bufferedStream = new BufferedStream(LOGGER_STREAM, 10240);
+    sys = new droid::core::System(bufferedStream, INFO);
     brain = new droid::brain::Brain("R2D2", sys);
 
     brain->init();
     brain->logConfig();
 }
 
+#define ONE_MINUTE 60000
+ulong next = millis() + ONE_MINUTE;
+
 void loop() {
     brain->task();
+    bufferedStream->task();
+
+    if (millis() >= next) {
+        sys->getLogger()->log(LOGNAME, INFO, "Free Memory: %d\n", ESP.getFreeHeap());
+        next = next + ONE_MINUTE;
+    }
 }

@@ -11,12 +11,13 @@
 #pragma once
 
 #ifdef LOGGER
+LOGGER->setLogLevel("Main", INFO);
 LOGGER->setLogLevel("R2D2", INFO);
 LOGGER->setLogLevel("StubPWM", INFO);
 LOGGER->setLogLevel("StubCtrl", INFO);
 LOGGER->setLogLevel("PCA9685", INFO);
 LOGGER->setLogLevel("DualSony", DEBUG);
-LOGGER->setLogLevel("DualRing", DEBUG);
+LOGGER->setLogLevel("DualRing", INFO);
 LOGGER->setLogLevel("Dome_DRV8871", INFO);
 LOGGER->setLogLevel("Drive_DRV8871", INFO);
 LOGGER->setLogLevel("DomeMgr", INFO);
@@ -31,8 +32,9 @@ LOGGER->setLogLevel("Body", INFO);
 LOGGER->setLogLevel("HCR", INFO);
 LOGGER->setLogLevel("Panel", INFO);
 LOGGER->setLogLevel("Brain", INFO);
-LOGGER->setLogLevel("DualRingBLE", DEBUG);
-LOGGER->setLogLevel("driveRing", DEBUG);
-LOGGER->setLogLevel("domeRing", DEBUG);
-LOGGER->setLogLevel("ringBLECB", DEBUG);
+LOGGER->setLogLevel("DualRingBLE", INFO);
+LOGGER->setLogLevel("driveRing", INFO);
+LOGGER->setLogLevel("domeRing", INFO);
+LOGGER->setLogLevel("ringBLECB", INFO);
+LOGGER->setLogLevel("AdvDevCB", INFO);
 #endif
