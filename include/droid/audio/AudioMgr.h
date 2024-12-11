@@ -49,8 +49,10 @@ namespace droid::audio {
         float volume;
         bool randomPlayEnabled;
         uint32_t nextRandomTime = 0;
+        uint32_t lastScheduledCmd = 0;
         int minRandomMilliSeconds;
         int maxRandomMilliSeconds;
+        int cmdStaggerMs = 0;
 
         void queueCommand(const char* command, unsigned long delayMs = 0);
         void randomPlay();

@@ -9,7 +9,6 @@
  */
 
 #pragma once
-#include <DFRobotDFPlayerMini.h>
 #include "droid/audio/AudioDriver.h"
 
 namespace droid::audio {
@@ -22,9 +21,14 @@ namespace droid::audio {
         const char* getEnableRandomCmd(char* cmdBuf, size_t buflen, bool enable);
         bool executeCmd(const char* deviceCmd);
 
+        void init() override;
+
     private:
         Stream* out;
-        DFRobotDFPlayerMini dfPlayer;
-        bool initSuccess = false;
+        ulong powerOnTime = 0;
+        bool waiting = true;
+
+        void sendMsg(uint8_t command, uint8_t parm1 = 0, uint8_t parm2 = 0);
+        void tryToInit();
     };
 }

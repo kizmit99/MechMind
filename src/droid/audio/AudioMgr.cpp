@@ -16,6 +16,7 @@
 #define CONFIG_KEY_RANDOM_ENABLED   "RandomOn"
 #define CONFIG_KEY_RANDOM_MIN       "MinRandomMs"
 #define CONFIG_KEY_RANDOM_MAX       "MaxRandomMs"
+#define CONFIG_KEY_CMD_STAGGER      "CmdStaggerMs"
 
 #define CONFIG_DEFAULT_MAX_VOLUME       1.0
 #define CONFIG_DEFAULT_MIN_VOLUME       0.0
@@ -23,6 +24,7 @@
 #define CONFIG_DEFAULT_RANDOM_ENABLED   1
 #define CONFIG_DEFAULT_RANDOM_MIN       1000
 #define CONFIG_DEFAULT_RANDOM_MAX       10000
+#define CONFIG_DEFAULT_CMD_STAGGER      100
 
 #define ONE_HOUR_IN_MS 3600000
 
@@ -41,6 +43,7 @@ namespace droid::audio {
         bool enableRandomPlay = config->getBool(name, CONFIG_KEY_RANDOM_ENABLED, CONFIG_DEFAULT_RANDOM_ENABLED);
         this->minRandomMilliSeconds = config->getInt(name, CONFIG_KEY_RANDOM_MIN, CONFIG_DEFAULT_RANDOM_MIN);
         this->maxRandomMilliSeconds = config->getInt(name, CONFIG_KEY_RANDOM_MAX, CONFIG_DEFAULT_RANDOM_MAX);
+        this->cmdStaggerMs = config->getInt(name, CONFIG_KEY_CMD_STAGGER, CONFIG_DEFAULT_CMD_STAGGER);
 
         enableRandom(enableRandomPlay);
     }
@@ -81,6 +84,7 @@ namespace droid::audio {
         config->putBool(name, CONFIG_KEY_RANDOM_ENABLED, CONFIG_DEFAULT_RANDOM_ENABLED);
         config->putInt(name, CONFIG_KEY_RANDOM_MIN, CONFIG_DEFAULT_RANDOM_MIN);
         config->putInt(name, CONFIG_KEY_RANDOM_MAX, CONFIG_DEFAULT_RANDOM_MAX);
+        config->putInt(name, CONFIG_KEY_CMD_STAGGER, CONFIG_DEFAULT_CMD_STAGGER);
     }
     
     void AudioMgr::logConfig() {
@@ -90,6 +94,7 @@ namespace droid::audio {
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_RANDOM_ENABLED, config->getString(name, CONFIG_KEY_RANDOM_ENABLED, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_RANDOM_MIN, config->getString(name, CONFIG_KEY_RANDOM_MIN, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_RANDOM_MAX, config->getString(name, CONFIG_KEY_RANDOM_MAX, "").c_str());
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_CMD_STAGGER, config->getString(name, CONFIG_KEY_CMD_STAGGER, "").c_str());
     }
 
     void AudioMgr::failsafe() {
@@ -227,6 +232,22 @@ namespace droid::audio {
             return;
         }
         strncpy(newAudioCmd->command, command, INSTRUCTIONLIST_COMMAND_LEN);
-        newAudioCmd->executeTime = millis() + delayMs;
+
+        ulong now = millis();
+        if (delayMs != 0) {
+            //Don't stagger delayed commands, just assume they will not overlap
+            newAudioCmd->executeTime = now + delayMs;
+        } else {
+            //Ensure that commands are not scheduled to overlap each other
+            if (now >= (lastScheduledCmd + cmdStaggerMs)) {
+                //Stagger not required
+                lastScheduledCmd = now;
+                newAudioCmd->executeTime = now;
+            } else {
+                //We need to enforce staggering of commands
+                lastScheduledCmd += cmdStaggerMs;
+                newAudioCmd->executeTime = lastScheduledCmd;
+            }
+        }
     }
 }

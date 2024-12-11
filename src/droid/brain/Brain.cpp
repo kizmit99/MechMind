@@ -40,7 +40,8 @@ namespace droid::brain {
         domeMotorDriver("Dome_DRV8871", system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2, -1, -1),
         domeMgr("DomeMgr", system, &controller, &domeMotorDriver),
         actionMgr("ActionMgr", system, &controller),
-        audioDriver("HCRDriver", system, HCR_STREAM),
+//        audioDriver("HCRDriver", system, HCR_STREAM),
+        audioDriver("DFMiniDriver", system, DFMINI_STREAM),
         audioMgr("AudioMgr", system, &audioDriver),
 //        driveMotorDriver("Sabertooth", system, (byte) 128, SABERTOOTH_STREAM),
         driveMotorDriver("Drive_DRV8871", system, PWMSERVICE_DRIVE_MOTOR0_OUT1, PWMSERVICE_DRIVE_MOTOR0_OUT2, PWMSERVICE_DRIVE_MOTOR1_OUT1, PWMSERVICE_DRIVE_MOTOR1_OUT2),
@@ -65,6 +66,7 @@ namespace droid::brain {
         componentList.push_back(&domeMgr);
         componentList.push_back(&driveMgr);
         componentList.push_back(&audioMgr);
+        componentList.push_back(&audioDriver);
         componentList.push_back(&actionMgr);
         componentList.push_back(panelCmdHandler);
     }

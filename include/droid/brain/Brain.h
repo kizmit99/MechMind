@@ -21,6 +21,7 @@
 #include "droid/command/ActionMgr.h"
 #include "droid/audio/AudioMgr.h"
 #include "droid/audio/HCRDriver.h"
+#include "droid/audio/DFMiniDriver.h"
 #include "droid/brain/DriveMgr.h"
 #include "droid/brain/PanelCmdHandler.h"
 
@@ -58,7 +59,8 @@ namespace droid::brain {
         droid::motor::DRV8871Driver driveMotorDriver;
         DomeMgr domeMgr;
         droid::command::ActionMgr actionMgr;
-        droid::audio::HCRDriver audioDriver;
+//        droid::audio::HCRDriver audioDriver;
+        droid::audio::DFMiniDriver audioDriver;
         droid::audio::AudioMgr audioMgr;
         droid::brain::DriveMgr driveMgr;
 
