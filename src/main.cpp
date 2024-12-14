@@ -32,7 +32,7 @@ void setup() {
     delay(500);
 
     bufferedStream = new BufferedStream(LOGGER_STREAM, 10240);
-    sys = new droid::core::System(bufferedStream, INFO);
+    sys = new droid::core::System(bufferedStream, DEBUG);
     brain = new droid::brain::Brain("R2D2", sys);
 
     brain->init();
