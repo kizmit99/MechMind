@@ -27,5 +27,6 @@ namespace droid::controller {
         void setDeadband(int8_t deadband) {}
         int8_t getJoystickPosition(Joystick, Axis) {return 0;}
         String getTrigger() {return "";}
+        ControllerType getType() {return STUB;}
     };
 }

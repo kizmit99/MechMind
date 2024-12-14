@@ -24,6 +24,11 @@ namespace droid::controller {
         enum Joystick {
             LEFT, RIGHT};
 
+        //This is a hack to work around the constraint that some of the
+        //  Controller implementations do not support multiple instantiation
+        enum ControllerType {
+            STUB, DUAL_SONY, DUAL_RING};
+
         Controller(const char* name, droid::core::System* system) :
             BaseComponent(name, system) {}
         
@@ -38,5 +43,7 @@ namespace droid::controller {
         //Joystick Position should be returned as a value between -100 and +100 for each axis
         virtual int8_t getJoystickPosition(Joystick, Axis) = 0;
         virtual String getTrigger() = 0;
+
+        virtual ControllerType getType() = 0;
     };
 }

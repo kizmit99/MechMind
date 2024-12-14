@@ -9,7 +9,6 @@
  */
 
 #pragma once
-//#define BUILD_FOR_DEBUGGER
 
 //PCA9685PWM Config
 #define PCA9685_I2C_ADDRESS 0x40
@@ -42,10 +41,8 @@
 #define SABERTOOTH_STREAM_SETUP Serial2.begin(9600)
 #define BODY_STREAM &Serial
 #define BODY_STREAM_SETUP
-//#define HCR_STREAM &Serial1
-//#define HCR_STREAM_SETUP Serial1.begin(9600, SERIAL_8N1, 33, 25)
-#define DFMINI_STREAM &Serial1
-#define DFMINI_STREAM_SETUP Serial1.begin(9600, SERIAL_8N1, 33, 25)
+#define AUDIO_STREAM &Serial1
+#define AUDIO_STREAM_SETUP Serial1.begin(9600, SERIAL_8N1, 33, 25)
 
 //DualSonyMoveController
 #define CONFIG_DEFAULT_SONY_DEADBAND        20

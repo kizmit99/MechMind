@@ -69,6 +69,7 @@ namespace droid::controller {
         badDataWindow = config->getInt(name, CONFIG_KEY_SONY_BAD_DATA_WINDOW, CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW);
         deadbandX = config->getInt(name, CONFIG_KEY_SONY_DEADBAND_X, CONFIG_DEFAULT_SONY_DEADBAND);
         deadbandY = config->getInt(name, CONFIG_KEY_SONY_DEADBAND_Y, CONFIG_DEFAULT_SONY_DEADBAND);
+        
         if (Usb.Init() != 0) {
             logger->log(name, FATAL, "Unable to init() the USB stack");
         }

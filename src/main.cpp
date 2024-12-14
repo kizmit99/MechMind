@@ -25,18 +25,19 @@ void setup() {
     LOGGER_STREAM_SETUP;
     DOME_STREAM_SETUP;
     BODY_STREAM_SETUP;
-//    HCR_STREAM_SETUP;
-    DFMINI_STREAM_SETUP;
+    AUDIO_STREAM_SETUP;
     SABERTOOTH_STREAM_SETUP;
     
     delay(500);
 
     bufferedStream = new BufferedStream(LOGGER_STREAM, 10240);
-    sys = new droid::core::System(bufferedStream, DEBUG);
+    sys = new droid::core::System(LOGGER_STREAM, DEBUG);
     brain = new droid::brain::Brain("R2D2", sys);
 
     brain->init();
     brain->logConfig();
+    
+    sys->getLogger()->log(LOGNAME, INFO, "Free Memory: %d\n", ESP.getFreeHeap());
 }
 
 #define ONE_MINUTE 60000

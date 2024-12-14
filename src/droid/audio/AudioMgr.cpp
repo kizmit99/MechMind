@@ -46,6 +46,7 @@ namespace droid::audio {
         this->cmdStaggerMs = config->getInt(name, CONFIG_KEY_CMD_STAGGER, CONFIG_DEFAULT_CMD_STAGGER);
 
         enableRandom(enableRandomPlay);
+        setVolume(this->volume);
     }
     
     void AudioMgr::task() {

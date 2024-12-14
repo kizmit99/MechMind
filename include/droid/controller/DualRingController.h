@@ -29,6 +29,7 @@ namespace droid::controller {
         //Joystick Position should be returned as a value between -100 and +100 for each axis
         int8_t getJoystickPosition(Joystick, Axis);
         String getTrigger();
+        ControllerType getType() {return DUAL_RING;}
 
     private:
         static DualRingController* instance;

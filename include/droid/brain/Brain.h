@@ -10,20 +10,14 @@
 
 #pragma once
 #include "droid/core/BaseComponent.h"
-#include "droid/services/NoPWMService.h"
-#include "droid/services/PCA9685PWM.h"
-#include "droid/controller/DualSonyMoveController.h"
-#include "droid/controller/DualRingController.h"
-#include "droid/controller/StubController.h"
-#include "droid/motor/DRV8871Driver.h"
-#include "droid/motor/SabertoothDriver.h"
 #include "droid/brain/DomeMgr.h"
+#include "droid/brain/DriveMgr.h"
 #include "droid/command/ActionMgr.h"
 #include "droid/audio/AudioMgr.h"
-#include "droid/audio/HCRDriver.h"
-#include "droid/audio/DFMiniDriver.h"
-#include "droid/brain/DriveMgr.h"
-#include "droid/brain/PanelCmdHandler.h"
+#include "droid/services/PWMService.h"
+#include "droid/controller/Controller.h"
+#include "droid/motor/MotorDriver.h"
+#include "droid/audio/AudioDriver.h"
 
 namespace droid::brain {
     class Brain : droid::core::BaseComponent {
@@ -42,27 +36,16 @@ namespace droid::brain {
         void trigger(const char* trigger);
 
     private:
-        droid::core::System* system;
-#ifdef BUILD_FOR_DEBUGGER
-        droid::services::NoPWMService pwmService;
-#else
-        droid::services::PCA9685PWM pwmService;
-#endif
-#ifdef BUILD_FOR_DEBUGGER
-        droid::controller::StubController controller;
-#else
-        droid::controller::DualSonyMoveController controller;
-//        droid::controller::DualRingController controller;
-#endif
-        droid::motor::DRV8871Driver domeMotorDriver;
-//        droid::motor::SabertoothDriver driveMotorDriver;
-        droid::motor::DRV8871Driver driveMotorDriver;
-        DomeMgr domeMgr;
-        droid::command::ActionMgr actionMgr;
-//        droid::audio::HCRDriver audioDriver;
-        droid::audio::DFMiniDriver audioDriver;
-        droid::audio::AudioMgr audioMgr;
-        droid::brain::DriveMgr driveMgr;
+        droid::brain::DomeMgr* domeMgr;
+        droid::brain::DriveMgr* driveMgr;
+        droid::command::ActionMgr* actionMgr;
+        droid::audio::AudioMgr* audioMgr;
+
+        droid::services::PWMService* pwmService;
+        droid::controller::Controller* controller;
+        droid::motor::MotorDriver* driveMotorDriver;
+        droid::motor::MotorDriver* domeMotorDriver;
+        droid::audio::AudioDriver* audioDriver;
 
         std::vector<droid::core::BaseComponent*> componentList;
 
