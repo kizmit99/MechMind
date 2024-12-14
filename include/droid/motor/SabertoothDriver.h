@@ -33,7 +33,7 @@ namespace droid::motor {
 
     private:
         ::SabertoothDriver wrapped;
-        Stream* port;
+        Stream* port = nullptr;
 
         int8_t lastMotorSpeed[2] = {0};
         unsigned long lastMotorUpdate[2] = {0};

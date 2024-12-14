@@ -36,10 +36,10 @@ namespace droid::command {
         void overrideCmdMap(const char* trigger, const char* cmd);
 
     private:
-        droid::controller::Controller* controller;
+        droid::controller::Controller* controller = nullptr;
         std::map<String, String> cmdMap;
         unsigned long lastTriggerTime = 0;
-        String lastTrigger;
+        String lastTrigger = "";
         droid::core::InstructionList instructionList;
         std::vector<droid::command::CmdHandler*> cmdHandlers;
 

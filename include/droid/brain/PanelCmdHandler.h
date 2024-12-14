@@ -27,11 +27,11 @@ namespace droid::brain {
 
     private:
         struct {
-            uint16_t openMicroSeconds;
-            uint16_t closeMicroSeconds;
-            uint16_t timeMilliSeconds;
-            uint8_t pwmOutput;
-            bool isOpen;
+            uint16_t openMicroSeconds = 0;
+            uint16_t closeMicroSeconds = 0;
+            uint16_t timeMilliSeconds = 0;
+            uint8_t pwmOutput = 0;
+            bool isOpen = false;
         } panelDetails[LOCAL_PANEL_COUNT];
     };
 }

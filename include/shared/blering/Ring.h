@@ -19,11 +19,11 @@
 namespace blering {
     class Ring {
     public:
-        char address[RingAddressMaxLen];
-        NimBLEAdvertisedDevice *advertisedDevice;
+        char address[RingAddressMaxLen] = {0};
+        NimBLEAdvertisedDevice *advertisedDevice = nullptr;
         NimBLEAddress bleAddress;
-        volatile bool waitingFor;
-        volatile bool connectTo;
+        volatile bool waitingFor = false;
+        volatile bool connectTo = false;
         bool connected = false;
 
         Ring() {}
@@ -45,11 +45,11 @@ namespace blering {
         void printState();
 
     private:
-        const char* name;
-        Logger* logger;
+        const char* name = nullptr;
+        Logger* logger = nullptr;
         ReportQueue reportQueue;
         MagicseeR1 myRing;
-        MagicseeR1 *otherRing;
+        MagicseeR1 *otherRing = nullptr;
         uint32_t droppedReports = 0;
         bool L2wasPressed = false;
     };

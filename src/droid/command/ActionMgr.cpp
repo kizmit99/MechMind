@@ -175,42 +175,4 @@ namespace droid::command {
             }
         }
     }
-
-
-// // =======================================================================================
-// // This function handles the processing of custom MarcDuino panel routines
-// // =======================================================================================
-// inline void custMarcDuinoPanel()
-// {
-//     if (!sRunningCustRoutine)
-//         return;
-//     sRunningCustRoutine = false;
-//     for (int i = 0; i < SizeOfArray(sPanelStatus); i++)
-//     {
-//         PanelStatus &panel = sPanelStatus[i];
-//         if (panel.fStatus == 1)
-//         {
-//             if (panel.fStartTime + panel.fStartDelay * 1000 < millis())
-//             {
-//                 char cmd[10];
-//                 snprintf(cmd, sizeof(cmd), ":OP%02d", i+1);
-//                 sendMarcCommand(cmd);
-//                 panel.fStatus = 2;
-//             }
-//         }
-//         else if (panel.fStatus == 2)
-//         {
-//             if (panel.fStartTime + (panel.fStartDelay + panel.fDuration) * 1000 < millis())
-//             {
-//                 char cmd[10];
-//                 snprintf(cmd, sizeof(cmd), ":CL%02d", i+1);
-//                 sendMarcCommand(cmd);
-//                 panel.fStatus = 0;
-//             }
-//         }
-//         if (panel.fStatus != 0)
-//             sRunningCustRoutine = true;
-//     }
-// }
-
 }

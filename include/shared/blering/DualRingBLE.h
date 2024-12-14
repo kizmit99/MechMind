@@ -60,9 +60,9 @@ namespace blering {
         void log(LogLevel level, const char *format, ...) __attribute__ ((format (printf, 3, 4)));
 
     private:
-        const char* name;
-        Config* config;
-        Logger* logger;
+        const char* name = nullptr;
+        Config* config = nullptr;
+        Logger* logger = nullptr;
         Ring driveRing;
         Ring domeRing;
     };

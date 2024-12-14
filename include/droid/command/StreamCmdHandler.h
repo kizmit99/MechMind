@@ -18,6 +18,6 @@ namespace droid::command {
         bool process(const char* device, const char* command);
 
     private:
-        Stream* stream;
+        Stream* stream = nullptr;
     };
 }

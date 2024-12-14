@@ -39,9 +39,9 @@ namespace droid::core {
 
         const char* name;
     protected:
-        droid::core::System* system;
-        Logger* logger;
-        Config* config;
-        droid::services::DroidState* droidState;
+        droid::core::System* system = nullptr;
+        Logger* logger = nullptr;
+        Config* config = nullptr;
+        droid::services::DroidState* droidState = nullptr;
     };
 }

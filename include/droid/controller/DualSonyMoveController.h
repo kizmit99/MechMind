@@ -51,13 +51,13 @@ namespace droid::controller {
         ControllerDetails PS3Right;
         ControllerDetails PS3Left;
         static DualSonyMoveController* instance;
-        void (*statusChangeCallback)(Controller*);
-        bool isCritical;
-        uint32_t activeTimeout;
-        uint32_t inactiveTimeout;
-        uint32_t badDataWindow;
-        int8_t deadbandX;
-        int8_t deadbandY;
+        void (*statusChangeCallback)(Controller*) = nullptr;
+        bool isCritical = false;
+        uint32_t activeTimeout = 0;
+        uint32_t inactiveTimeout = 0;
+        uint32_t badDataWindow = 0;
+        int8_t deadbandX = 0;
+        int8_t deadbandY = 0;
 
         void onInitPS3(Joystick which);
         void faultCheck(ControllerDetails* controller);

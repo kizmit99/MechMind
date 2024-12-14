@@ -32,6 +32,6 @@ namespace droid::core {
         Config config;
         Logger logger;
         droid::services::DroidState droidState;
-        droid::services::PWMService* pwmService;
+        droid::services::PWMService* pwmService = nullptr;
     };
 }

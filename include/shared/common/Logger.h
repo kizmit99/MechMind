@@ -23,9 +23,9 @@ public:
         name(compName),
         next(NULL) {
     };
-    LogConfigEntry* next;
-    const char* name;
-    LogLevel level;
+    LogConfigEntry* next = nullptr;
+    const char* name = nullptr;
+    LogLevel level = DEBUG;
 };
 
 class Logger {
@@ -115,10 +115,10 @@ public:
 private:
     const char* const levelStr[7] = {
         "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
-    Print* out;
-    char buf[256];
-    LogLevel maxLevel;
-    LogConfigEntry* logConfigList;
+    Print* out = nullptr;
+    char buf[256] = {0};
+    LogLevel maxLevel = DEBUG;
+    LogConfigEntry* logConfigList = nullptr;
 
     void updateLevel(LogLevel newLevel) {
         if (newLevel > maxLevel) {

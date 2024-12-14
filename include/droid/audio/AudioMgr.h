@@ -41,17 +41,17 @@ namespace droid::audio {
         uint32_t getRandomMaxMs();
 
     private:
-        AudioDriver* driver;
+        AudioDriver* driver = nullptr;
         droid::core::InstructionList audioCmdList;
         char cmdBuffer[INSTRUCTIONLIST_COMMAND_LEN] = {0};
-        float maxVolume;
-        float minVolume;
-        float volume;
-        bool randomPlayEnabled;
+        float maxVolume = 0;
+        float minVolume = 0;
+        float volume = 0;
+        bool randomPlayEnabled = false;
         uint32_t nextRandomTime = 0;
         uint32_t lastScheduledCmd = 0;
-        int minRandomMilliSeconds;
-        int maxRandomMilliSeconds;
+        int minRandomMilliSeconds = 0;
+        int maxRandomMilliSeconds = 0;
         int cmdStaggerMs = 0;
 
         void queueCommand(const char* command, unsigned long delayMs = 0);

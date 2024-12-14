@@ -3,9 +3,9 @@
 
 class BufferedStream : public Stream {
 private:
-    HardwareSerial* wrapped;
-    uint8_t* buffer;
-    size_t bufferSize;
+    HardwareSerial* wrapped = nullptr;
+    uint8_t* buffer = nullptr;
+    size_t bufferSize = 0;
     size_t writeIndex = 0;
     size_t readIndex = 0;
     size_t totalSize = 0;

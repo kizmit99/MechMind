@@ -33,10 +33,10 @@ namespace droid::services {
     private:
         Adafruit_PWMServoDriver pca9685Driver;
         bool initialized = false;
-        uint8_t outputEnablePin;
+        uint8_t outputEnablePin = 0;
         struct {
-            bool isActive;
-            uint32_t disableAt;
+            bool isActive = false;
+            uint32_t disableAt = 0;
         } outDetails[NUMBER_OF_PWM_OUTPUTS];
     };
 }

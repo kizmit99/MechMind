@@ -24,11 +24,10 @@ namespace droid::audio {
         void init() override;
 
     private:
-        Stream* out;
+        Stream* out = nullptr;
         ulong powerOnTime = 0;
         bool waiting = true;
 
         void sendMsg(uint8_t command, uint8_t parm1 = 0, uint8_t parm2 = 0);
-        void tryToInit();
     };
 }

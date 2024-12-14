@@ -26,12 +26,12 @@ namespace droid::brain {
         void failsafe() override;
 
     private:
-        droid::controller::Controller* controller;
-        droid::motor::MotorDriver* driveMotor;
+        droid::controller::Controller* controller = nullptr;
+        droid::motor::MotorDriver* driveMotor = nullptr;
 
-        int8_t normalSpeed;
-        int8_t turboSpeed;
-        int8_t turnSpeed;
-        int8_t deadband;
+        int8_t normalSpeed = 0;
+        int8_t turboSpeed = 0;
+        int8_t turnSpeed = 0;
+        int8_t deadband = 0;
     };
 }

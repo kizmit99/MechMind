@@ -122,6 +122,6 @@ public:
 
 private:
     Preferences preferences;
-    const char* name;
-    Logger* logger;
+    const char* name = nullptr;
+    Logger* logger = nullptr;
 };

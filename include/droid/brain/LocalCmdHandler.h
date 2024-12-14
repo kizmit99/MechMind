@@ -19,8 +19,8 @@ namespace droid::brain {
         bool process(const char* device, const char* command);
 
     private:
-        Brain* brain;
-        Stream* console;
+        Brain* brain = nullptr;
+        Stream* console = nullptr;
 
         void printHelp();
         void printCmdHelp(const char* cmdName, const char* cmdDescription);

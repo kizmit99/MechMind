@@ -51,8 +51,8 @@ namespace droid::brain {
 #ifdef BUILD_FOR_DEBUGGER
         droid::controller::StubController controller;
 #else
-//        droid::controller::DualSonyMoveController controller;
-        droid::controller::DualRingController controller;
+        droid::controller::DualSonyMoveController controller;
+//        droid::controller::DualRingController controller;
 #endif
         droid::motor::DRV8871Driver domeMotorDriver;
 //        droid::motor::SabertoothDriver driveMotorDriver;
@@ -66,7 +66,7 @@ namespace droid::brain {
 
         std::vector<droid::core::BaseComponent*> componentList;
 
-        char inputBuf[100];
+        char inputBuf[100] = {0};
         uint8_t bufIndex = 0;
 
         void processConsoleInput(Stream* cmdStream);

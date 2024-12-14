@@ -15,15 +15,15 @@
 
 namespace blering {
     typedef struct {
-        uint8_t report[32];
-        size_t report_len;
-        bool isNotify;
+        uint8_t report[32] = {0};
+        size_t report_len = 0;
+        bool isNotify = false;
     } ReportRecord;
 
     class ReportQueue {
     public:
-        const char* name;
-        Logger* logger;
+        const char* name = nullptr;
+        Logger* logger = nullptr;
         int8_t head = 0;
         int8_t tail = 0;
         int8_t count = 0;

@@ -22,6 +22,6 @@ namespace droid::audio {
         bool executeCmd(const char* deviceCmd);
 
     private:
-        Stream* out;
+        Stream* out = nullptr;
     };
 }

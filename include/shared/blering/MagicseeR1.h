@@ -51,12 +51,13 @@ namespace blering {
     private:
         static const uint8_t buttonCount = ((uint8_t) RIGHT) + 1;
 
-        bool pressedButtons[buttonCount];
-        bool clickedButtons[buttonCount];
+        bool pressedButtons[buttonCount] = {false};
+        bool clickedButtons[buttonCount] = {false};
         Mode currentMode = MODE_UNKNOWN;
 
-        const char* name;
-        Logger* logger;
+        const char* name = nullptr;
+        Logger* logger = nullptr;
+        
         const char *modeString(Mode mode);
         void unexpected(volatile void *report, size_t length);
         void testForModeChange(volatile uint8_t *report, int length);

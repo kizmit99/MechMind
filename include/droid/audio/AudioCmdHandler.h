@@ -20,7 +20,7 @@ namespace droid::audio {
         bool process(const char* device, const char* command);
 
     private:
-        AudioMgr* audioMgr;
+        AudioMgr* audioMgr = nullptr;
 
         bool parseCmd(const char* command);
     };
