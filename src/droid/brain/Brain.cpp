@@ -117,8 +117,8 @@ namespace droid::brain {
             logger->log(name, DEBUG, "Initializing DomeDRV8871\n");
             domeMotorDriver = new droid::motor::DRV8871Driver("DomeDRV8871", system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2, -1, -1);
         } else {
-            logger->log(name, DEBUG, "Initializing DomeStube\n");
-            domeMotorDriver = new droid::motor::StubMotorDriver("DomeStube", system);
+            logger->log(name, DEBUG, "Initializing DomeStub\n");
+            domeMotorDriver = new droid::motor::StubMotorDriver("DomeStub", system);
         }
 
         whichService = config->getString(name, CONFIG_KEY_BRAIN_AUDIO_DRIVER, CONFIG_OPTION_AUDIO_NONE);
@@ -228,19 +228,19 @@ namespace droid::brain {
         (new droid::motor::DRV8871Driver("DriveDRV8871", system, PWMSERVICE_DRIVE_MOTOR0_OUT1, PWMSERVICE_DRIVE_MOTOR0_OUT2, PWMSERVICE_DRIVE_MOTOR1_OUT1, PWMSERVICE_DRIVE_MOTOR1_OUT2))->factoryReset();
         (new droid::motor::StubMotorDriver("DriveStub", system))->factoryReset();
         (new droid::motor::DRV8871Driver("DomeDRV8871", system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2, -1, -1))->factoryReset();
-        (new droid::motor::StubMotorDriver("DomeStube", system))->factoryReset();
+        (new droid::motor::StubMotorDriver("DomeStub", system))->factoryReset();
         (new droid::audio::HCRDriver("HCRDriver", system, AUDIO_STREAM))->factoryReset();
         (new droid::audio::DFMiniDriver("DFMiniDriver", system, AUDIO_STREAM))->factoryReset();
         (new droid::audio::SparkDriver("SparkDriver", system, AUDIO_STREAM))->factoryReset();
         (new droid::audio::StubAudioDriver("AudioStub", system))->factoryReset();
-        (new droid::brain::DomeMgr("DomeMgr", system, controller, domeMotorDriver))->factoryReset();
-        (new droid::brain::DriveMgr("DriveMgr", system, controller, driveMotorDriver))->factoryReset();
-        (new droid::command::ActionMgr("ActionMgr", system, controller))->factoryReset();
         (new droid::audio::AudioMgr("AudioMgr", system, audioDriver))->factoryReset();
+        (new droid::audio::AudioCmdHandler("Audio", system, audioMgr))->factoryReset();
+        (new droid::command::ActionMgr("ActionMgr", system, controller))->factoryReset();
         (new droid::command::CmdLogger("CmdLogger", system))->factoryReset();
         (new droid::command::StreamCmdHandler("Dome", system, DOME_STREAM))->factoryReset();
         (new droid::command::StreamCmdHandler("Body", system, BODY_STREAM))->factoryReset();
-        (new droid::audio::AudioCmdHandler("Audio", system, audioMgr))->factoryReset();
+        (new droid::brain::DomeMgr("DomeMgr", system, controller, domeMotorDriver))->factoryReset();
+        (new droid::brain::DriveMgr("DriveMgr", system, controller, driveMotorDriver))->factoryReset();
         (new droid::brain::LocalCmdHandler("Brain", system, this, CONSOLE_STREAM))->factoryReset();
         (new droid::brain::PanelCmdHandler("Panel", system))->factoryReset();
     }

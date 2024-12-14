@@ -76,7 +76,7 @@ public:
         LogConfigEntry* head = logConfigList;
         LogConfigEntry* entry = head;
         while (entry != NULL) {
-            if (strcmp(entry->name, compName) == 0) {
+            if (strcasecmp(entry->name, compName) == 0) {
                 break;
             }
             entry = entry->next;
@@ -93,7 +93,7 @@ public:
         LogConfigEntry* head = logConfigList;
         LogConfigEntry* entry = head;
         while (entry != NULL) {
-            if (strcmp(entry->name, compName) == 0) {
+            if (strcasecmp(entry->name, compName) == 0) {
                 break;
             }
             entry = entry->next;

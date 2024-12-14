@@ -162,6 +162,9 @@ namespace droid::brain {
                 snprintf(buf, sizeof(buf), "Panel>:TP%03d%04d", atoi(parm1), atoi(parm2));
                 brain->trigger(buf);
 
+            } else if (strcasecmp(cmd, "LogLevel") == 0) {
+                logger->setLogLevel(parm1, (LogLevel) atoi(parm2));
+
             } else if ((strcasecmp(cmd, "Help") == 0) ||
                        (strcasecmp(cmd, "?") == 0)) {
                 //Provide help on using Local Commands
@@ -190,20 +193,23 @@ namespace droid::brain {
             printCmdHelp("Restart", "Perform a complete system restart");
             printCmdHelp("FactoryReset", "Restore all configuration parameters to defaults and restart the system");
             printCmdHelp("ListConfig", "Print out all of the configuration parameters");
-            printCmdHelp("SetTrigger <trigger> <action>", "Configure the Action associated with the specified Trigger");
+            printCmdHelp("SetTrigger <trigger> <action>", "Configure the Action associated with the specified Trigger - persistent across restarts");
             printParmHelp("trigger", "The Trigger to override");
             printParmHelp("action", "The new Action (list of instructions) to associate with the Trigger");
             printCmdHelp("Play <command>", "Execute the specified Trigger or Action");
             printParmHelp("command", "This can be a Trigger, or a list of instructions (see ListConfig for examples)");
-            printCmdHelp("ResetTrigger <trigger>", "Restore the default Action associated with the specified Trigger");
+            printCmdHelp("ResetTrigger <trigger>", "Restore the default Action associated with the specified Trigger - persistent across restarts");
             printParmHelp("trigger", "The Trigger to override");
-            printCmdHelp("SetConfig <namespace> <key> <newValue>", "Update the specified configuration value");
+            printCmdHelp("SetConfig <namespace> <key> <newValue>", "Update the specified configuration value - persistent across restarts");
             printParmHelp("namespace", "The namespace of the configuration entry to update (see ListConfig for valid options)");
             printParmHelp("key", "The key name of the configuration entry to update (see ListConfig for valid options)");
             printParmHelp("newValue", "The new value for the specified configuration namespace/key");
             printCmdHelp("testPanel <panel> <value>", "Test a panel by setting its servo controller to the specified (uS) value");
             printParmHelp("panel", "Number identifying the panel to test (between 1 and " TOSTRING(LOCAL_PANEL_COUNT) ")");
             printParmHelp("value", "The microSecond value to send to the PWM controlling the panel (generally between 500 and 2500)");
+            printCmdHelp("LogLevel <component> <level>", "Set the logger for the component to the level specified");
+            printParmHelp("component", "The name of the component to set level for");
+            printParmHelp("level", "The new log level: 0=DEBUG, 1=INFO, 2=WARN, 3=ERROR or 4=FATAL");
             console->print("\n");
         }
     }
