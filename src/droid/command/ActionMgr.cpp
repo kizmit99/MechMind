@@ -120,7 +120,6 @@ namespace droid::command {
                 // It's a device token
                 *greaterPos = '\0';  // Null-terminate the device name
                 strncpy(currentDevice, token, sizeof(currentDevice));
-                cumulativeDelay = 0;
                 token = greaterPos + 1;
                 continue;
             }

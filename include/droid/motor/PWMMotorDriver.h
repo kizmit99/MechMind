@@ -12,9 +12,9 @@
 #include "droid/motor/MotorDriver.h"
 
 namespace droid::motor {
-    class DRV8871Driver : public MotorDriver {
+    class PWMMotorDriver : public MotorDriver {
     public:
-        DRV8871Driver(const char* name, droid::core::System* system, int8_t M0_out1, int8_t M0_out2, int8_t M1_out1, int8_t M1_out2);
+        PWMMotorDriver(const char* name, droid::core::System* system, int8_t M0_out1, int8_t M0_out2, int8_t M1_out1, int8_t M1_out2);
 
         //Override virtual methods from MotorDriver/BaseComponent
         void init() override;

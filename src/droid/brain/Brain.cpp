@@ -20,7 +20,7 @@
 #include "droid/controller/DualSonyMoveController.h"
 #include "droid/controller/DualRingController.h"
 #include "droid/controller/StubController.h"
-#include "droid/motor/DRV8871Driver.h"
+#include "droid/motor/PWMMotorDriver.h"
 #include "droid/motor/SabertoothDriver.h"
 #include "droid/motor/StubMotorDriver.h"
 #include "droid/audio/HCRDriver.h"
@@ -47,10 +47,10 @@
 #define CONFIG_OPTION_PWMSERVICE_NONE       "None"
 
 #define CONFIG_OPTION_DRIVE_SABERTOOTH      "Sabertooth"
-#define CONFIG_OPTION_DRIVE_DRV8871         "DVR8871"
+#define CONFIG_OPTION_DRIVE_PWMMOTOR        "PWMMotor"
 #define CONFIG_OPTION_DRIVE_NONE            "None"
 
-#define CONFIG_OPTION_DOME_DRV8871          "DRV8871"
+#define CONFIG_OPTION_DOME_PWMMOTOR         "PWMMotor"
 #define CONFIG_OPTION_DOME_NONE             "None"
 
 #define CONFIG_OPTION_AUDIO_HCR             "HCR"
@@ -61,8 +61,8 @@
 #define CONFIG_DEFAULT_BRAIN_INITIALIZED     true
 #define CONFIG_DEFAULT_BRAIN_CONTROLLER      CONFIG_OPTION_CONTROLLER_DUALRING
 #define CONFIG_DEFAULT_BRAIN_PWMSERVICE      CONFIG_OPTION_PWMSERVICE_PCA9685
-#define CONFIG_DEFAULT_BRAIN_DRIVE_MOTOR     CONFIG_OPTION_DRIVE_DRV8871
-#define CONFIG_DEFAULT_BRAIN_DOME_MOTOR      CONFIG_OPTION_DOME_DRV8871
+#define CONFIG_DEFAULT_BRAIN_DRIVE_MOTOR     CONFIG_OPTION_DRIVE_PWMMOTOR
+#define CONFIG_DEFAULT_BRAIN_DOME_MOTOR      CONFIG_OPTION_DOME_PWMMOTOR
 #define CONFIG_DEFAULT_BRAIN_AUDIO_DRIVER    CONFIG_OPTION_AUDIO_DFMINI
 #define CONFIG_DEFAULT_BRAIN_STICK_ENABLE    true
 #define CONFIG_DEFAULT_BRAIN_TURBO_ENABLE    false
@@ -103,9 +103,9 @@ namespace droid::brain {
         if (whichService == CONFIG_OPTION_DRIVE_SABERTOOTH) {
             logger->log(name, DEBUG, "Initializing Sabertooth\n");
             driveMotorDriver = new droid::motor::SabertoothDriver("Sabertooth", system, (byte) 128, SABERTOOTH_STREAM);
-        } else if (whichService == CONFIG_OPTION_DRIVE_DRV8871) {
-            logger->log(name, DEBUG, "Initializing DriveDRV8871\n");
-            driveMotorDriver = new droid::motor::DRV8871Driver("DriveDRV8871", system, PWMSERVICE_DRIVE_MOTOR0_OUT1, PWMSERVICE_DRIVE_MOTOR0_OUT2, PWMSERVICE_DRIVE_MOTOR1_OUT1, PWMSERVICE_DRIVE_MOTOR1_OUT2);
+        } else if (whichService == CONFIG_OPTION_DRIVE_PWMMOTOR) {
+            logger->log(name, DEBUG, "Initializing DrivePWM\n");
+            driveMotorDriver = new droid::motor::PWMMotorDriver("DrivePWM", system, PWMSERVICE_DRIVE_MOTOR0_OUT1, PWMSERVICE_DRIVE_MOTOR0_OUT2, PWMSERVICE_DRIVE_MOTOR1_OUT1, PWMSERVICE_DRIVE_MOTOR1_OUT2);
         } else {
             logger->log(name, DEBUG, "Initializing DriveStub\n");
             driveMotorDriver = new droid::motor::StubMotorDriver("DriveStub", system);
@@ -113,9 +113,9 @@ namespace droid::brain {
 
         whichService = config->getString(name, CONFIG_KEY_BRAIN_DOME_MOTOR, CONFIG_OPTION_DOME_NONE);
         logger->log(name, DEBUG, "Requested DomeMotor: %s\n", whichService);
-        if (whichService == CONFIG_OPTION_DOME_DRV8871) {
-            logger->log(name, DEBUG, "Initializing DomeDRV8871\n");
-            domeMotorDriver = new droid::motor::DRV8871Driver("DomeDRV8871", system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2, -1, -1);
+        if (whichService == CONFIG_OPTION_DOME_PWMMOTOR) {
+            logger->log(name, DEBUG, "Initializing DomePWM\n");
+            domeMotorDriver = new droid::motor::PWMMotorDriver("DomePWM", system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2, -1, -1);
         } else {
             logger->log(name, DEBUG, "Initializing DomeStub\n");
             domeMotorDriver = new droid::motor::StubMotorDriver("DomeStub", system);
@@ -225,9 +225,9 @@ namespace droid::brain {
         (new droid::services::PCA9685PWM("PCA9685", system, PCA9685_I2C_ADDRESS, PCA9685_OUTPUT_ENABLE_PIN))->factoryReset();
         (new droid::services::NoPWMService("PWMStub", system))->factoryReset();
         (new droid::motor::SabertoothDriver("Sabertooth", system, (byte) 128, SABERTOOTH_STREAM))->factoryReset();
-        (new droid::motor::DRV8871Driver("DriveDRV8871", system, PWMSERVICE_DRIVE_MOTOR0_OUT1, PWMSERVICE_DRIVE_MOTOR0_OUT2, PWMSERVICE_DRIVE_MOTOR1_OUT1, PWMSERVICE_DRIVE_MOTOR1_OUT2))->factoryReset();
+        (new droid::motor::PWMMotorDriver("DrivePWM", system, PWMSERVICE_DRIVE_MOTOR0_OUT1, PWMSERVICE_DRIVE_MOTOR0_OUT2, PWMSERVICE_DRIVE_MOTOR1_OUT1, PWMSERVICE_DRIVE_MOTOR1_OUT2))->factoryReset();
         (new droid::motor::StubMotorDriver("DriveStub", system))->factoryReset();
-        (new droid::motor::DRV8871Driver("DomeDRV8871", system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2, -1, -1))->factoryReset();
+        (new droid::motor::PWMMotorDriver("DomePWM", system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2, -1, -1))->factoryReset();
         (new droid::motor::StubMotorDriver("DomeStub", system))->factoryReset();
         (new droid::audio::HCRDriver("HCRDriver", system, AUDIO_STREAM))->factoryReset();
         (new droid::audio::DFMiniDriver("DFMiniDriver", system, AUDIO_STREAM))->factoryReset();

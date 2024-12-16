@@ -8,18 +8,18 @@
  * For more information, visit https://github.com/kizmit99/MechMind
  */
 
-#include "droid/motor/DRV8871Driver.h"
+#include "droid/motor/PWMMotorDriver.h"
 #include "droid/services/PWMService.h"
 
-#define CONFIG_KEY_DRV8871_TIMEOUT          "Timeout"
-#define CONFIG_KEY_DRV8871_DEADBAND         "Deadband"
-#define CONFIG_KEY_DRV8871_RAMP             "RampPowerPerMs"
-#define CONFIG_DEFAULT_DRV8871_TIMEOUT      100
-#define CONFIG_DEFAULT_DRV8871_DEADBAND     3
-#define CONFIG_DEFAULT_DRV8871_RAMP         1.0
+#define CONFIG_KEY_PWMMOTOR_TIMEOUT          "Timeout"
+#define CONFIG_KEY_PWMMOTOR_DEADBAND         "Deadband"
+#define CONFIG_KEY_PWMMOTOR_RAMP             "RampPowerPerMs"
+#define CONFIG_DEFAULT_PWMMOTOR_TIMEOUT      100
+#define CONFIG_DEFAULT_PWMMOTOR_DEADBAND     3
+#define CONFIG_DEFAULT_PWMMOTOR_RAMP         1.0
 
 namespace droid::motor {
-    DRV8871Driver::DRV8871Driver(const char* name, droid::core::System* system, int8_t M0_out1, int8_t M0_out2, int8_t M1_out1, int8_t M1_out2) :
+    PWMMotorDriver::PWMMotorDriver(const char* name, droid::core::System* system, int8_t M0_out1, int8_t M0_out2, int8_t M1_out1, int8_t M1_out2) :
         MotorDriver(name, system) {
 
         motorDetails[0].out1 = M0_out1;
@@ -31,10 +31,10 @@ namespace droid::motor {
         motorDetails[1].requestedDutyCycle = 0;
     }
 
-    void DRV8871Driver::init() {
-        motorDetails[0].timeoutMs = config->getInt(name, CONFIG_KEY_DRV8871_TIMEOUT, CONFIG_DEFAULT_DRV8871_TIMEOUT);
-        motorDetails[0].deadband = config->getInt(name, CONFIG_KEY_DRV8871_DEADBAND, CONFIG_DEFAULT_DRV8871_DEADBAND);
-        motorDetails[0].rampPowerPerMs = config->getFloat(name, CONFIG_KEY_DRV8871_RAMP, CONFIG_DEFAULT_DRV8871_RAMP);
+    void PWMMotorDriver::init() {
+        motorDetails[0].timeoutMs = config->getInt(name, CONFIG_KEY_PWMMOTOR_TIMEOUT, CONFIG_DEFAULT_PWMMOTOR_TIMEOUT);
+        motorDetails[0].deadband = config->getInt(name, CONFIG_KEY_PWMMOTOR_DEADBAND, CONFIG_DEFAULT_PWMMOTOR_DEADBAND);
+        motorDetails[0].rampPowerPerMs = config->getFloat(name, CONFIG_KEY_PWMMOTOR_RAMP, CONFIG_DEFAULT_PWMMOTOR_RAMP);
         motorDetails[0].requestedDutyCycle = 0;
         setDutyCycle(0, 0);
 
@@ -45,20 +45,20 @@ namespace droid::motor {
         setDutyCycle(1, 0);
     }
 
-    void DRV8871Driver::factoryReset() {
+    void PWMMotorDriver::factoryReset() {
         config->clear(name);
-        config->putInt(name, CONFIG_KEY_DRV8871_TIMEOUT, CONFIG_DEFAULT_DRV8871_TIMEOUT);
-        config->putInt(name, CONFIG_KEY_DRV8871_DEADBAND, CONFIG_DEFAULT_DRV8871_DEADBAND);
-        config->putFloat(name, CONFIG_KEY_DRV8871_RAMP, CONFIG_DEFAULT_DRV8871_RAMP);
+        config->putInt(name, CONFIG_KEY_PWMMOTOR_TIMEOUT, CONFIG_DEFAULT_PWMMOTOR_TIMEOUT);
+        config->putInt(name, CONFIG_KEY_PWMMOTOR_DEADBAND, CONFIG_DEFAULT_PWMMOTOR_DEADBAND);
+        config->putFloat(name, CONFIG_KEY_PWMMOTOR_RAMP, CONFIG_DEFAULT_PWMMOTOR_RAMP);
     }
 
-    void DRV8871Driver::logConfig() {
-        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_DRV8871_TIMEOUT, config->getString(name, CONFIG_KEY_DRV8871_TIMEOUT, "").c_str());
-        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_DRV8871_DEADBAND, config->getString(name, CONFIG_KEY_DRV8871_DEADBAND, "").c_str());
-        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_DRV8871_RAMP, config->getString(name, CONFIG_KEY_DRV8871_RAMP, "").c_str());
+    void PWMMotorDriver::logConfig() {
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_PWMMOTOR_TIMEOUT, config->getString(name, CONFIG_KEY_PWMMOTOR_TIMEOUT, "").c_str());
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_PWMMOTOR_DEADBAND, config->getString(name, CONFIG_KEY_PWMMOTOR_DEADBAND, "").c_str());
+        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_PWMMOTOR_RAMP, config->getString(name, CONFIG_KEY_PWMMOTOR_RAMP, "").c_str());
     }
 
-    void DRV8871Driver::failsafe() {
+    void PWMMotorDriver::failsafe() {
         setDutyCycle(0, 0);
         motorDetails[0].requestedDutyCycle = 0;
 
@@ -67,7 +67,7 @@ namespace droid::motor {
     }
 
     //Speed should be specified in the range -100 to +100
-    bool DRV8871Driver::setMotorSpeed(uint8_t motor, int8_t speed) {
+    bool PWMMotorDriver::setMotorSpeed(uint8_t motor, int8_t speed) {
         if (motor > 1) {return false;}
         if (speed < -100) {speed = -100;}
         if (speed > 100) {speed = 100;}
@@ -82,7 +82,7 @@ namespace droid::motor {
     }
 
     //Joystick positions should be passed as normalized (-100 to +100)
-    bool DRV8871Driver::arcadeDrive(int8_t joystickX, int8_t joystickY) {
+    bool PWMMotorDriver::arcadeDrive(int8_t joystickX, int8_t joystickY) {
         if (joystickX < -100) {joystickX = -100;}
         if (joystickX > 100) {joystickX = 100;}
         if (joystickY < -100) {joystickY = -100;}
@@ -105,12 +105,12 @@ namespace droid::motor {
         return supported;
     }
     
-    void DRV8871Driver::stop() {
+    void PWMMotorDriver::stop() {
         setMotorSpeed(0, 0);
         setMotorSpeed(1, 0);
     }
 
-    void DRV8871Driver::task() {
+    void PWMMotorDriver::task() {
         ulong now = millis();
         for (uint8_t motor = 0; motor < 2; motor++) {
             if ((motorDetails[motor].requestedDutyCycle != 0) && (now > (motorDetails[motor].lastCommandMs + motorDetails[motor].timeoutMs))) {
@@ -147,7 +147,7 @@ namespace droid::motor {
         }
     }
 
-    void DRV8871Driver::setDutyCycle(uint8_t motor, int8_t dutyCycle) {
+    void PWMMotorDriver::setDutyCycle(uint8_t motor, int8_t dutyCycle) {
 //        logger->log(name, DEBUG, "setDutyCycle motor: %d, dutyCycle: %d\n", motor, dutyCycle);
         if ((motorDetails[motor].out1 < 0) || (motorDetails[motor].out2 < 0)) {
             return;

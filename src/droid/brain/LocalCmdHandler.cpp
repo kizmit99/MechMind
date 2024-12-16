@@ -204,7 +204,7 @@ namespace droid::brain {
             printParmHelp("namespace", "The namespace of the configuration entry to update (see ListConfig for valid options)");
             printParmHelp("key", "The key name of the configuration entry to update (see ListConfig for valid options)");
             printParmHelp("newValue", "The new value for the specified configuration namespace/key");
-            printCmdHelp("testPanel <panel> <value>", "Test a panel by setting its servo controller to the specified (uS) value");
+            printCmdHelp("TestPanel <panel> <value>", "Test a panel by setting its servo controller to the specified (uS) value");
             printParmHelp("panel", "Number identifying the panel to test (between 1 and " TOSTRING(LOCAL_PANEL_COUNT) ")");
             printParmHelp("value", "The microSecond value to send to the PWM controlling the panel (generally between 500 and 2500)");
             printCmdHelp("LogLevel <component> <level>", "Set the logger for the component to the level specified");
