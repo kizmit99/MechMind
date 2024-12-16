@@ -39,6 +39,8 @@
 #define DOME_STREAM_SETUP
 #define SABERTOOTH_STREAM &Serial2
 #define SABERTOOTH_STREAM_SETUP Serial2.begin(9600)
+#define CYTRON_STREAM &Serial2
+#define CYTRON_STREAM_SETUP
 #define BODY_STREAM &Serial
 #define BODY_STREAM_SETUP
 #define AUDIO_STREAM &Serial1

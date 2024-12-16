@@ -17,9 +17,9 @@
 
 namespace droid::motor {
 
-    CytronSmartDriveDuoDriver::CytronSmartDriveDuoDriver(const char* name, droid::core::System* system, byte address, Stream& port, uint8_t initialByte) : 
+    CytronSmartDriveDuoDriver::CytronSmartDriveDuoDriver(const char* name, droid::core::System* system, byte address, Stream* port, uint8_t initialByte) : 
         MotorDriver(name, system),
-        wrapped(address, port, initialByte) {}
+        wrapped(address, *port, initialByte) {}
 
     void CytronSmartDriveDuoDriver::init() {
         timeoutMs = config->getInt(name, CONFIG_KEY_CYTRON_TIMEOUT, CONFIG_DEFAULT_CYTRON_TIMEOUT);

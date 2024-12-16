@@ -22,6 +22,7 @@
 #include "droid/controller/StubController.h"
 #include "droid/motor/PWMMotorDriver.h"
 #include "droid/motor/SabertoothDriver.h"
+#include "droid/motor/CytronSmartDriveDuoDriver.h"
 #include "droid/motor/StubMotorDriver.h"
 #include "droid/audio/HCRDriver.h"
 #include "droid/audio/DFMiniDriver.h"
@@ -48,6 +49,7 @@
 
 #define CONFIG_OPTION_DRIVE_SABERTOOTH      "Sabertooth"
 #define CONFIG_OPTION_DRIVE_PWMMOTOR        "PWMMotor"
+#define CONFIG_OPTION_DRIVE_CYTRON          "Cytron"
 #define CONFIG_OPTION_DRIVE_NONE            "None"
 
 #define CONFIG_OPTION_DOME_PWMMOTOR         "PWMMotor"
@@ -101,8 +103,11 @@ namespace droid::brain {
         whichService = config->getString(name, CONFIG_KEY_BRAIN_DRIVE_MOTOR, CONFIG_OPTION_DRIVE_NONE);
         logger->log(name, DEBUG, "Requested DriveMotor: %s\n", whichService);
         if (whichService == CONFIG_OPTION_DRIVE_SABERTOOTH) {
-            logger->log(name, DEBUG, "Initializing Sabertooth\n");
-            driveMotorDriver = new droid::motor::SabertoothDriver("Sabertooth", system, (byte) 128, SABERTOOTH_STREAM);
+            logger->log(name, DEBUG, "Initializing Drive Sabertooth\n");
+            driveMotorDriver = new droid::motor::SabertoothDriver("DriveSaber", system, (byte) 128, SABERTOOTH_STREAM);
+        } else if (whichService == CONFIG_OPTION_DRIVE_CYTRON) {
+            logger->log(name, DEBUG, "Initializing DriveCytron\n");
+            driveMotorDriver = new droid::motor::CytronSmartDriveDuoMDDS30Driver("DriveCytron", system, (byte) 128, CYTRON_STREAM);
         } else if (whichService == CONFIG_OPTION_DRIVE_PWMMOTOR) {
             logger->log(name, DEBUG, "Initializing DrivePWM\n");
             driveMotorDriver = new droid::motor::PWMMotorDriver("DrivePWM", system, PWMSERVICE_DRIVE_MOTOR0_OUT1, PWMSERVICE_DRIVE_MOTOR0_OUT2, PWMSERVICE_DRIVE_MOTOR1_OUT1, PWMSERVICE_DRIVE_MOTOR1_OUT2);
@@ -198,7 +203,6 @@ namespace droid::brain {
         config->putBool(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, CONFIG_DEFAULT_BRAIN_AUTODOME_ENABLE);
 
         //The Controllers are special because they cannot be instantiated twice
-        logger->log(name, DEBUG, "Controller type=%d\n", controller->getType());
         if (controller->getType() == droid::controller::Controller::ControllerType::DUAL_RING) {
             controller->factoryReset();
         } else {
@@ -224,7 +228,8 @@ namespace droid::brain {
         //The rest of the components are more straight-forward
         (new droid::services::PCA9685PWM("PCA9685", system, PCA9685_I2C_ADDRESS, PCA9685_OUTPUT_ENABLE_PIN))->factoryReset();
         (new droid::services::NoPWMService("PWMStub", system))->factoryReset();
-        (new droid::motor::SabertoothDriver("Sabertooth", system, (byte) 128, SABERTOOTH_STREAM))->factoryReset();
+        (new droid::motor::SabertoothDriver("DriveSaber", system, (byte) 128, SABERTOOTH_STREAM))->factoryReset();
+        (new droid::motor::CytronSmartDriveDuoMDDS30Driver("DriveCytron", system, (byte) 128, CYTRON_STREAM))->factoryReset();
         (new droid::motor::PWMMotorDriver("DrivePWM", system, PWMSERVICE_DRIVE_MOTOR0_OUT1, PWMSERVICE_DRIVE_MOTOR0_OUT2, PWMSERVICE_DRIVE_MOTOR1_OUT1, PWMSERVICE_DRIVE_MOTOR1_OUT2))->factoryReset();
         (new droid::motor::StubMotorDriver("DriveStub", system))->factoryReset();
         (new droid::motor::PWMMotorDriver("DomePWM", system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2, -1, -1))->factoryReset();

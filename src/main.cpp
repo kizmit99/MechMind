@@ -27,6 +27,7 @@ void setup() {
     BODY_STREAM_SETUP;
     AUDIO_STREAM_SETUP;
     SABERTOOTH_STREAM_SETUP;
+    CYTRON_STREAM_SETUP;
     
     delay(500);
 
