@@ -46,13 +46,7 @@ It is designed to run exclusively on ESP32 based microcontrollers and to be comp
 
 ## Documentation
 
-Here is an initial set of documentation:
-- [[ControlFlow]]
-- [[DriverConfig]]
-- [[ConsoleCommands]]
-- [[ConfigValues]]
-- [[CommandBNF]]
-- [[TriggerDocumentation]]
+For additional documentation, please refer to the Mechmind Wiki at https://github.com/kizmit99/MechMind/wiki
 
 ## Getting Started
 
