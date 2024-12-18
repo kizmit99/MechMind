@@ -29,11 +29,13 @@ It is designed to run exclusively on ESP32 based microcontrollers and to be comp
       - Teensy based Human-Cyborg Relations sound generator
       - Sparkfun MP3 Trigger
       - DF Robotics DFMini MP3 player
+      - DY-HV20T Playback module (Coming soon)
     - Motor drivers:
-      - Sabertooth dual motor drivers
-      - Syren single motor drivers
-      - Widely available DRV8871 single motor drivers
-      - Additional drivers coming soon...
+      - Dimension Engineering Sabertooth dual motor drivers
+      - Dimension Engineering Syren single motor drivers
+      - PWM based motor drivers such as:
+        - DRV8871 based single motor drivers
+        - L298N based dual motor drivers
   - Also provides direct support for:
     - Adafruit PCA9685 Servo/PWM drivers
 
@@ -54,15 +56,15 @@ To get started with the MechMind Program, follow the steps below:
 
 2. **Software Installation**:
    - Clone this repository to your local machine.
-   - Install any required libraries and dependencies.
+   - Required libraries and dependencies should automatically download
 
 3. **Configuration**:
-   - Define your input controllers and actuators in the configuration files.
+   - Define your input controllers and actuators in the hardware.h configuration file
+     - This can also be changed at runtime
    - Upload the firmware to your ESP32 board.
 
 4. **Running the Program**:
    - Power on your droid and test the input and output functions.
-   - Use the provided tools and interfaces to monitor and debug the system.
 
 ## License
 
