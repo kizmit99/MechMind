@@ -15,5 +15,10 @@ namespace droid::services {
         bool stickEnable = 1;
         bool turboSpeed = 0;
         bool autoDomeEnable = 1;
+        bool domePanelsOpen = 0;
+        bool bodyPanelsOpen = 0;
+        bool holosActive = 0;
+        bool musingEnabled = 0;
+        bool gestureMode = 0;
     };
 }

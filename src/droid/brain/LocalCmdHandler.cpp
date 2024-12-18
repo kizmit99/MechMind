@@ -113,6 +113,41 @@ namespace droid::brain {
             } else if (strcasecmp(cmd, "AutoDomeToggle") == 0) {
                 droidState->autoDomeEnable = !droidState->autoDomeEnable;
 
+            } else if (strcasecmp(cmd, "AllDomePanels") == 0) {
+                if (droidState->domePanelsOpen) {
+                    brain->trigger("CloseDomeAll");
+                } else {
+                    brain->trigger("OpenDomeAll");
+                }
+                droidState->domePanelsOpen = !droidState->domePanelsOpen;
+
+            } else if (strcasecmp(cmd, "ToggleHolos") == 0) {
+                if (droidState->holosActive) {
+                    brain->trigger("HolosReset");
+                } else {
+                    brain->trigger("HolosOn");
+                }
+                droidState->holosActive = !droidState->holosActive;
+
+            } else if (strcasecmp(cmd, "AllBodyPanels") == 0) {
+                if (droidState->bodyPanelsOpen) {
+                    brain->trigger("CloseBodyAll");
+                } else {
+                    brain->trigger("OpenBodyAll");
+                }
+                droidState->bodyPanelsOpen = !droidState->bodyPanelsOpen;
+
+            } else if (strcasecmp(cmd, "ToggleMusing") == 0) {
+                if (droidState->musingEnabled) {
+                    brain->trigger("MusingsOff");
+                } else {
+                    brain->trigger("MusingsOn");
+                }
+                droidState->musingEnabled = !droidState->musingEnabled;
+
+            } else if (strcasecmp(cmd, "Gesture") == 0) {
+                //TODO
+
             } else if (strcasecmp(cmd, "Restart") == 0) {
                 //Restart the controller.
                 brain->reboot();

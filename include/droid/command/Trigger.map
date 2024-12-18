@@ -44,7 +44,7 @@ cmdMap["FastSmirk"]     = "Dome>:SE03";
 cmdMap["ShortCircuit"]  = "Dome>:SE06";
 cmdMap["VolumeUp"]      = "Audio>$+";
 cmdMap["VolumeDown"]    = "Audio>$-";
-cmdMap["HolosOn"]       = "Dome>*ON00";
+cmdMap["HolosOn"]       = "Dome>*ON00;#200;*RD00";
 cmdMap["HolosOff"]      = "Dome>*OF00";
 cmdMap["CantinaDance"]  = "Dome>:SE07";
 cmdMap["LeiaMessage"]   = "Dome>:SE08";
@@ -54,3 +54,13 @@ cmdMap["Custom1"]       = "Audio>$71;Dome>LD=5";
 cmdMap["Custom2"]       = "Audio>$82;Dome>LD=1";
 cmdMap["Custom3"]       = "Audio>$81;Dome>LD=1";
 cmdMap["Custom4"]       = "Audio>$83;Dome>LD=1";
+
+cmdMap["OpenBodyAll"]   = "Panel>:OP00";
+cmdMap["CloseBodyAll"]  = "Panel>:CL00";
+cmdMap["MusingsOn"]     = "Audio>$R";
+cmdMap["MusingsOff"]    = "Audio>$O";
+
+cmdMap["Happy"]         = "Audio>$30";
+cmdMap["Sad"]           = "Audio>$40";
+cmdMap["Fear"]          = "Audio>$50";
+cmdMap["Anger"]         = "Audio>$60";

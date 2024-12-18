@@ -98,175 +98,207 @@ namespace droid::controller {
     }
 
     String DualRingController::getTrigger() {
-        if (rings.isButtonClicked(DualRingBLE_Drive, DualRingBLE_L1)) return "MarchingAnts";
+        //Click triggers
+        if (rings.isButtonClicked(DualRingBLE_Dome, DualRingBLE_C)) return "AllDomePanels";
+        if (rings.isButtonClicked(DualRingBLE_Dome, DualRingBLE_D)) return "ToggleHolos";
+        if (rings.isButtonClicked(DualRingBLE_Dome, DualRingBLE_L1)) return "AutoDome";
+        if (rings.isButtonClicked(DualRingBLE_Drive, DualRingBLE_C)) return "AllBodyPanels";
+        if (rings.isButtonClicked(DualRingBLE_Drive, DualRingBLE_D)) return "ToggleMusings";
+        if (rings.isButtonClicked(DualRingBLE_Drive, DualRingBLE_L1)) return "Gesture";
 
+        // Dome Joystick + Drive-A
+        if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
+            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
+            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
+            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2)) {
+            if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "Happy";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "Sad";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "Fear";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "Anger";
+        }
+
+        //Dome Joystick + Drive-B
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "VolumeUp";
+            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2)) {
+            if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "VolumeUp";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "VolumeDown";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "VolumeMid";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "VolumeMax";
+        }
 
-        if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "VolumeDown";
-
-        if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "VolumeMid";
-
-        if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "VolumeMax";
-
+        //Dome Joystick + Dome-A (Requires two hands, not stealthy)
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "OpenDomeP1";
+            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2)) {
+            if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "OpenDomeP1";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "CloseDomeP1";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "LeiaMessage";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "MarchingAnts";
+        }
 
-        if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "CloseDomeP1";
-
-        if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "LeiaMessage";
-
-        if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "";
-
+        //Dome Joystick + Dome-B (Requires two hands, not stealthy)
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "FullAwake";
+            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2)) {
+            if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "FullAwake";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "QuietMode";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "MidAwake";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "FullAware";
+        }
 
-        if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "QuietMode";
-
-        if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "MidAwake";
-
-        if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
-            rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "FullAware";
-
+        //Drive Joystick + Dome-A
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
-            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "BeepCantina";
+            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A)) {
+            if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "BeepCantina";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "CantinaDance";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "LeiaMessage";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "Scream";
+        }
 
+        //Drive Joystick + Dome-B
         if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
-            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "CantinaDance";
+            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B)) {
+            if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "Disco";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "ShortCircuit";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "FastSmirk";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "Wave";
+        }
 
-        if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
-            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "LeiaMessage";
-
-        if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
-            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "Scream";
-
-        if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
-            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "Disco";
-
-        if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
-            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "ShortCircuit";
-
-        if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
-            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "FastSmirk";
-
-        if (!rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
-            rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "Wave";
-
+        //Drive Joystick + Drive-A (Requires two hands, not stealthy)
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "OpenDomeP1";
+            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B)) {
+            if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "OpenDomeP1";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "CloseDomeP1";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "OpenDomeP2";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "CloseDomeP2";
+        }
 
-        if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "CloseDomeP1";
-
-        if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "OpenDomeP2";
-
-        if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "CloseDomeP2";
-
+        //Drive Joystick + Drive-B (Requires two hands, not stealthy)
         if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
             !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "OpenDomeP3";
+            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B)) {
+            if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "OpenDomeP3";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "CloseDomeP3";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "OpenDomeP4";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "CloseDomeP4";
+        }
 
-        if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "CloseDomeP3";
+        //Dome Joystick + Dome-A + Drive-A (Requries two hands, awkward to use)
+        if (rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
+            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
+            rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A)) {
+            if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "";
+        }
 
-        if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "OpenDomeP4";
+        //Dome Joystick + Dome-A + Drive-B (Requries two hands, awkward to use)
+        if (rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
+            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
+            rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B)) {
+            if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "";
+        }
 
-        if (rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
-            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2) &&
-            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
+        //Dome Joystick + Dome-B + Drive-A (Requries two hands, awkward to use)
+        if (rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
+            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
+            rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A)) {
+            if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "";
+        }
+
+        //Dome Joystick + Dome-B + Drive-B (Requries two hands, awkward to use)
+        if (rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
+            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
+            rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B)) {
+            if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "";
+        }
+
+
+        //Drive Joystick + Drive-A + Dome-A (Requries two hands, awkward to use)
+        if (rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
+            rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
+            rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2)) {
+            if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "";
+        }
+
+        //Drive Joystick + Drive-A + Dome-B (Requries two hands, awkward to use)
+        if (rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
+            rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
+            rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2)) {
+            if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "";
+        }
+
+        //Drive Joystick + Drive-B + Dome-A (Requries two hands, awkward to use)
+        if (rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
+            rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
+            rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2)) {
+            if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "";
+        }
+
+        //Drive Joystick + Drive-B + Dome-B (Requries two hands, awkward to use)
+        if (rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
+            rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
+            rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2)) {
+            if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "";
+        }
+
+
+        //Dome Joystick + no modifiers (Avoid, easily triggered accidentally)
+        if (!rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
             !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
-            rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "CloseDomeP4";
+            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
+            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B) &&
+            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_L2)) {
+            if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Up)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Down)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Left)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Dome, DualRingBLE_Right)) return "";
+        }
+
+        //Drive Joystick + no modifiers (Avoid, easily triggered accidentally)
+        if (!rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_A) &&
+            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_B) &&
+            !rings.isModifierPressed(DualRingBLE_Dome, DualRingBLE_L2) &&
+            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_A) &&
+            !rings.isModifierPressed(DualRingBLE_Drive, DualRingBLE_B)) {
+            if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Up)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Down)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Left)) return "";
+            else if (rings.isButtonPressed(DualRingBLE_Drive, DualRingBLE_Right)) return "";
+        }
 
         return "";
     }
