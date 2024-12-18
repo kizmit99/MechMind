@@ -44,6 +44,16 @@ It is designed to run exclusively on ESP32 based microcontrollers and to be comp
   - Supports both standard breakout boards and the Penumbra ESP32 board.
   - The Penumbra ESP32 is required if you plan to use a controller that requires a USB/Bluetooth dongle such as the Sony, PS3 or XBox controllers.  The Penumbra ESP32 with USB Host Mode support is sold by [Astromech.net user skelmir](https://astromech.net/forums/showthread.php?43249-Penumbra-ESP32-with-integrated-USB-host-shield)) and is a wonderful platform for MechMind.
 
+## Documentation
+
+Here is an initial set of documentation:
+- [[ControlFlow]]
+- [[DriverConfig]]
+- [[ConsoleCommands]]
+- [[ConfigValues]]
+- [[CommandBNF]]
+- [[TriggerDocumentation]]
+
 ## Getting Started
 
 This needs to be rewritten to actually be helpful...
