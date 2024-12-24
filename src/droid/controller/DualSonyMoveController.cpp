@@ -26,6 +26,7 @@
 #define CONFIG_DEFAULT_SONY_ACTIVE_TIMEOUT   200
 #define CONFIG_DEFAULT_SONY_INACTIVE_TIMEOUT 10000
 #define CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW  50
+#define CONFIG_DEFAULT_SONY_DEADBAND         20
 
 namespace droid::controller {
     DualSonyMoveController::DualSonyMoveController(const char* name, droid::core::System* system) :

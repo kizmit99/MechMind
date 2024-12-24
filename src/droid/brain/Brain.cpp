@@ -40,32 +40,7 @@
 #define CONFIG_KEY_BRAIN_TURBO_ENABLE       "StartTurboOn"
 #define CONFIG_KEY_BRAIN_AUTODOME_ENABLE    "StartDomeOn"
 
-#define CONFIG_OPTION_CONTROLLER_DUALRING   "DualRing"
-#define CONFIG_OPTION_CONTROLLER_SONYMOVE   "SonyMove"
-#define CONFIG_OPTION_CONTROLLER_NONE       "None"
-
-#define CONFIG_OPTION_PWMSERVICE_PCA9685    "PCA9685"
-#define CONFIG_OPTION_PWMSERVICE_NONE       "None"
-
-#define CONFIG_OPTION_DRIVE_SABERTOOTH      "Sabertooth"
-#define CONFIG_OPTION_DRIVE_PWMMOTOR        "PWMMotor"
-#define CONFIG_OPTION_DRIVE_CYTRON          "Cytron"
-#define CONFIG_OPTION_DRIVE_NONE            "None"
-
-#define CONFIG_OPTION_DOME_PWMMOTOR         "PWMMotor"
-#define CONFIG_OPTION_DOME_NONE             "None"
-
-#define CONFIG_OPTION_AUDIO_HCR             "HCR"
-#define CONFIG_OPTION_AUDIO_DFMINI          "DFMini"
-#define CONFIG_OPTION_AUDIO_SPARKFUN        "SparkFun"
-#define CONFIG_OPTION_AUDIO_NONE            "None"
-
 #define CONFIG_DEFAULT_BRAIN_INITIALIZED     true
-#define CONFIG_DEFAULT_BRAIN_CONTROLLER      CONFIG_OPTION_CONTROLLER_DUALRING
-#define CONFIG_DEFAULT_BRAIN_PWMSERVICE      CONFIG_OPTION_PWMSERVICE_PCA9685
-#define CONFIG_DEFAULT_BRAIN_DRIVE_MOTOR     CONFIG_OPTION_DRIVE_PWMMOTOR
-#define CONFIG_DEFAULT_BRAIN_DOME_MOTOR      CONFIG_OPTION_DOME_PWMMOTOR
-#define CONFIG_DEFAULT_BRAIN_AUDIO_DRIVER    CONFIG_OPTION_AUDIO_DFMINI
 #define CONFIG_DEFAULT_BRAIN_STICK_ENABLE    true
 #define CONFIG_DEFAULT_BRAIN_TURBO_ENABLE    false
 #define CONFIG_DEFAULT_BRAIN_AUTODOME_ENABLE false
@@ -76,9 +51,9 @@ namespace droid::brain {
 
         //Construct optional/pluggable components
 
-        String whichService = config->getString(name, CONFIG_KEY_BRAIN_PWMSERVICE, CONFIG_OPTION_PWMSERVICE_NONE);
+        String whichService = config->getString(name, CONFIG_KEY_BRAIN_PWMSERVICE, CONFIG_DEFAULT_PWMSERVICE);
         logger->log(name, DEBUG, "Requested PWMService: %s\n", whichService);
-        if (whichService == CONFIG_OPTION_PWMSERVICE_PCA9685) {
+        if (whichService == PWMSERVICE_OPTION_PCA9685) {
             logger->log(name, DEBUG, "Initializing PCA9685\n");
             pwmService = new droid::services::PCA9685PWM("PCA9685", system, PCA9685_I2C_ADDRESS, PCA9685_OUTPUT_ENABLE_PIN);
         } else {
@@ -87,12 +62,12 @@ namespace droid::brain {
         }
         system->setPWMService(pwmService);
 
-        whichService = config->getString(name, CONFIG_KEY_BRAIN_CONTROLLER, CONFIG_OPTION_CONTROLLER_NONE);
+        whichService = config->getString(name, CONFIG_KEY_BRAIN_CONTROLLER, CONFIG_DEFAULT_CONTROLLER);
         logger->log(name, DEBUG, "Requested Controller: %s\n", whichService);
-        if (whichService == CONFIG_OPTION_CONTROLLER_DUALRING) {
+        if (whichService == CONTROLLER_OPTION_DUALRING) {
             logger->log(name, DEBUG, "Initializing DualRing\n");
             controller = new droid::controller::DualRingController("DualRing", system);
-        } else if (whichService == CONFIG_OPTION_CONTROLLER_SONYMOVE) {
+        } else if (whichService == CONTROLLER_OPTION_SONYMOVE) {
             logger->log(name, DEBUG, "Initializing DualSony\n");
             controller = new droid::controller::DualSonyMoveController("DualSony", system);
         } else {
@@ -100,15 +75,15 @@ namespace droid::brain {
             controller = new droid::controller::StubController("ControllerStub", system);
         }
 
-        whichService = config->getString(name, CONFIG_KEY_BRAIN_DRIVE_MOTOR, CONFIG_OPTION_DRIVE_NONE);
+        whichService = config->getString(name, CONFIG_KEY_BRAIN_DRIVE_MOTOR, CONFIG_DEFAULT_DRIVE_MOTOR);
         logger->log(name, DEBUG, "Requested DriveMotor: %s\n", whichService);
-        if (whichService == CONFIG_OPTION_DRIVE_SABERTOOTH) {
+        if (whichService == MOTOR_DRIVER_OPTION_SABERTOOTH) {
             logger->log(name, DEBUG, "Initializing Drive Sabertooth\n");
             driveMotorDriver = new droid::motor::SabertoothDriver("DriveSaber", system, (byte) 128, SABERTOOTH_STREAM);
-        } else if (whichService == CONFIG_OPTION_DRIVE_CYTRON) {
+        } else if (whichService == MOTOR_DRIVER_OPTION_CYTRON) {
             logger->log(name, DEBUG, "Initializing DriveCytron\n");
             driveMotorDriver = new droid::motor::CytronSmartDriveDuoMDDS30Driver("DriveCytron", system, (byte) 128, CYTRON_STREAM);
-        } else if (whichService == CONFIG_OPTION_DRIVE_PWMMOTOR) {
+        } else if (whichService == MOTOR_DRIVER_OPTION_PWMMOTOR) {
             logger->log(name, DEBUG, "Initializing DrivePWM\n");
             driveMotorDriver = new droid::motor::PWMMotorDriver("DrivePWM", system, PWMSERVICE_DRIVE_MOTOR0_OUT1, PWMSERVICE_DRIVE_MOTOR0_OUT2, PWMSERVICE_DRIVE_MOTOR1_OUT1, PWMSERVICE_DRIVE_MOTOR1_OUT2);
         } else {
@@ -116,9 +91,9 @@ namespace droid::brain {
             driveMotorDriver = new droid::motor::StubMotorDriver("DriveStub", system);
         }
 
-        whichService = config->getString(name, CONFIG_KEY_BRAIN_DOME_MOTOR, CONFIG_OPTION_DOME_NONE);
+        whichService = config->getString(name, CONFIG_KEY_BRAIN_DOME_MOTOR, CONFIG_DEFAULT_DOME_MOTOR);
         logger->log(name, DEBUG, "Requested DomeMotor: %s\n", whichService);
-        if (whichService == CONFIG_OPTION_DOME_PWMMOTOR) {
+        if (whichService == MOTOR_DRIVER_OPTION_PWMMOTOR) {
             logger->log(name, DEBUG, "Initializing DomePWM\n");
             domeMotorDriver = new droid::motor::PWMMotorDriver("DomePWM", system, PWMSERVICE_DOME_MOTOR_OUT1, PWMSERVICE_DOME_MOTOR_OUT2, -1, -1);
         } else {
@@ -126,15 +101,15 @@ namespace droid::brain {
             domeMotorDriver = new droid::motor::StubMotorDriver("DomeStub", system);
         }
 
-        whichService = config->getString(name, CONFIG_KEY_BRAIN_AUDIO_DRIVER, CONFIG_OPTION_AUDIO_NONE);
+        whichService = config->getString(name, CONFIG_KEY_BRAIN_AUDIO_DRIVER, CONFIG_DEFAULT_AUDIO_DRIVER);
         logger->log(name, DEBUG, "Requested AudioDriver: %s\n", whichService);
-        if (whichService == CONFIG_OPTION_AUDIO_HCR) {
+        if (whichService == AUDIO_DRIVER_OPTION_HCR) {
             logger->log(name, DEBUG, "Initializing HCRDriver\n");
             audioDriver = new droid::audio::HCRDriver("HCRDriver", system, AUDIO_STREAM);
-        } else if (whichService == CONFIG_OPTION_AUDIO_DFMINI) {
+        } else if (whichService == AUDIO_DRIVER_OPTION_DFMINI) {
             logger->log(name, DEBUG, "Initializing DFMiniDriver\n");
             audioDriver = new droid::audio::DFMiniDriver("DFMiniDriver", system, AUDIO_STREAM);
-        } else if (whichService == CONFIG_OPTION_AUDIO_SPARKFUN) {
+        } else if (whichService == AUDIO_DRIVER_OPTION_SPARKFUN) {
             logger->log(name, DEBUG, "Initializing SparkDriver\n");
             audioDriver = new droid::audio::SparkDriver("SparkDriver", system, AUDIO_STREAM);
         } else {
@@ -193,11 +168,11 @@ namespace droid::brain {
 
     void Brain::factoryReset() {
         config->putBool(name, CONFIG_KEY_BRAIN_INITIALIZED, CONFIG_DEFAULT_BRAIN_INITIALIZED);
-        config->putString(name, CONFIG_KEY_BRAIN_CONTROLLER, CONFIG_DEFAULT_BRAIN_CONTROLLER);
-        config->putString(name, CONFIG_KEY_BRAIN_PWMSERVICE, CONFIG_DEFAULT_BRAIN_PWMSERVICE);
-        config->putString(name, CONFIG_KEY_BRAIN_DRIVE_MOTOR, CONFIG_DEFAULT_BRAIN_DRIVE_MOTOR);
-        config->putString(name, CONFIG_KEY_BRAIN_DOME_MOTOR, CONFIG_DEFAULT_BRAIN_DOME_MOTOR);
-        config->putString(name, CONFIG_KEY_BRAIN_AUDIO_DRIVER, CONFIG_DEFAULT_BRAIN_AUDIO_DRIVER);
+        config->putString(name, CONFIG_KEY_BRAIN_CONTROLLER, CONFIG_DEFAULT_CONTROLLER);
+        config->putString(name, CONFIG_KEY_BRAIN_PWMSERVICE, CONFIG_DEFAULT_PWMSERVICE);
+        config->putString(name, CONFIG_KEY_BRAIN_DRIVE_MOTOR, CONFIG_DEFAULT_DRIVE_MOTOR);
+        config->putString(name, CONFIG_KEY_BRAIN_DOME_MOTOR, CONFIG_DEFAULT_DOME_MOTOR);
+        config->putString(name, CONFIG_KEY_BRAIN_AUDIO_DRIVER, CONFIG_DEFAULT_AUDIO_DRIVER);
         config->putBool(name, CONFIG_KEY_BRAIN_STICK_ENABLE, CONFIG_DEFAULT_BRAIN_STICK_ENABLE);
         config->putBool(name, CONFIG_KEY_BRAIN_TURBO_ENABLE, CONFIG_DEFAULT_BRAIN_TURBO_ENABLE);
         config->putBool(name, CONFIG_KEY_BRAIN_AUTODOME_ENABLE, CONFIG_DEFAULT_BRAIN_AUTODOME_ENABLE);
