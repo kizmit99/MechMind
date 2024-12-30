@@ -237,12 +237,12 @@ namespace droid::brain {
         ESP.restart();
     }
 
-    void Brain::overrideCmdMap(const char* trigger, const char* cmd) {
-        actionMgr->overrideCmdMap(trigger, cmd);
+    void Brain::overrideCmdMap(const char* action, const char* cmd) {
+        actionMgr->overrideCmdMap(action, cmd);
     }
 
-    void Brain::trigger(const char* trigger) {
-        actionMgr->fireTrigger(trigger);
+    void Brain::fireAction(const char* action) {
+        actionMgr->fireAction(action);
     }
 
     void Brain::processConsoleInput(Stream* cmdStream) {

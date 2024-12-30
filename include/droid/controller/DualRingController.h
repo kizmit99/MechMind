@@ -11,6 +11,7 @@
 #include "droid/controller/Controller.h"
 #include "droid/core/System.h"
 #include "shared/blering/DualRingBLE.h"
+#include <map>
 
 namespace droid::controller {
     class DualRingController : public Controller {
@@ -28,14 +29,16 @@ namespace droid::controller {
         void setCritical(bool isCritical);
         //Joystick Position should be returned as a value between -100 and +100 for each axis
         int8_t getJoystickPosition(Joystick, Axis);
-        String getTrigger();
+        String getAction();
         ControllerType getType() {return DUAL_RING;}
 
     private:
         static DualRingController* instance;
 
         bool faultState = true;
+        std::map<String, String> triggerMap;
 
         void faultCheck();
+        String getTrigger();
     };
 }

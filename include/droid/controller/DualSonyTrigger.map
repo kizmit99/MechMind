@@ -1,0 +1,55 @@
+/*
+ * MechMind Program
+ * Author: Kizmit99
+ * License: CC BY-NC-SA 4.0
+ *
+ * This source code is open-source for non-commercial use. 
+ * For commercial use, please obtain a license from the author.
+ * For more information, visit https://github.com/kizmit99/MechMind
+ */
+
+triggerMap["LL1_Lup"]       = "OpenDomeP1";
+triggerMap["LL1_Ldown"]     = "CloseDomeP1";
+triggerMap["LL1_Lleft"]     = "OpenDomeP2";
+triggerMap["LL1_Lright"]    = "CloseDomeP2";
+triggerMap["RPS_Lup"]       = "OpenDomeP3";
+triggerMap["RPS_Ldown"]     = "CloseDomeP3";
+triggerMap["RPS_Lleft"]     = "OpenDomeP4";
+triggerMap["RPS_Lright"]    = "CloseDomeP4";
+triggerMap["Lup"]           = "BeepCantina";
+triggerMap["Ldown"]         = "MarchingAnts";
+triggerMap["Lleft"]         = "OpenBodyP1";
+triggerMap["Lright"]        = "CloseBodyP1";
+triggerMap["RO_Lup"]        = "HoloMoveOn";
+triggerMap["RO_Ldown"]      = "HoloReset";
+triggerMap["RO_Lleft"]      = "HoloLightsOn";
+triggerMap["RO_Lright"]     = "HoloLightsOff";
+triggerMap["RX_Lup"]        = "VolumeMax";
+triggerMap["RX_Ldown"]      = "VolumeMid";
+triggerMap["RX_Lleft"]      = "CloseDomeAll";
+triggerMap["RX_Lright"]     = "OpenDomeAll";
+triggerMap["RX_RPS"]        = "StickDisable";
+triggerMap["RO_RPS"]        = "StickEnable";
+triggerMap["RL1_RL3"]       = "ToggleSpeed";
+triggerMap["RX_RL2"]        = "AutoDomeOn";
+triggerMap["RO_RL2"]        = "AutoDomeOff";
+triggerMap["Rup"]           = "FullAwake";
+triggerMap["Rdown"]         = "QuietMode";
+triggerMap["Rleft"]         = "MidAwake";
+triggerMap["Rright"]        = "FullAware";
+triggerMap["LO_Rup"]        = "Scream";
+triggerMap["LO_Rdown"]      = "Disco";
+triggerMap["LO_Rleft"]      = "FastSmirk";
+triggerMap["LO_Rright"]     = "ShortCircuit";
+triggerMap["LX_Rup"]        = "VolumeUp";
+triggerMap["LX_Rdown"]      = "VolumeDown";
+triggerMap["LX_Rleft"]      = "HolosOn";
+triggerMap["LX_Rright"]     = "HolosOff";
+triggerMap["RL1_Rup"]       = "CantinaDance";
+triggerMap["RL1_Rdown"]     = "LeiaMessage";
+triggerMap["RL1_Rleft"]     = "Wave";
+triggerMap["RL1_Rright"]    = "Wave2";
+triggerMap["LPS_Rup"]       = "Custom1";
+triggerMap["LPS_Rdown"]     = "Custom2";
+triggerMap["LPS_Rleft"]     = "Custom3";
+triggerMap["LPS_Rright"]    = "Custom4";

@@ -9,7 +9,6 @@
  */
 
 #include "droid/command/ActionMgr.h"
-#include <map>
 
 namespace droid::command {
     ActionMgr::ActionMgr(const char* name, droid::core::System* system, droid::controller::Controller* controller) :
@@ -19,14 +18,14 @@ namespace droid::command {
     void ActionMgr::init() {
         //init cmdMap with defaults then load overrides from config
         cmdMap.clear();
-        #include "droid/command/Trigger.map"
+        #include "droid/command/Action.map"
         // Iterate through the map looking for overrides
         for (const auto& mapEntry : cmdMap) {
-            const char* trigger = mapEntry.first.c_str();
+            const char* action = mapEntry.first.c_str();
             const char* cmd = mapEntry.second.c_str();
-            String override = config->getString(name, trigger, cmd);
+            String override = config->getString(name, action, cmd);
             if (override != cmd) {
-                cmdMap[trigger] = override;
+                cmdMap[action] = override;
             }
         }
     }
@@ -40,12 +39,12 @@ namespace droid::command {
     void ActionMgr::factoryReset() {
         //init cmdMap with defaults then store default into config
         cmdMap.clear();
-        #include "droid/command/Trigger.map"
+        #include "droid/command/Action.map"
         // Iterate through the map clearing all overrides
         for (const auto& mapEntry : cmdMap) {
-            const char* trigger = mapEntry.first.c_str();
+            const char* action = mapEntry.first.c_str();
             const char* cmd = mapEntry.second.c_str();
-            config->putString(name, trigger, cmd);
+            config->putString(name, action, cmd);
         }
     }
 
@@ -53,20 +52,20 @@ namespace droid::command {
         //NOOP
     }
 
-    void ActionMgr::overrideCmdMap(const char* trigger, const char* cmd) {
-        if (trigger) {
+    void ActionMgr::overrideCmdMap(const char* action, const char* cmd) {
+        if (action) {
             if (cmd == NULL) {  //Revert to default
                 std::map<String, String> cmdMap;
                 //Load defaults into a temp map
-                #include "droid/command/Trigger.map"
+                #include "droid/command/Action.map"
                 //override master map with the default value just loaded
-                this->cmdMap[trigger] = cmdMap[trigger];
+                this->cmdMap[action] = cmdMap[action];
                 //save the default back to config storage
-                config->putString(name, trigger, this->cmdMap[trigger].c_str());
+                config->putString(name, action, this->cmdMap[action].c_str());
             } else {
                 //New cmd is specified, use it
-                cmdMap[trigger] = cmd;
-                config->putString(name, trigger, cmd);
+                cmdMap[action] = cmd;
+                config->putString(name, action, cmd);
             }
         }
     }
@@ -74,32 +73,32 @@ namespace droid::command {
     void ActionMgr::logConfig() {
         // Iterate through the cmdMap for keys to log
         for (const auto& mapEntry : cmdMap) {
-            const char* trigger = mapEntry.first.c_str();
-            logger->log(name, INFO, "Config %s = %s\n", trigger, config->getString(name, trigger, "").c_str());
+            const char* action = mapEntry.first.c_str();
+            logger->log(name, INFO, "Config %s = %s\n", action, config->getString(name, action, "").c_str());
         }
     }
 
-    void ActionMgr::fireTrigger(const char* trigger) {
-        if (cmdMap.count(trigger) > 0) {
-            parseCommands(cmdMap[trigger].c_str());
+    void ActionMgr::fireAction(const char* action) {
+        if (cmdMap.count(action) > 0) {
+            parseCommands(cmdMap[action].c_str());
         } else {
-            logger->log(name, DEBUG, "Trigger (%s) not recognized, trying to parse as a command\n", trigger);
-            parseCommands(trigger);
+            logger->log(name, DEBUG, "Action (%s) not recognized, trying to parse as a command\n", action);
+            parseCommands(action);
         }
     }
 
     void ActionMgr::task() {
-        String trigger = controller->getTrigger();
+        String action = controller->getAction();
         unsigned long now = millis();
-        if ((trigger == lastTrigger) &&
-            (now < (lastTriggerTime + 1000))) {
+        if ((action == lastAction) &&
+            (now < (lastActionTime + 1000))) {
             //Skip it
         } else {
-            lastTriggerTime = now;
-            lastTrigger = trigger;
-            if (trigger != "") {
-                logger->log(name, DEBUG, "Trigger: %s, Cmd: %s\n", trigger.c_str(), cmdMap[trigger].c_str());
-                fireTrigger(trigger.c_str());
+            lastActionTime = now;
+            lastAction = action;
+            if (action != "") {
+                logger->log(name, DEBUG, "Trigger: %s, Cmd: %s\n", action.c_str(), cmdMap[action].c_str());
+                fireAction(action.c_str());
             }
         }
         executeCommands();

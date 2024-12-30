@@ -42,7 +42,8 @@ namespace droid::controller {
         virtual void setCritical(bool isCritical) = 0;
         //Joystick Position should be returned as a value between -100 and +100 for each axis
         virtual int8_t getJoystickPosition(Joystick, Axis) = 0;
-        virtual String getTrigger() = 0;
+        //Return the MechMind Action associated with the active Trigger
+        virtual String getAction() = 0;
 
         virtual ControllerType getType() = 0;
     };

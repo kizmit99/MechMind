@@ -1,0 +1,88 @@
+/*
+ * MechMind Program
+ * Author: Kizmit99
+ * License: CC BY-NC-SA 4.0
+ *
+ * This source code is open-source for non-commercial use. 
+ * For commercial use, please obtain a license from the author.
+ * For more information, visit https://github.com/kizmit99/MechMind
+ */
+
+triggerMap["LC"]			= "AllDomePanels";
+triggerMap["LD"]			= "ToggleHolos";
+triggerMap["LL1"]			= "AutoDomeToggle";
+triggerMap["RC"]			= "AllBodyPanels";
+triggerMap["RD"]			= "ToggleMusing";
+triggerMap["RL1"]			= "Gesture";
+triggerMap["RA_Lup"]		= "Happy";
+triggerMap["RA_Ldown"]		= "Sad";
+triggerMap["RA_Lleft"]		= "Fear";
+triggerMap["RA_Lright"]		= "Anger";
+triggerMap["RB_Lup"]		= "VolumeUp";
+triggerMap["RB_Ldown"]		= "VolumeDown";
+triggerMap["RB_Lleft"]		= "VolumeMid";
+triggerMap["RB_Lright"]		= "VolumeMax";
+triggerMap["LA_Lup"]		= "OpenDomeP1";
+triggerMap["LA_Ldown"]		= "CloseDomeP1";
+triggerMap["LA_Lleft"]		= "LeiaMessage";
+triggerMap["LA_Lright"]		= "MarchingAnts";
+triggerMap["LB_Lup"]		= "FullAwake";
+triggerMap["LB_Ldown"]		= "QuietMode";
+triggerMap["LB_Lleft"]		= "MidAwake";
+triggerMap["LB_Lright"]		= "FullAware";
+triggerMap["Lup"]			= "";
+triggerMap["Ldown"]			= "";
+triggerMap["Lleft"]			= "";
+triggerMap["Lright"]		= "";
+triggerMap["LA_RA_Lup"]		= "";
+triggerMap["LA_RA_Ldown"]	= "";
+triggerMap["LA_RA_Lleft"]	= "";
+triggerMap["LA_RA_Lright"]	= "";
+triggerMap["LA_RB_Lup"]		= "";
+triggerMap["LA_RB_Ldown"]	= "";
+triggerMap["LA_RB_Lleft"]	= "";
+triggerMap["LA_RB_Lright"]	= "";
+triggerMap["LB_RA_Lup"]		= "";
+triggerMap["LB_RA_Ldown"]	= "";
+triggerMap["LB_RA_Lleft"]	= "";
+triggerMap["LB_RA_Lright"]	= "";
+triggerMap["LB_RB_Lup"]		= "";
+triggerMap["LB_RB_Ldown"]	= "";
+triggerMap["LB_RB_Lleft"]	= "";
+triggerMap["LB_RB_Lright"]	= "";
+triggerMap["LA_Rup"]		= "BeepCantina";
+triggerMap["LA_Rdown"]		= "CantinaDance";
+triggerMap["LA_Rleft"]		= "LeiaMessage";
+triggerMap["LA_Rright"]		= "Scream";
+triggerMap["LB_Rup"]		= "Disco";
+triggerMap["LB_Rdown"]		= "ShortCircuit";
+triggerMap["LB_Rleft"]		= "FastSmirk";
+triggerMap["LB_Rright"]		= "Wave";
+triggerMap["RA_Rup"]		= "OpenDomeP1";
+triggerMap["RA_Rdown"]		= "CloseDomeP1";
+triggerMap["RA_Rleft"]		= "OpenDomeP2";
+triggerMap["RA_Rright"]		= "CloseDomeP2";
+triggerMap["RB_Rup"]		= "OpenDomeP3";
+triggerMap["RB_Rdown"]		= "CloseDomeP3";
+triggerMap["RB_Rleft"]		= "OpenDomeP4";
+triggerMap["RB_Rright"]		= "CloseDomeP4";
+triggerMap["Rup"]			= "";
+triggerMap["Rdown"]			= "";
+triggerMap["Rleft"]			= "";
+triggerMap["Rright"]		= "";
+triggerMap["RA_LA_Rup"]		= "";
+triggerMap["RA_LA_Rdown"]	= "";
+triggerMap["RA_LA_Rleft"]	= "";
+triggerMap["RA_LA_Rright"]	= "";
+triggerMap["RA_LB_Rup"]		= "";
+triggerMap["RA_LB_Rdown"]	= "";
+triggerMap["RA_LB_Rleft"]	= "";
+triggerMap["RA_LB_Rright"]	= "";
+triggerMap["RB_LA_Rup"]		= "";
+triggerMap["RB_LA_Rdown"]	= "";
+triggerMap["RB_LA_Rleft"]	= "";
+triggerMap["RB_LA_Rright"]	= "";
+triggerMap["RB_LB_Rup"]		= "";
+triggerMap["RB_LB_Rdown"]	= "";
+triggerMap["RB_LB_Rleft"]	= "";
+triggerMap["RB_LB_Rright"]	= "";

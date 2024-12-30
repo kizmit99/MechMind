@@ -13,6 +13,7 @@
 
 #include "droid/controller/Controller.h"
 #include "droid/core/System.h"
+#include <map>
 
 namespace droid::controller {
     struct ControllerDetails {
@@ -43,7 +44,7 @@ namespace droid::controller {
         void setCritical(bool isCritical);
         //Joystick Position should be returned as a value between -100 and +100 for each axis
         int8_t getJoystickPosition(Joystick, Axis);
-        String getTrigger();
+        String getAction();
         ControllerType getType() {return DUAL_SONY;}
 
     private:
@@ -59,10 +60,12 @@ namespace droid::controller {
         uint32_t badDataWindow = 0;
         int8_t deadbandX = 0;
         int8_t deadbandY = 0;
+        std::map<String, String> triggerMap;
 
         void onInitPS3(Joystick which);
         void faultCheck(ControllerDetails* controller);
         void disconnect(ControllerDetails* controller);
+        String getTrigger();
 
         static void onInitPS3RightWrapper() {
             instance->onInitPS3(RIGHT);

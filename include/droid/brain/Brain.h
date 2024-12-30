@@ -32,8 +32,8 @@ namespace droid::brain {
         void failsafe() override;
         
         void reboot();
-        void overrideCmdMap(const char* trigger, const char* cmd);
-        void trigger(const char* trigger);
+        void overrideCmdMap(const char* action, const char* cmd);
+        void fireAction(const char* action);
 
     private:
         droid::brain::DomeMgr* domeMgr;

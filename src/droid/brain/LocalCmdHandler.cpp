@@ -115,33 +115,33 @@ namespace droid::brain {
 
             } else if (strcasecmp(cmd, "AllDomePanels") == 0) {
                 if (droidState->domePanelsOpen) {
-                    brain->trigger("CloseDomeAll");
+                    brain->fireAction("CloseDomeAll");
                 } else {
-                    brain->trigger("OpenDomeAll");
+                    brain->fireAction("OpenDomeAll");
                 }
                 droidState->domePanelsOpen = !droidState->domePanelsOpen;
 
             } else if (strcasecmp(cmd, "ToggleHolos") == 0) {
                 if (droidState->holosActive) {
-                    brain->trigger("HolosReset");
+                    brain->fireAction("HolosReset");
                 } else {
-                    brain->trigger("HolosOn");
+                    brain->fireAction("HolosOn");
                 }
                 droidState->holosActive = !droidState->holosActive;
 
             } else if (strcasecmp(cmd, "AllBodyPanels") == 0) {
                 if (droidState->bodyPanelsOpen) {
-                    brain->trigger("CloseBodyAll");
+                    brain->fireAction("CloseBodyAll");
                 } else {
-                    brain->trigger("OpenBodyAll");
+                    brain->fireAction("OpenBodyAll");
                 }
                 droidState->bodyPanelsOpen = !droidState->bodyPanelsOpen;
 
             } else if (strcasecmp(cmd, "ToggleMusing") == 0) {
                 if (droidState->musingEnabled) {
-                    brain->trigger("MusingsOff");
+                    brain->fireAction("MusingsOff");
                 } else {
-                    brain->trigger("MusingsOn");
+                    brain->fireAction("MusingsOn");
                 }
                 droidState->musingEnabled = !droidState->musingEnabled;
 
@@ -153,7 +153,7 @@ namespace droid::brain {
                 brain->reboot();
 
             } else if (strcasecmp(cmd, "FactoryReset") == 0) {
-                //Delete all preferences, reset button triggers to sketch defaults, unpair controllers.
+                //Delete all preferences, reset button actions to sketch defaults, unpair controllers.
                 logger->log(name, WARN, "Initiating factory reset...\n");
                 brain->factoryReset();
                 brain->reboot();
@@ -162,17 +162,17 @@ namespace droid::brain {
                 //List all configuration data
                 brain->logConfig();
 
-            } else if (strcasecmp(cmd, "SetTrigger") == 0) {
-                //Set the button trigger (parm1) to the specified action (parm2).
+            } else if (strcasecmp(cmd, "SetAction") == 0) {
+                //Set the button action (parm1) to the specified cmdList (parm2).
                 brain->overrideCmdMap(parm1, parm2);
 
             } else if (strcasecmp(cmd, "Play") == 0) {
-                //Play any action associated with the specified trigger or cmd string
+                //Play any action associated with the specified action or cmd string
                 //Note that you cannot directly play cmd strings that contain spaces!
-                brain->trigger(parm1);
+                brain->fireAction(parm1);
 
-            } else if (strcasecmp(cmd, "ResetTrigger") == 0) {
-                //Reset command for specified trigger to default.
+            } else if (strcasecmp(cmd, "ResetAction") == 0) {
+                //Reset command for specified action to default.
                 brain->overrideCmdMap(parm1, NULL);
 
             } else if (strcasecmp(cmd, "SetConfig") == 0) {
@@ -195,7 +195,7 @@ namespace droid::brain {
                 //Test a panel
                 char buf[100];
                 snprintf(buf, sizeof(buf), "Panel>:TP%03d%04d", atoi(parm1), atoi(parm2));
-                brain->trigger(buf);
+                brain->fireAction(buf);
 
             } else if (strcasecmp(cmd, "LogLevel") == 0) {
                 logger->setLogLevel(parm1, (LogLevel) atoi(parm2));
@@ -228,13 +228,13 @@ namespace droid::brain {
             printCmdHelp("Restart", "Perform a complete system restart");
             printCmdHelp("FactoryReset", "Restore all configuration parameters to defaults and restart the system");
             printCmdHelp("ListConfig", "Print out all of the configuration parameters");
-            printCmdHelp("SetTrigger <trigger> <action>", "Configure the Action associated with the specified Trigger - persistent across restarts");
-            printParmHelp("trigger", "The Trigger to override");
-            printParmHelp("action", "The new Action (list of instructions) to associate with the Trigger");
-            printCmdHelp("Play <command>", "Execute the specified Trigger or Action");
-            printParmHelp("command", "This can be a Trigger, or a list of instructions (see ListConfig for examples)");
-            printCmdHelp("ResetTrigger <trigger>", "Restore the default Action associated with the specified Trigger - persistent across restarts");
-            printParmHelp("trigger", "The Trigger to override");
+            printCmdHelp("SetAction <action> <cmdList>", "Configure the Command List associated with the specified Action - persistent across restarts");
+            printParmHelp("action", "The Action to override");
+            printParmHelp("cmdList", "The new Command List (list of instructions) to associate with the Action");
+            printCmdHelp("Play <command>", "Execute the specified Action or Command List");
+            printParmHelp("command", "This can be an Action, or a list of instructions (see ListConfig for examples)");
+            printCmdHelp("ResetAction <action>", "Restore the default Command List associated with the specified Action - persistent across restarts");
+            printParmHelp("action", "The Action to override");
             printCmdHelp("SetConfig <namespace> <key> <newValue>", "Update the specified configuration value - persistent across restarts");
             printParmHelp("namespace", "The namespace of the configuration entry to update (see ListConfig for valid options)");
             printParmHelp("key", "The key name of the configuration entry to update (see ListConfig for valid options)");
