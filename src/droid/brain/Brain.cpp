@@ -19,6 +19,8 @@
 #include "droid/services/PCA9685PWM.h"
 #include "droid/controller/DualSonyMoveController.h"
 #include "droid/controller/DualRingController.h"
+#include "droid/controller/PS3BtController.h"
+#include "droid/controller/PS3UsbController.h"
 #include "droid/controller/StubController.h"
 #include "droid/motor/PWMMotorDriver.h"
 #include "droid/motor/SabertoothDriver.h"
@@ -66,10 +68,16 @@ namespace droid::brain {
         logger->log(name, DEBUG, "Requested Controller: %s\n", whichService);
         if (whichService == CONTROLLER_OPTION_DUALRING) {
             logger->log(name, DEBUG, "Initializing DualRing\n");
-            controller = new droid::controller::DualRingController("DualRing", system);
+            controller = new droid::controller::DualRingController(CONTROLLER_OPTION_DUALRING, system);
         } else if (whichService == CONTROLLER_OPTION_SONYMOVE) {
             logger->log(name, DEBUG, "Initializing DualSony\n");
-            controller = new droid::controller::DualSonyMoveController("DualSony", system);
+            controller = new droid::controller::DualSonyMoveController(CONTROLLER_OPTION_SONYMOVE, system);
+        } else if (whichService == CONTROLLER_OPTION_PS3BT) {
+            logger->log(name, DEBUG, "Initializing PS3Bt\n");
+            controller = new droid::controller::PS3BtController(CONTROLLER_OPTION_PS3BT, system);
+        } else if (whichService == CONTROLLER_OPTION_PS3USB) {
+            logger->log(name, DEBUG, "Initializing PS3Usb\n");
+            controller = new droid::controller::PS3UsbController(CONTROLLER_OPTION_PS3USB, system);
         } else {
             logger->log(name, DEBUG, "Initializing ControllerStub\n");
             controller = new droid::controller::StubController("ControllerStub", system);
@@ -181,16 +189,32 @@ namespace droid::brain {
         if (controller->getType() == droid::controller::Controller::ControllerType::DUAL_RING) {
             controller->factoryReset();
         } else {
-            droid::controller::DualRingController* drController = new droid::controller::DualRingController("DualRing", system);
+            droid::controller::DualRingController* drController = new droid::controller::DualRingController(CONTROLLER_OPTION_DUALRING, system);
             drController->init();
             drController->factoryReset();
         }
         if (controller->getType() == droid::controller::Controller::ControllerType::DUAL_SONY) {
             controller->factoryReset();
         } else {
-            droid::controller::DualSonyMoveController* dsController = new droid::controller::DualSonyMoveController("DualSony", system);
+            droid::controller::DualSonyMoveController* dsController = new droid::controller::DualSonyMoveController(CONTROLLER_OPTION_SONYMOVE, system);
             dsController->init();
             dsController->factoryReset();
+        }
+        if (controller->getType() == droid::controller::Controller::ControllerType::PS3_BT) {
+            controller->init();
+            controller->factoryReset();
+        } else {
+            droid::controller::PS3BtController* ps3Controller = new droid::controller::PS3BtController(CONTROLLER_OPTION_PS3BT, system);
+            ps3Controller->init();
+            ps3Controller->factoryReset();
+        }
+        if (controller->getType() == droid::controller::Controller::ControllerType::PS3_USB) {
+            controller->init();
+            controller->factoryReset();
+        } else {
+            droid::controller::PS3UsbController* ps3Controller = new droid::controller::PS3UsbController(CONTROLLER_OPTION_PS3USB, system);
+            ps3Controller->init();
+            ps3Controller->factoryReset();
         }
         if (controller->getType() == droid::controller::Controller::ControllerType::STUB) {
             controller->factoryReset();

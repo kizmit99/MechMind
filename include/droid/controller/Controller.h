@@ -27,7 +27,7 @@ namespace droid::controller {
         //This is a hack to work around the constraint that some of the
         //  Controller implementations do not support multiple instantiation
         enum ControllerType {
-            STUB, DUAL_SONY, DUAL_RING};
+            STUB, DUAL_SONY, DUAL_RING, PS3_BT, PS3_USB};
 
         Controller(const char* name, droid::core::System* system) :
             BaseComponent(name, system) {}

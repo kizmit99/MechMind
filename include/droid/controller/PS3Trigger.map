@@ -1,0 +1,56 @@
+/*
+ * MechMind Program
+ * Author: Kizmit99
+ * License: CC BY-NC-SA 4.0
+ *
+ * This source code is open-source for non-commercial use. 
+ * For commercial use, please obtain a license from the author.
+ * For more information, visit https://github.com/kizmit99/MechMind
+ */
+
+triggerMap["Start"]			= "ToggleStick";
+triggerMap["Select"]		= "ToggleAutoDome";
+triggerMap["Select_R2"]		= "";
+triggerMap["P3"]			= "";
+triggerMap["L3"]			= "ToggleHolos";
+triggerMap["R3"]			= "ToggleSpeed";
+triggerMap["Cross"]			= "GenSound";
+triggerMap["Circle"]		= "ChatSound";
+triggerMap["Square"]		= "SadSound";
+triggerMap["Triangle"]		= "FearSound";
+triggerMap["Up"]			= "HoloUp";
+triggerMap["Down"]			= "HoloDown";
+triggerMap["Left"]			= "HoloLeft";
+triggerMap["Right"]			= "HoloRight";
+triggerMap["L1_Cross"]		= "ShortCircuit";
+triggerMap["L1_Circle"]		= "Patrol";
+triggerMap["L1_Square"]		= "LeiaMessage";
+triggerMap["L1_Triangle"]	= "AngerSound";
+triggerMap["L1_Up"]			= "BrightnessUp";
+triggerMap["L1_Down"]		= "BrightnessDown";
+triggerMap["L1_Left"]		= "";
+triggerMap["L1_Right"]		= "";
+triggerMap["R1_Cross"]		= "March";
+triggerMap["R1_Circle"]		= "CantinaDance";
+triggerMap["R1_Square"]		= "";
+triggerMap["R1_Triangle"]	= "Theme";
+triggerMap["R1_Up"]			= "VolumeUp";
+triggerMap["R1_Down"]		= "VolumeDown";
+triggerMap["R1_Left"]		= "";
+triggerMap["R1_Right"]		= "";
+triggerMap["L2_Cross"]		= "Scream";
+triggerMap["L2_Circle"]		= "DooDoo";
+triggerMap["L2_Square"]		= "WolfWstl";
+triggerMap["L2_Triangle"]	= "Chortle";
+triggerMap["L2_Up"]			= "";
+triggerMap["L2_Down"]		= "";
+triggerMap["L2_Left"]		= "";
+triggerMap["L2_Right"]		= "";
+triggerMap["R2_Cross"]		= "Custom1";
+triggerMap["R2_Circle"]		= "Custom2";
+triggerMap["R2_Square"]		= "Custom3";
+triggerMap["R2_Triangle"]	= "Custom4";
+triggerMap["R2_Up"]			= "";
+triggerMap["R2_Down"]		= "";
+triggerMap["R2_Left"]		= "";
+triggerMap["R2_Right"]		= "";
