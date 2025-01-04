@@ -11,7 +11,7 @@
 #include "droid/brain/LocalCmdHandler.h"
 #include "droid/services/DroidState.h"
 #include "droid/command/ActionMgr.h"
-#include "droid/core/hardware.h"
+#include "settings/hardware.config.h"
 
 namespace {
     const char* trimSpaces(const char* str) {

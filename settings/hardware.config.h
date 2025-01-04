@@ -13,6 +13,9 @@
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
+//Partition Name for the Config Store
+#define CONFIG_PARTITION_NAME           "config"
+
 //Configuration Options for pluggeable components
 #define CONTROLLER_OPTION_DUALRING      "DualRing"
 #define CONTROLLER_OPTION_SONYMOVE      "SonyMove"
@@ -35,7 +38,7 @@
 #define AUDIO_DRIVER_OPTION_STUB        "None"
 
 //Default Configuration Options (modify to suit your needs)
-#define CONFIG_DEFAULT_CONTROLLER       CONTROLLER_OPTION_PS3USB
+#define CONFIG_DEFAULT_CONTROLLER       CONTROLLER_OPTION_PS3BT
 #define CONFIG_DEFAULT_PWMSERVICE       PWMSERVICE_OPTION_PCA9685
 #define CONFIG_DEFAULT_DRIVE_MOTOR      MOTOR_DRIVER_OPTION_PWMMOTOR
 #define CONFIG_DEFAULT_DOME_MOTOR       MOTOR_DRIVER_OPTION_PWMMOTOR

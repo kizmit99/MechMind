@@ -40,7 +40,7 @@ namespace droid::controller {
     void DualRingController::init() {
         //init triggerMap with defaults then load overrides from config
         triggerMap.clear();
-        #include "droid/controller/DualRingTrigger.map"
+        #include "settings/DualRingTrigger.map"
         // Iterate through the map looking for overrides
         for (const auto& mapEntry : triggerMap) {
             const char* trigger = mapEntry.first.c_str();
@@ -57,7 +57,7 @@ namespace droid::controller {
     void DualRingController::factoryReset() {
         //init triggerMap with defaults then store default into config
         triggerMap.clear();
-        #include "droid/controller/DualRingTrigger.map"
+        #include "settings/DualRingTrigger.map"
         // Iterate through the map clearing all overrides
         for (const auto& mapEntry : triggerMap) {
             const char* trigger = mapEntry.first.c_str();

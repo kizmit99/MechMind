@@ -11,6 +11,7 @@
 #pragma once
 #include <Preferences.h>
 #include "shared/common/Logger.h"
+#include "settings/hardware.config.h"
 
 class Config {
 public:
@@ -82,7 +83,7 @@ public:
     }
 
     void putString(const char* nspace, const char* key, const char* value) {
-        if (preferences.begin(nspace, false, "config")) {
+        if (preferences.begin(nspace, false, CONFIG_PARTITION_NAME)) {
             preferences.putString(key, value);
             preferences.end();
         }
@@ -90,7 +91,7 @@ public:
 
     String getString(const char* nspace, const char* key, const char* defaultValue) {
         String value = defaultValue;
-        if (preferences.begin(nspace, true, "config")) {
+        if (preferences.begin(nspace, true, CONFIG_PARTITION_NAME)) {
             value = preferences.getString(key, defaultValue);
             preferences.end();
         }
@@ -98,14 +99,14 @@ public:
     }
 
     void clear(const char* nspace) {
-        if (preferences.begin(nspace, false, "config")) {
+        if (preferences.begin(nspace, false, CONFIG_PARTITION_NAME)) {
             preferences.clear();
             preferences.end();
         }
     }
 
     void remove(const char* nspace, const char* key) {
-        if (preferences.begin(nspace, false, "config")) {
+        if (preferences.begin(nspace, false, CONFIG_PARTITION_NAME)) {
             preferences.remove(key);
             preferences.end();
         }
@@ -113,7 +114,7 @@ public:
 
     bool isKey(const char* nspace, const char* key) {
         bool isKey = false;
-        if (preferences.begin(nspace, false, "config")) {
+        if (preferences.begin(nspace, false, CONFIG_PARTITION_NAME)) {
             isKey = preferences.isKey(key);
             preferences.end();
         }

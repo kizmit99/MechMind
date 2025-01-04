@@ -9,7 +9,7 @@
  */
 
 #include "droid/brain/Brain.h"
-#include "droid/core/hardware.h"
+#include "settings/hardware.config.h"
 #include "droid/command/CmdLogger.h"
 #include "droid/command/StreamCmdHandler.h"
 #include "droid/brain/LocalCmdHandler.h"
@@ -166,7 +166,7 @@ namespace droid::brain {
 
         //Initialize the Logger log levels for all Components
         #define LOGGER logger
-        #include "droid/core/LoggerLevels.h"
+        #include "settings/LoggerLevels.config.h"
 
         //Initialize all BaseComponents
         for (droid::core::BaseComponent* component : componentList) {

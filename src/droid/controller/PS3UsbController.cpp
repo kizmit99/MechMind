@@ -9,7 +9,7 @@
  */
 
 #include <Arduino.h>
-#include "droid/core/hardware.h"
+#include "settings/hardware.config.h"
 #include "droid/controller/PS3UsbController.h"
 #include <string>
 #include <stdexcept>
@@ -49,7 +49,7 @@ namespace droid::controller {
 
         //init triggerMap with defaults then store default into config
         triggerMap.clear();
-        #include "droid/controller/PS3Trigger.map"
+        #include "settings/PS3Trigger.map"
         // Iterate through the map clearing all overrides
         for (const auto& mapEntry : triggerMap) {
             const char* trigger = mapEntry.first.c_str();
@@ -68,7 +68,7 @@ namespace droid::controller {
 
         //init triggerMap with defaults then load overrides from config
         triggerMap.clear();
-        #include "droid/controller/PS3Trigger.map"
+        #include "settings/PS3Trigger.map"
         // Iterate through the map looking for overrides
         for (const auto& mapEntry : triggerMap) {
             const char* trigger = mapEntry.first.c_str();

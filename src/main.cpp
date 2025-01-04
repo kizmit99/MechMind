@@ -10,7 +10,7 @@
 
 #include "droid/brain/Brain.h"
 #include "droid/core/System.h"
-#include "droid/core/hardware.h"
+#include "settings/hardware.config.h"
 #include "shared/common/BufferedStream.h"
 
 #define LOGNAME "Main"

@@ -18,7 +18,7 @@ namespace droid::command {
     void ActionMgr::init() {
         //init cmdMap with defaults then load overrides from config
         cmdMap.clear();
-        #include "droid/command/Action.map"
+        #include "settings/Action.map"
         // Iterate through the map looking for overrides
         for (const auto& mapEntry : cmdMap) {
             const char* action = mapEntry.first.c_str();
@@ -39,7 +39,7 @@ namespace droid::command {
     void ActionMgr::factoryReset() {
         //init cmdMap with defaults then store default into config
         cmdMap.clear();
-        #include "droid/command/Action.map"
+        #include "settings/Action.map"
         // Iterate through the map clearing all overrides
         for (const auto& mapEntry : cmdMap) {
             const char* action = mapEntry.first.c_str();
@@ -57,7 +57,7 @@ namespace droid::command {
             if (cmd == NULL) {  //Revert to default
                 std::map<String, String> cmdMap;
                 //Load defaults into a temp map
-                #include "droid/command/Action.map"
+                #include "settings/Action.map"
                 //override master map with the default value just loaded
                 this->cmdMap[action] = cmdMap[action];
                 //save the default back to config storage
