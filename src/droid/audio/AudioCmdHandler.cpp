@@ -64,7 +64,7 @@ namespace droid::audio {
                 return false;
             }
             audioMgr->enableRandom(false);
-            uint8_t bank = command[2] - '0';
+            uint8_t bank = command[1] - '0';
             uint8_t sound = 0;
             if (cmdlen > 2) {
                 sound = atoi(&command[2]);
@@ -89,43 +89,49 @@ namespace droid::audio {
                 break;
 
             case 'L':   // L - Leia message (bank 7 sound 1)
+                audioMgr->enableRandom(false);
                 audioMgr->playSound(7, 1);
                 if (randomOn) {
-                    audioMgr->enableRandom(true, 44);
+                    audioMgr->enableRandom(true, 45);
                 }
                 break;
 
             case 'C':   // C - Cantina music (bank 9 sound 5)
-                audioMgr->playSound(8, 5);
+                audioMgr->enableRandom(false);
+                audioMgr->playSound(9, 5);
                 if (randomOn) {
-                    audioMgr->enableRandom(true, 56);
+                    audioMgr->enableRandom(true, 190);
                 }
                 break;
 
             case 'c':   // c - Beep cantina (bank 9 sound 1)
-                audioMgr->playSound(8, 1);
+                audioMgr->enableRandom(false);
+                audioMgr->playSound(9, 1);
                 if (randomOn) {
-                    audioMgr->enableRandom(true, 27);
+                    audioMgr->enableRandom(true, 30);
                 }
                 break;
 
             case 'S':   // S - Scream (bank 6 sound 1)
+                audioMgr->enableRandom(false);
                 audioMgr->playSound(6, 1);
                 if (randomOn) {
-                    audioMgr->enableRandom(true, 12);
+                    audioMgr->enableRandom(true, 20);
                 }
                 break;
 
             case 'F':   // F - Faint/Short Circuit (bank 6 sound 3)
+                audioMgr->enableRandom(false);
                 audioMgr->playSound(6,3);
                 if (randomOn) {
-                    audioMgr->enableRandom(true, 12);
+                    audioMgr->enableRandom(true, 20);
                 }
                 break;
             case 'D':   // D - Disco (bank 9 sound 6)
+                audioMgr->enableRandom(false);
                 audioMgr->playSound(8, 6);
                 if (randomOn) {
-                    audioMgr->enableRandom(true, 40);
+                    audioMgr->enableRandom(true, 270);
                 }
                 break;
 
@@ -160,11 +166,17 @@ namespace droid::audio {
             case 'W':   // W - Star Wars music (bank 9 sound 2)
                 audioMgr->enableRandom(false);
                 audioMgr->playSound(8, 2);
+                if (randomOn) {
+                    audioMgr->enableRandom(true, 90);
+                }
                 break;
 
             case 'M':   // M - Imperial March (bank 9 sound 3)
                 audioMgr->enableRandom(false);
                 audioMgr->playSound(8, 3);
+                if (randomOn) {
+                    audioMgr->enableRandom(true, 50);
+                }
                 break;
 
             default:

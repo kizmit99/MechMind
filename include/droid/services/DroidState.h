@@ -18,6 +18,7 @@ namespace droid::services {
         bool domePanelsOpen = 0;
         bool bodyPanelsOpen = 0;
         bool holosActive = 0;
+        bool holoLightsActive = 0;
         bool musingEnabled = 0;
         bool gestureMode = 0;
     };

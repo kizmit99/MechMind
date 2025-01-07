@@ -199,10 +199,12 @@ namespace droid::audio {
     
     void AudioMgr::stop() {
         logger->log(name, DEBUG, "stop()\n");
+        audioCmdList.clear();
+        randomPlayEnabled = false;
         queueCommand(driver->getStopCmd(cmdBuffer, INSTRUCTIONLIST_COMMAND_LEN));
     }
     
-    void AudioMgr::enableRandom(bool enable, uint8_t secondsInFuture) {
+    void AudioMgr::enableRandom(bool enable, uint16_t secondsInFuture) {
         logger->log(name, DEBUG, "enableRandom(%d, %d)\n", enable, secondsInFuture);
         queueCommand(driver->getEnableRandomCmd(cmdBuffer, INSTRUCTIONLIST_COMMAND_LEN, enable), (((int) secondsInFuture) * 1000));
     }

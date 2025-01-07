@@ -92,52 +92,60 @@ namespace droid::brain {
             (command != NULL)) {
             logger->log(name, DEBUG, "LocalCmdHandler asked to processcommand: %s\n", command);
             parseCmd(command, cmd, sizeof(cmd), parm1, sizeof(parm1), parm2, sizeof(parm2));
-            if (strcasecmp(cmd, "StickOn") == 0) {
+            if (strcasecmp(cmd, "StickEnable") == 0) {
                 droidState->stickEnable = true;
 
-            } else if (strcasecmp(cmd, "StickOff") == 0) {
+            } else if (strcasecmp(cmd, "StickDisable") == 0) {
                 droidState->stickEnable = false;
 
             } else if (strcasecmp(cmd, "StickToggle") == 0) {
                 droidState->stickEnable = !droidState->stickEnable;
 
-            } else if (strcasecmp(cmd, "SpeedToggle") == 0) {
+            } else if (strcasecmp(cmd, "SpeedChange") == 0) {
                 droidState->turboSpeed = !droidState->turboSpeed;
 
-            } else if (strcasecmp(cmd, "AutoDomeOn") == 0) {
+            } else if (strcasecmp(cmd, "DomeAutoOn") == 0) {
                 droidState->autoDomeEnable = true;
 
-            } else if (strcasecmp(cmd, "AutoDomeOff") == 0) {
+            } else if (strcasecmp(cmd, "DomeAutoOff") == 0) {
                 droidState->autoDomeEnable = false;
 
-            } else if (strcasecmp(cmd, "AutoDomeToggle") == 0) {
+            } else if (strcasecmp(cmd, "DomeAutoToggle") == 0) {
                 droidState->autoDomeEnable = !droidState->autoDomeEnable;
 
-            } else if (strcasecmp(cmd, "AllDomePanels") == 0) {
+            } else if (strcasecmp(cmd, "DomePAllToggle") == 0) {
                 if (droidState->domePanelsOpen) {
-                    brain->fireAction("CloseDomeAll");
+                    brain->fireAction("DomePAllClose");
                 } else {
-                    brain->fireAction("OpenDomeAll");
+                    brain->fireAction("DomePAllOpen");
                 }
                 droidState->domePanelsOpen = !droidState->domePanelsOpen;
 
-            } else if (strcasecmp(cmd, "ToggleHolos") == 0) {
+            } else if (strcasecmp(cmd, "HoloAutoToggle") == 0) {
                 if (droidState->holosActive) {
-                    brain->fireAction("HolosReset");
+                    brain->fireAction("HolosAutoOff");
                 } else {
-                    brain->fireAction("HolosOn");
+                    brain->fireAction("HolosAutoOn");
                 }
                 droidState->holosActive = !droidState->holosActive;
 
-            } else if (strcasecmp(cmd, "AllBodyPanels") == 0) {
-                if (droidState->bodyPanelsOpen) {
-                    brain->fireAction("CloseBodyAll");
+            } else if (strcasecmp(cmd, "HoloLightsTogl") == 0) {
+                if (droidState->holoLightsActive) {
+                    brain->fireAction("HoloLightsOff");
                 } else {
-                    brain->fireAction("OpenBodyAll");
+                    brain->fireAction("HoloLightsOn");
+                }
+                droidState->holoLightsActive = !droidState->holoLightsActive;
+
+            } else if (strcasecmp(cmd, "BodyPAllToggle") == 0) {
+                if (droidState->bodyPanelsOpen) {
+                    brain->fireAction("BodyPAllClose");
+                } else {
+                    brain->fireAction("BodyPAllOpen");
                 }
                 droidState->bodyPanelsOpen = !droidState->bodyPanelsOpen;
 
-            } else if (strcasecmp(cmd, "ToggleMusing") == 0) {
+            } else if (strcasecmp(cmd, "MusingsToggle") == 0) {
                 if (droidState->musingEnabled) {
                     brain->fireAction("MusingsOff");
                 } else {
@@ -219,12 +227,12 @@ namespace droid::brain {
             console->print("\n");
             console->print("Commands:");
             printCmdHelp("Help or ?", "Print this list of commands");
-            printCmdHelp("StickOn", "Enable the Drive joystick");
-            printCmdHelp("StickOff", "Disable the Drive joystick");
+            printCmdHelp("StickEnable", "Enable the Drive joystick");
+            printCmdHelp("StickDisable", "Disable the Drive joystick");
             printCmdHelp("StickToggle", "Toggle the enabled state of the Drive joystick");
-            printCmdHelp("AutoDomeOn", "Enable the Auto Dome functionality");
-            printCmdHelp("AutoDomeOff", "Disable the Auto Dome functionality");
-            printCmdHelp("AutoDomeToggle", "Toggle the enabled state of the Auto Dome Functionality");
+            printCmdHelp("DomeAutoOn", "Enable the Auto Dome functionality");
+            printCmdHelp("DomeAutoOff", "Disable the Auto Dome functionality");
+            printCmdHelp("DomeAutoToggle", "Toggle the enabled state of the Auto Dome Functionality");
             printCmdHelp("Restart", "Perform a complete system restart");
             printCmdHelp("FactoryReset", "Restore all configuration parameters to defaults and restart the system");
             printCmdHelp("ListConfig", "Print out all of the configuration parameters");

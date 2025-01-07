@@ -37,8 +37,6 @@ namespace droid::brain {
 
         //AutoDome config
         bool autoEnabled = false;
-        bool autoAutoEnabled = false;
-        int32_t autoIdleMs = 0;
         int8_t autoMinSpeed = 0;
         int8_t autoMaxSpeed = 0;
         int32_t autoMinDelayMs = 0;
@@ -47,7 +45,6 @@ namespace droid::brain {
         // bool autoLights = false;
 
         //AutoDome state
-        unsigned long lastManualMove = 0;
         bool autoDomeActive = false;
         bool autoDomeMoving = false;
         int16_t autoDomeAngle = 0;

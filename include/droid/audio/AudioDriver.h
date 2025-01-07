@@ -27,11 +27,7 @@
  *       Bank 8: sing sounds (deprecated, not used by R2 Touch)
  *       Bank 9: mus sounds, numbered 176 to 181
  *
- *  The pre-made R2 sound library contains only a few non-copyrighted music sounds.
- *  Sound 202, 203 and 205 are "beeped music" place-holders, meant to be replaced with the
- *  original score of Star Wars, Empire March, and Cantina respectively
- *
- *  If you add your own sounds in Bank 9, make sure you update the last variable
+  *  If you add your own sounds in Bank 9, make sure you update the last variable
  *  MP3_BANK9_SOUNDS below to reflect the total number of sounds
  *
  ***********************************************************/
@@ -50,7 +46,7 @@
 #define MP3_BANK6_SOUND_COUNT MP3_MAX_SOUNDS_PER_BANK    // scream sounds, numbered 126 to 150
 #define MP3_BANK7_SOUND_COUNT MP3_MAX_SOUNDS_PER_BANK    // Leia sounds, numbered 151 to 175
 #define MP3_BANK8_SOUND_COUNT MP3_MAX_SOUNDS_PER_BANK    // sing sounds (deprecated, not used by R2 Touch)
-#define MP3_BANK9_SOUND_COUNT MP3_MAX_SOUNDS_PER_BANK // mus sounds, numbered 201 t0 225
+#define MP3_BANK9_SOUND_COUNT 10 // mus sounds, numbered 176 to 185
 
 namespace droid::audio {
     class AudioDriver : public droid::core::BaseComponent {
@@ -109,7 +105,9 @@ namespace droid::audio {
                     sound = maxSounds[bankIndex];
                 }
                 lastPlayed[bankIndex] = sound;
-                return (bankIndex * MP3_MAX_SOUNDS_PER_BANK) + sound;
+
+                //For some reason bank 8 is not assigned sound files
+                return (((bank == 9) ? 7 : bankIndex) * MP3_MAX_SOUNDS_PER_BANK) + sound;
             }
         }
 

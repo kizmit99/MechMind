@@ -522,13 +522,13 @@ namespace droid::controller {
         // Triggers for command toggles
         if (PS3Right.isConnected && 
             PS3Right.ps3BT.getButtonPress(ButtonEnum::PS) && 
-            PS3Right.ps3BT.getButtonClick(ButtonEnum::CROSS)) {
+            PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS)) {
             return "RX_RPS";
         }
         
         if(PS3Right.isConnected && 
             PS3Right.ps3BT.getButtonPress(ButtonEnum::PS) && 
-            PS3Right.ps3BT.getButtonClick(ButtonEnum::CIRCLE)) {
+            PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE)) {
             return "RO_RPS";
         }
         
@@ -540,13 +540,13 @@ namespace droid::controller {
     
         if(PS3Right.isConnected && 
             PS3Right.ps3BT.getButtonPress(ButtonEnum::L2) && 
-            PS3Right.ps3BT.getButtonClick(ButtonEnum::CROSS)) {
+            PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS)) {
             return "RX_RL2";
         } 
 
         if(PS3Right.isConnected && 
             PS3Right.ps3BT.getButtonPress(ButtonEnum::L2) && 
-            PS3Right.ps3BT.getButtonClick(ButtonEnum::CIRCLE)) {
+            PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE)) {
             return "RO_RL2";
         } 
 

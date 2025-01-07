@@ -33,7 +33,7 @@ namespace droid::audio {
         float getVolume();
         void playSound(uint8_t bank, uint8_t sound);
         void stop();
-        void enableRandom(bool enable, uint8_t secondsInFuture = 0);
+        void enableRandom(bool enable, uint16_t secondsInFuture = 0);
         bool isRandomEnabled();
         void setRandomMinMs(uint32_t millis);
         uint32_t getRandomMinMs();

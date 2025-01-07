@@ -14,8 +14,6 @@
 #define CONFIG_KEY_DOMEMGR_360TIME              "360TimeMs"
 #define CONFIG_KEY_DOMEMGR_DEADBAND             "Deadband"
 #define CONFIG_KEY_DOMEMGR_AUTODOME_ENABLE      "AutoEnable"
-#define CONFIG_KEY_DOMEMGR_AUTODOME_AUTOENABLE  "AutoAutoEnable"
-#define CONFIG_KEY_DOMEMGR_AUTODOME_AUTO_IDLE   "AutoIdleMs"
 #define CONFIG_KEY_DOMEMGR_AUTODOME_MIN_SPEED   "AutoMinSpeed"
 #define CONFIG_KEY_DOMEMGR_AUTODOME_MAX_SPEED   "AutoMaxSpeed"
 #define CONFIG_KEY_DOMEMGR_AUTODOME_MIN_DELAY   "AutoMinDelayMs"
@@ -27,12 +25,10 @@
 #define CONFIG_DEFAULT_DOMEMGR_360TIME              5000
 #define CONFIG_DEFAULT_DOMEMGR_DEADBAND             16
 #define CONFIG_DEFAULT_DOMEMGR_AUTODOME_ENABLE      true
-#define CONFIG_DEFAULT_DOMEMGR_AUTODOME_AUTOENABLE  true
-#define CONFIG_DEFAULT_DOMEMGR_AUTODOME_AUTO_IDLE   30000
 #define CONFIG_DEFAULT_DOMEMGR_AUTODOME_MIN_SPEED   30
 #define CONFIG_DEFAULT_DOMEMGR_AUTODOME_MAX_SPEED   80
-#define CONFIG_DEFAULT_DOMEMGR_AUTODOME_MIN_DELAY   3000
-#define CONFIG_DEFAULT_DOMEMGR_AUTODOME_MAX_DELAY   20000
+#define CONFIG_DEFAULT_DOMEMGR_AUTODOME_MIN_DELAY   10000
+#define CONFIG_DEFAULT_DOMEMGR_AUTODOME_MAX_DELAY   45000
 // #define CONFIG_DEFAULT_DOMEMGR_AUTODOME_AUDIO       true
 // #define CONFIG_DEFAULT_DOMEMGR_AUTODOME_LIGHTS      true
 
@@ -99,8 +95,6 @@ namespace droid::brain {
         rotationTimeMs = config->getInt(name, CONFIG_KEY_DOMEMGR_360TIME, CONFIG_DEFAULT_DOMEMGR_360TIME);
         deadband = config->getInt(name, CONFIG_KEY_DOMEMGR_DEADBAND, CONFIG_DEFAULT_DOMEMGR_DEADBAND);
         autoEnabled = config->getBool(name, CONFIG_KEY_DOMEMGR_AUTODOME_ENABLE, CONFIG_DEFAULT_DOMEMGR_AUTODOME_ENABLE);
-        autoAutoEnabled = config->getBool(name, CONFIG_KEY_DOMEMGR_AUTODOME_AUTOENABLE, CONFIG_DEFAULT_DOMEMGR_AUTODOME_AUTOENABLE);
-        autoIdleMs = config->getInt(name, CONFIG_KEY_DOMEMGR_AUTODOME_AUTO_IDLE, CONFIG_DEFAULT_DOMEMGR_AUTODOME_AUTO_IDLE);
         autoMinSpeed = config->getInt(name, CONFIG_KEY_DOMEMGR_AUTODOME_MIN_SPEED, CONFIG_DEFAULT_DOMEMGR_AUTODOME_MIN_SPEED);
         autoMaxSpeed = config->getInt(name, CONFIG_KEY_DOMEMGR_AUTODOME_MAX_SPEED, CONFIG_DEFAULT_DOMEMGR_AUTODOME_MAX_SPEED);
         autoMinDelayMs = config->getInt(name, CONFIG_KEY_DOMEMGR_AUTODOME_MIN_DELAY, CONFIG_DEFAULT_DOMEMGR_AUTODOME_MIN_DELAY);
@@ -117,8 +111,6 @@ namespace droid::brain {
         config->putInt(name, CONFIG_KEY_DOMEMGR_360TIME, CONFIG_DEFAULT_DOMEMGR_360TIME);
         config->putInt(name, CONFIG_KEY_DOMEMGR_DEADBAND, CONFIG_DEFAULT_DOMEMGR_DEADBAND);
         config->putBool(name, CONFIG_KEY_DOMEMGR_AUTODOME_ENABLE, CONFIG_DEFAULT_DOMEMGR_AUTODOME_ENABLE);
-        config->putBool(name, CONFIG_KEY_DOMEMGR_AUTODOME_AUTOENABLE, CONFIG_DEFAULT_DOMEMGR_AUTODOME_AUTOENABLE);
-        config->putInt(name, CONFIG_KEY_DOMEMGR_AUTODOME_AUTO_IDLE, CONFIG_DEFAULT_DOMEMGR_AUTODOME_AUTO_IDLE);
         config->putInt(name, CONFIG_KEY_DOMEMGR_AUTODOME_MIN_SPEED, CONFIG_DEFAULT_DOMEMGR_AUTODOME_MIN_SPEED);
         config->putInt(name, CONFIG_KEY_DOMEMGR_AUTODOME_MAX_SPEED, CONFIG_DEFAULT_DOMEMGR_AUTODOME_MAX_SPEED);
         config->putInt(name, CONFIG_KEY_DOMEMGR_AUTODOME_MIN_DELAY, CONFIG_DEFAULT_DOMEMGR_AUTODOME_MIN_DELAY);
@@ -132,8 +124,6 @@ namespace droid::brain {
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_DOMEMGR_360TIME, config->getString(name, CONFIG_KEY_DOMEMGR_360TIME, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_DOMEMGR_DEADBAND, config->getString(name, CONFIG_KEY_DOMEMGR_DEADBAND, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_DOMEMGR_AUTODOME_ENABLE, config->getString(name, CONFIG_KEY_DOMEMGR_AUTODOME_ENABLE, "").c_str());
-        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_DOMEMGR_AUTODOME_AUTOENABLE, config->getString(name, CONFIG_KEY_DOMEMGR_AUTODOME_AUTOENABLE, "").c_str());
-        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_DOMEMGR_AUTODOME_AUTO_IDLE, config->getString(name, CONFIG_KEY_DOMEMGR_AUTODOME_AUTO_IDLE, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_DOMEMGR_AUTODOME_MIN_SPEED, config->getString(name, CONFIG_KEY_DOMEMGR_AUTODOME_MIN_SPEED, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_DOMEMGR_AUTODOME_MAX_SPEED, config->getString(name, CONFIG_KEY_DOMEMGR_AUTODOME_MAX_SPEED, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_DOMEMGR_AUTODOME_MIN_DELAY, config->getString(name, CONFIG_KEY_DOMEMGR_AUTODOME_MIN_DELAY, "").c_str());
@@ -158,7 +148,6 @@ namespace droid::brain {
             domeMotor->setMotorSpeed(0, joyX);
             //Disable autoDome
             droidState->autoDomeEnable = false;
-            lastManualMove = millis();
             autoDomeActive = false;
         } else {
             bool moved = doAutoDome();
@@ -171,18 +160,19 @@ namespace droid::brain {
     bool DomeMgr::doAutoDome() {
         unsigned long now = millis();
 
-        //Check for auto enable
-        if (!droidState->autoDomeEnable &&
-            autoEnabled && 
-            autoAutoEnabled &&
-            !autoDomeActive && 
-            (now > (lastManualMove + autoIdleMs))) {
-            droidState->autoDomeEnable = true;
+        if (autoEnabled &&
+            !autoDomeActive &&
+            droidState->autoDomeEnable) {
             autoDomeActive = true;
+            logger->log(name, DEBUG, "AutoDome activating\n");
+        }
+
+        if (autoDomeActive &&
+            !droidState->autoDomeEnable) {
+            autoDomeActive = false;
             autoDomeMoving = false;
-            autoDomeAngle = 0;
-            autoDomeNextMove = now;
-            logger->log(name, DEBUG, "AutoDome is activating after Idle time expired\n");
+            autoDomeSpeed = 0;
+            logger->log(name, DEBUG, "AutoDome deactivating\n");
         }
 
         if (autoDomeActive) {
