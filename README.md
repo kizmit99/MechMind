@@ -15,9 +15,9 @@ It is designed to run exclusively on ESP32 based microcontrollers and to be comp
 - **Extensible Controller Support**:
   - Supports multiple game controllers including:
     - Single/Dual Bluetooth Sony Move Controllers
-    - Generic PS3 Bluetooth controllers (Coming soon)
+    - Generic PS3 Bluetooth controllers
     - Generic Xbox Bluetooth Controllers (Coming soon)
-    - Widely available Bluetooth Low Energy Ring style "VR controllers"
+    - Widely available Bluetooth Low Energy (Magicsee R1) Ring style "VR controllers"
     - Custom ESPNow based controllers (Future implementation)
   - Unlike existing control software, which often supports only one specific controller, MechMind allows you to pick the controller that best suits your particular situation.
 

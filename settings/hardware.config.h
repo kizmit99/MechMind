@@ -9,6 +9,7 @@
  */
 
 #pragma once
+#include <SoftwareSerial.h>
 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
@@ -44,13 +45,15 @@
 #define CONFIG_DEFAULT_DOME_MOTOR       MOTOR_DRIVER_OPTION_PWMMOTOR
 #define CONFIG_DEFAULT_AUDIO_DRIVER     AUDIO_DRIVER_OPTION_DFMINI
 
+extern EspSoftwareSerial::UART Serial3;
+
 //Stream configurations (modify to suit your needs)
 #define LOGGER_STREAM &Serial
 #define LOGGER_STREAM_SETUP Serial.begin(115200)
 #define CONSOLE_STREAM LOGGER_STREAM
 #define CONSOLE_STREAM_SETUP
-#define DOME_STREAM LOGGER_STREAM
-#define DOME_STREAM_SETUP
+#define DOME_STREAM &Serial3
+#define DOME_STREAM_SETUP Serial3.begin(2400, SWSERIAL_8N1, 32, 4)
 #define SABERTOOTH_STREAM &Serial2
 #define SABERTOOTH_STREAM_SETUP Serial2.begin(9600)
 #define CYTRON_STREAM &Serial2

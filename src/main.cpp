@@ -18,6 +18,7 @@
 droid::core::System* sys;
 droid::brain::Brain* brain;
 BufferedStream* bufferedStream;
+EspSoftwareSerial::UART Serial3;
 
 void setup() {
 
