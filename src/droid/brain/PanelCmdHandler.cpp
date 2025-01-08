@@ -36,10 +36,14 @@ namespace droid::brain {
             ((command[2] == 'P') || (command[1] == 'p'))) {
             int panel = atoi(&command[3]);
             if (panel > LOCAL_PANEL_COUNT) {return false;}
-            uint8_t startIndex, endIndex = panel - 1;
+            uint8_t startIndex;
+            uint8_t endIndex;
             if (panel == 0) {
                 startIndex = 0;
                 endIndex = LOCAL_PANEL_COUNT - 1;
+            } else {
+                startIndex = panel - 1;
+                endIndex = panel - 1;
             }
             for (uint8_t index = startIndex; index <= endIndex; index++) {
                 pwmService->setPWMuS(panelDetails[index].pwmOutput, 
@@ -53,10 +57,14 @@ namespace droid::brain {
             ((command[2] == 'L') || (command[1] == 'l'))) {
             int panel = atoi(&command[3]);
             if (panel > LOCAL_PANEL_COUNT) {return false;}
-            uint8_t startIndex, endIndex = panel - 1;
+            uint8_t startIndex;
+            uint8_t endIndex;
             if (panel == 0) {
                 startIndex = 0;
                 endIndex = LOCAL_PANEL_COUNT - 1;
+            } else {
+                startIndex = panel - 1;
+                endIndex = panel - 1;
             }
             for (uint8_t index = startIndex; index <= endIndex; index++) {
                 pwmService->setPWMuS(panelDetails[index].pwmOutput, 

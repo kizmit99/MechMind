@@ -1,0 +1,102 @@
+/*
+ * MechMind Program
+ * Author: Kizmit99
+ * License: CC BY-NC-SA 4.0
+ *
+ * This source code is open-source for non-commercial use. 
+ * For commercial use, please obtain a license from the author.
+ * For more information, visit https://github.com/kizmit99/MechMind
+ */
+
+//Panel Actions	
+cmdMap["DomePAllOpen"]		= "Dome>:OP00";
+cmdMap["DomePAllClose"]		= "Dome>:CL00";
+cmdMap["DomePAllToggle"]	= "Brain>DomePAllToggle";
+cmdMap["DomeP1Open"]		= "Dome>:OP01";
+cmdMap["DomeP2Open"]		= "Dome>:OP02";
+cmdMap["DomeP3Open"]		= "Dome>:OP03";
+cmdMap["DomeP4Open"]		= "Dome>:OP04";
+cmdMap["DomeP1Close"]		= "Dome>:CL01";
+cmdMap["DomeP2Close"]		= "Dome>:CL02";
+cmdMap["DomeP3Close"]		= "Dome>:CL03";
+cmdMap["DomeP4Close"]		= "Dome>:CL04";
+cmdMap["BodyPAllOpen"]		= "Panel>:OP00";
+cmdMap["BodyPAllClose"]		= "Panel>:CL00";
+cmdMap["BodyPAllToggle"]	= "Brain>BodyPAllToggle";
+cmdMap["BodyP1Open"]		= "Panel>:OP01";
+cmdMap["BodyP2Open"]		= "Panel>:OP02";
+cmdMap["BodyP3Open"]		= "Panel>:OP03";
+cmdMap["BodyP4Open"]		= "Panel>:OP04";
+cmdMap["BodyP1Close"]		= "Panel>:CL01";
+cmdMap["BodyP2Close"]		= "Panel>:CL02";
+cmdMap["BodyP3Close"]		= "Panel>:CL03";
+cmdMap["BodyP4Close"]		= "Panel>:CL04";
+	
+//Drive Actions	
+cmdMap["StickEnable"]		= "Brain>StickEnable";
+cmdMap["StickDisable"]		= "Brain>StickDisable";
+cmdMap["StickToggle"]		= "Brain>StickToggle";
+cmdMap["SpeedChange"]		= "Brain>SpeedChange";
+	
+//Holo Actions	
+cmdMap["HoloReset"]			= "Dome>*ST00";
+cmdMap["HoloLightsOn"]		= "Dome>*ON00";
+cmdMap["HoloLightsOff"]		= "Dome>*OF00";
+cmdMap["HoloLightsTogl"]	= "Brain>HoloLightsTogl";
+cmdMap["HoloAutoOn"]		= "Brain>HoloAutoOn";
+cmdMap["HoloAutoOff"]		= "Brain>HoloAutoOff";
+cmdMap["HoloAutoToggle"]	= "Brain>HoloAutoToggle";
+cmdMap["HoloUp"]			= "Dome>*HP201";
+cmdMap["HoloDown"]			= "Dome>*HP001";
+cmdMap["HoloLeft"]			= "Dome>*HP301";
+cmdMap["HoloRight"]			= "Dome>*HP601";
+	
+//Dome Actions	
+cmdMap["DomeAutoOn"]		= "Brain>DomeAutoOn";
+cmdMap["DomeAutoOff"]		= "Brain>DomeAutoOff";
+cmdMap["DomeAutoToggle"]	= "Brain>DomeAutoToggle";
+cmdMap["LogicBright+"]		= "Dome>@0T1";
+cmdMap["LogicBright-"]		= "Dome>@APLE140500";
+
+//Sound Actions	
+cmdMap["VolumeUp"]			= "Audio>$+";
+cmdMap["VolumeDown"]		= "Audio>$-";
+cmdMap["VolumeMax"]			= "Audio>$f";
+cmdMap["VolumeMid"]			= "Audio>$m";
+cmdMap["VolumeOff"]			= "Audio>$s";
+cmdMap["MusingsOn"]			= "Audio>$R";
+cmdMap["MusingsOff"]		= "Audio>$O";
+cmdMap["MusingsToggle"]		= "Brain>MusingsToggle";
+cmdMap["RandomMuse"]		= "Audio>$10";
+	
+//Complex Actions	
+cmdMap["Happy"]				= "Audio>$30;Dome>@0T1";
+cmdMap["Sad"]				= "Audio>$40;Dome>@0T1";
+cmdMap["Fear"]				= "Audio>$50;Dome>@0T1";
+cmdMap["Anger"]				= "Audio>$60;Dome>@0T1";
+cmdMap["QuietMode"]			= "Dome>:SE10;Audio>$s";
+cmdMap["MidAwake"]			= "Dome>:SE13;Audio>$R";
+cmdMap["FullAwake"]			= "Dome>:SE11;Audio>$R";
+cmdMap["FullAwake+"]		= "Dome>:SE14;Audio>$R";
+cmdMap["BeepCantina"]		= "Dome>:SE05;Audio>$c";
+cmdMap["CantinaDance"]		= "Dome>:SE07;Audio>$C";
+cmdMap["MarchingAnts"]		= "Dome>:SE55";
+cmdMap["Scream"]			= "Dome>:SE01;Audio>$61";
+cmdMap["Disco"]				= "Dome>:SE09;Audio>$D";
+cmdMap["FastSmirk"]			= "Dome>:SE03";
+cmdMap["ShortCircuit"]		= "Dome>:SE06;Audio>$63";
+cmdMap["LeiaFullMsg"]		= "Dome>:SE08;Audio>$L";
+cmdMap["LeiaShortMsg"]		= "Audio>$72";
+cmdMap["Wave"]				= "Dome>:SE02";
+cmdMap["Wave2"]				= "Dome>:SE04";
+cmdMap["Patrol"]			= "Dome>:SE10;Audio>$97";
+cmdMap["Empire"]			= "Audio>$M";
+cmdMap["Theme"]				= "Audio>$W";
+cmdMap["WolfWhistle"]		= "Audio>$98";
+cmdMap["Chortle"]			= "Audio>$910";
+cmdMap["DooDoo"]			= "Audio>$94";
+cmdMap["Custom1"]			= "";
+cmdMap["Custom2"]			= "";
+cmdMap["Custom3"]			= "";
+cmdMap["Custom4"]			= "";
+cmdMap["Gesture"]			= "Brain>Gesture";

@@ -31,15 +31,15 @@ namespace droid::command {
         void failsafe() override;
 
         void addCmdHandler(droid::command::CmdHandler*);
-        void fireTrigger(const char* trigger);
+        void fireAction(const char* action);
         void queueCommand(const char* device, const char* command, unsigned long executeTime);
-        void overrideCmdMap(const char* trigger, const char* cmd);
+        void overrideCmdMap(const char* action, const char* cmd);
 
     private:
         droid::controller::Controller* controller = nullptr;
         std::map<String, String> cmdMap;
-        unsigned long lastTriggerTime = 0;
-        String lastTrigger = "";
+        unsigned long lastActionTime = 0;
+        String lastAction = "";
         droid::core::InstructionList instructionList;
         std::vector<droid::command::CmdHandler*> cmdHandlers;
 

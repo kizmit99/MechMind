@@ -26,7 +26,7 @@ namespace droid::controller {
         void setCritical(bool isCritical) {}
         void setDeadband(int8_t deadband) {}
         int8_t getJoystickPosition(Joystick, Axis) {return 0;}
-        String getTrigger() {return "";}
+        String getAction() {return "";}
         ControllerType getType() {return STUB;}
     };
 }

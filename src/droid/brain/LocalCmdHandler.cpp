@@ -11,7 +11,7 @@
 #include "droid/brain/LocalCmdHandler.h"
 #include "droid/services/DroidState.h"
 #include "droid/command/ActionMgr.h"
-#include "droid/core/hardware.h"
+#include "settings/hardware.config.h"
 
 namespace {
     const char* trimSpaces(const char* str) {
@@ -92,56 +92,64 @@ namespace droid::brain {
             (command != NULL)) {
             logger->log(name, DEBUG, "LocalCmdHandler asked to processcommand: %s\n", command);
             parseCmd(command, cmd, sizeof(cmd), parm1, sizeof(parm1), parm2, sizeof(parm2));
-            if (strcasecmp(cmd, "StickOn") == 0) {
+            if (strcasecmp(cmd, "StickEnable") == 0) {
                 droidState->stickEnable = true;
 
-            } else if (strcasecmp(cmd, "StickOff") == 0) {
+            } else if (strcasecmp(cmd, "StickDisable") == 0) {
                 droidState->stickEnable = false;
 
             } else if (strcasecmp(cmd, "StickToggle") == 0) {
                 droidState->stickEnable = !droidState->stickEnable;
 
-            } else if (strcasecmp(cmd, "SpeedToggle") == 0) {
+            } else if (strcasecmp(cmd, "SpeedChange") == 0) {
                 droidState->turboSpeed = !droidState->turboSpeed;
 
-            } else if (strcasecmp(cmd, "AutoDomeOn") == 0) {
+            } else if (strcasecmp(cmd, "DomeAutoOn") == 0) {
                 droidState->autoDomeEnable = true;
 
-            } else if (strcasecmp(cmd, "AutoDomeOff") == 0) {
+            } else if (strcasecmp(cmd, "DomeAutoOff") == 0) {
                 droidState->autoDomeEnable = false;
 
-            } else if (strcasecmp(cmd, "AutoDomeToggle") == 0) {
+            } else if (strcasecmp(cmd, "DomeAutoToggle") == 0) {
                 droidState->autoDomeEnable = !droidState->autoDomeEnable;
 
-            } else if (strcasecmp(cmd, "AllDomePanels") == 0) {
+            } else if (strcasecmp(cmd, "DomePAllToggle") == 0) {
                 if (droidState->domePanelsOpen) {
-                    brain->trigger("CloseDomeAll");
+                    brain->fireAction("DomePAllClose");
                 } else {
-                    brain->trigger("OpenDomeAll");
+                    brain->fireAction("DomePAllOpen");
                 }
                 droidState->domePanelsOpen = !droidState->domePanelsOpen;
 
-            } else if (strcasecmp(cmd, "ToggleHolos") == 0) {
+            } else if (strcasecmp(cmd, "HoloAutoToggle") == 0) {
                 if (droidState->holosActive) {
-                    brain->trigger("HolosReset");
+                    brain->fireAction("HolosAutoOff");
                 } else {
-                    brain->trigger("HolosOn");
+                    brain->fireAction("HolosAutoOn");
                 }
                 droidState->holosActive = !droidState->holosActive;
 
-            } else if (strcasecmp(cmd, "AllBodyPanels") == 0) {
-                if (droidState->bodyPanelsOpen) {
-                    brain->trigger("CloseBodyAll");
+            } else if (strcasecmp(cmd, "HoloLightsTogl") == 0) {
+                if (droidState->holoLightsActive) {
+                    brain->fireAction("HoloLightsOff");
                 } else {
-                    brain->trigger("OpenBodyAll");
+                    brain->fireAction("HoloLightsOn");
+                }
+                droidState->holoLightsActive = !droidState->holoLightsActive;
+
+            } else if (strcasecmp(cmd, "BodyPAllToggle") == 0) {
+                if (droidState->bodyPanelsOpen) {
+                    brain->fireAction("BodyPAllClose");
+                } else {
+                    brain->fireAction("BodyPAllOpen");
                 }
                 droidState->bodyPanelsOpen = !droidState->bodyPanelsOpen;
 
-            } else if (strcasecmp(cmd, "ToggleMusing") == 0) {
+            } else if (strcasecmp(cmd, "MusingsToggle") == 0) {
                 if (droidState->musingEnabled) {
-                    brain->trigger("MusingsOff");
+                    brain->fireAction("MusingsOff");
                 } else {
-                    brain->trigger("MusingsOn");
+                    brain->fireAction("MusingsOn");
                 }
                 droidState->musingEnabled = !droidState->musingEnabled;
 
@@ -153,7 +161,7 @@ namespace droid::brain {
                 brain->reboot();
 
             } else if (strcasecmp(cmd, "FactoryReset") == 0) {
-                //Delete all preferences, reset button triggers to sketch defaults, unpair controllers.
+                //Delete all preferences, reset button actions to sketch defaults, unpair controllers.
                 logger->log(name, WARN, "Initiating factory reset...\n");
                 brain->factoryReset();
                 brain->reboot();
@@ -162,17 +170,17 @@ namespace droid::brain {
                 //List all configuration data
                 brain->logConfig();
 
-            } else if (strcasecmp(cmd, "SetTrigger") == 0) {
-                //Set the button trigger (parm1) to the specified action (parm2).
+            } else if (strcasecmp(cmd, "SetAction") == 0) {
+                //Set the button action (parm1) to the specified cmdList (parm2).
                 brain->overrideCmdMap(parm1, parm2);
 
             } else if (strcasecmp(cmd, "Play") == 0) {
-                //Play any action associated with the specified trigger or cmd string
+                //Play any action associated with the specified action or cmd string
                 //Note that you cannot directly play cmd strings that contain spaces!
-                brain->trigger(parm1);
+                brain->fireAction(parm1);
 
-            } else if (strcasecmp(cmd, "ResetTrigger") == 0) {
-                //Reset command for specified trigger to default.
+            } else if (strcasecmp(cmd, "ResetAction") == 0) {
+                //Reset command for specified action to default.
                 brain->overrideCmdMap(parm1, NULL);
 
             } else if (strcasecmp(cmd, "SetConfig") == 0) {
@@ -195,7 +203,7 @@ namespace droid::brain {
                 //Test a panel
                 char buf[100];
                 snprintf(buf, sizeof(buf), "Panel>:TP%03d%04d", atoi(parm1), atoi(parm2));
-                brain->trigger(buf);
+                brain->fireAction(buf);
 
             } else if (strcasecmp(cmd, "LogLevel") == 0) {
                 logger->setLogLevel(parm1, (LogLevel) atoi(parm2));
@@ -219,22 +227,22 @@ namespace droid::brain {
             console->print("\n");
             console->print("Commands:");
             printCmdHelp("Help or ?", "Print this list of commands");
-            printCmdHelp("StickOn", "Enable the Drive joystick");
-            printCmdHelp("StickOff", "Disable the Drive joystick");
+            printCmdHelp("StickEnable", "Enable the Drive joystick");
+            printCmdHelp("StickDisable", "Disable the Drive joystick");
             printCmdHelp("StickToggle", "Toggle the enabled state of the Drive joystick");
-            printCmdHelp("AutoDomeOn", "Enable the Auto Dome functionality");
-            printCmdHelp("AutoDomeOff", "Disable the Auto Dome functionality");
-            printCmdHelp("AutoDomeToggle", "Toggle the enabled state of the Auto Dome Functionality");
+            printCmdHelp("DomeAutoOn", "Enable the Auto Dome functionality");
+            printCmdHelp("DomeAutoOff", "Disable the Auto Dome functionality");
+            printCmdHelp("DomeAutoToggle", "Toggle the enabled state of the Auto Dome Functionality");
             printCmdHelp("Restart", "Perform a complete system restart");
             printCmdHelp("FactoryReset", "Restore all configuration parameters to defaults and restart the system");
             printCmdHelp("ListConfig", "Print out all of the configuration parameters");
-            printCmdHelp("SetTrigger <trigger> <action>", "Configure the Action associated with the specified Trigger - persistent across restarts");
-            printParmHelp("trigger", "The Trigger to override");
-            printParmHelp("action", "The new Action (list of instructions) to associate with the Trigger");
-            printCmdHelp("Play <command>", "Execute the specified Trigger or Action");
-            printParmHelp("command", "This can be a Trigger, or a list of instructions (see ListConfig for examples)");
-            printCmdHelp("ResetTrigger <trigger>", "Restore the default Action associated with the specified Trigger - persistent across restarts");
-            printParmHelp("trigger", "The Trigger to override");
+            printCmdHelp("SetAction <action> <cmdList>", "Configure the Command List associated with the specified Action - persistent across restarts");
+            printParmHelp("action", "The Action to override");
+            printParmHelp("cmdList", "The new Command List (list of instructions) to associate with the Action");
+            printCmdHelp("Play <command>", "Execute the specified Action or Command List");
+            printParmHelp("command", "This can be an Action, or a list of instructions (see ListConfig for examples)");
+            printCmdHelp("ResetAction <action>", "Restore the default Command List associated with the specified Action - persistent across restarts");
+            printParmHelp("action", "The Action to override");
             printCmdHelp("SetConfig <namespace> <key> <newValue>", "Update the specified configuration value - persistent across restarts");
             printParmHelp("namespace", "The namespace of the configuration entry to update (see ListConfig for valid options)");
             printParmHelp("key", "The key name of the configuration entry to update (see ListConfig for valid options)");

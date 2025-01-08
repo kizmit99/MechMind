@@ -25,7 +25,7 @@ LOGGER->setLogLevel("Sabertooth", INFO);
 LOGGER->setLogLevel("DrivePWM", INFO);
 LOGGER->setLogLevel("DriveStub", INFO);
 LOGGER->setLogLevel("DriveMgr", INFO);
-LOGGER->setLogLevel("ActionMgr", INFO);
+LOGGER->setLogLevel("ActionMgr", DEBUG);
 LOGGER->setLogLevel("HCRDriver", DEBUG);
 LOGGER->setLogLevel("DFMiniDriver", DEBUG);
 LOGGER->setLogLevel("SparkDriver", DEBUG);

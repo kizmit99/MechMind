@@ -9,7 +9,7 @@
  */
 
 #include "droid/services/PCA9685PWM.h"
-#include "droid/core/hardware.h"
+#include "settings/hardware.config.h"
 
 namespace droid::services {
     PCA9685PWM::PCA9685PWM(const char* name, droid::core::System* system, const uint8_t I2CAddress, uint8_t outputEnablePin) :

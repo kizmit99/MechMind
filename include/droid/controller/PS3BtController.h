@@ -16,9 +16,9 @@
 #include <map>
 
 namespace droid::controller {
-    class DualSonyMoveController : public Controller {
+    class PS3BtController : public Controller {
     public:
-        DualSonyMoveController(const char* name, droid::core::System* system);
+        PS3BtController(const char* name, droid::core::System* system);
 
         //Override virtual methods from BaseComponent
         void init() override;
@@ -31,7 +31,7 @@ namespace droid::controller {
         //Joystick Position should be returned as a value between -100 and +100 for each axis
         int8_t getJoystickPosition(Joystick, Axis);
         String getAction();
-        ControllerType getType() {return DUAL_SONY;}
+        ControllerType getType() {return ControllerType::PS3_BT;}
 
     private:
         struct ControllerDetails {
@@ -50,9 +50,8 @@ namespace droid::controller {
 
         USB Usb;
         BTD Btd;
-        ControllerDetails PS3Right;
-        ControllerDetails PS3Left;
-        static DualSonyMoveController* instance;
+        ControllerDetails PS3;
+        static PS3BtController* instance;
         void (*statusChangeCallback)(Controller*) = nullptr;
         bool isCritical = false;
         uint32_t activeTimeout = 0;
@@ -62,16 +61,13 @@ namespace droid::controller {
         int8_t deadbandY = 0;
         std::map<String, String> triggerMap;
 
-        void onInitPS3(Joystick which);
+        void onInitPS3();
         void faultCheck(ControllerDetails* controller);
         void disconnect(ControllerDetails* controller);
         String getTrigger();
 
-        static void onInitPS3RightWrapper() {
-            instance->onInitPS3(RIGHT);
-        }
-        static void onInitPS3LeftWrapper() {
-            instance->onInitPS3(LEFT);
+        static void onInitPS3Wrapper() {
+            instance->onInitPS3();
         }
     };
 }

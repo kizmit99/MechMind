@@ -9,7 +9,7 @@
  */
 
 #include <Arduino.h>
-#include "droid/core/hardware.h"
+#include "settings/hardware.config.h"
 #include "droid/controller/DualSonyMoveController.h"
 #include <string>
 #include <stdexcept>
@@ -26,6 +26,7 @@
 #define CONFIG_DEFAULT_SONY_ACTIVE_TIMEOUT   200
 #define CONFIG_DEFAULT_SONY_INACTIVE_TIMEOUT 10000
 #define CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW  50
+#define CONFIG_DEFAULT_SONY_DEADBAND         20
 
 namespace droid::controller {
     DualSonyMoveController::DualSonyMoveController(const char* name, droid::core::System* system) :
@@ -56,6 +57,16 @@ namespace droid::controller {
         config->putInt(name, CONFIG_KEY_SONY_BAD_DATA_WINDOW, CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW);
         config->putInt(name, CONFIG_KEY_SONY_DEADBAND_X, CONFIG_DEFAULT_SONY_DEADBAND);
         config->putInt(name, CONFIG_KEY_SONY_DEADBAND_Y, CONFIG_DEFAULT_SONY_DEADBAND);
+
+        //init triggerMap with defaults then store default into config
+        triggerMap.clear();
+        #include "settings/DualSonyTrigger.map"
+        // Iterate through the map clearing all overrides
+        for (const auto& mapEntry : triggerMap) {
+            const char* trigger = mapEntry.first.c_str();
+            const char* action = mapEntry.second.c_str();
+            config->putString(name, trigger, action);
+        }
     }
 
     void DualSonyMoveController::init() {
@@ -69,7 +80,20 @@ namespace droid::controller {
         badDataWindow = config->getInt(name, CONFIG_KEY_SONY_BAD_DATA_WINDOW, CONFIG_DEFAULT_SONY_BAD_DATA_WINDOW);
         deadbandX = config->getInt(name, CONFIG_KEY_SONY_DEADBAND_X, CONFIG_DEFAULT_SONY_DEADBAND);
         deadbandY = config->getInt(name, CONFIG_KEY_SONY_DEADBAND_Y, CONFIG_DEFAULT_SONY_DEADBAND);
-        
+
+        //init triggerMap with defaults then load overrides from config
+        triggerMap.clear();
+        #include "settings/DualSonyTrigger.map"
+        // Iterate through the map looking for overrides
+        for (const auto& mapEntry : triggerMap) {
+            const char* trigger = mapEntry.first.c_str();
+            const char* action = mapEntry.second.c_str();
+            String override = config->getString(name, trigger, action);
+            if (override != action) {
+                triggerMap[trigger] = override;
+            }
+        }
+
         if (Usb.Init() != 0) {
             logger->log(name, FATAL, "Unable to init() the USB stack");
         }
@@ -92,6 +116,12 @@ namespace droid::controller {
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_BAD_DATA_WINDOW, config->getString(name, CONFIG_KEY_SONY_BAD_DATA_WINDOW, ""));
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_DEADBAND_X, config->getString(name, CONFIG_KEY_SONY_DEADBAND_X, ""));
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_DEADBAND_Y, config->getString(name, CONFIG_KEY_SONY_DEADBAND_Y, ""));
+
+        // Iterate through the triggerMap for keys to log
+        for (const auto& mapEntry : triggerMap) {
+            const char* trigger = mapEntry.first.c_str();
+            logger->log(name, INFO, "Config %s = %s\n", trigger, config->getString(name, trigger, "").c_str());
+        }
     }
 
     void DualSonyMoveController::failsafe() {
@@ -253,6 +283,7 @@ namespace droid::controller {
     }
 
     void DualSonyMoveController::onInitPS3(Joystick which) {
+        logger->log(name, INFO, "DualSonyMoveController::onInitPS3 called: %s\n", which == RIGHT ? "RIGHT" : "LEFT");
         ControllerDetails* controller;
         const char* whichStr;
         const char* configKey;
@@ -299,9 +330,16 @@ namespace droid::controller {
         } 
     }
 
-    String DualSonyMoveController::getTrigger() {
+    String DualSonyMoveController::getAction() {
         //Button definitions for Dual Sony Triggers to mimic PenumbraShadowMD
+        String trigger = getTrigger();
+        if (trigger == "") {    //No trigger detected
+            return "";
+        }
+        return triggerMap[trigger];
+    }
 
+    String DualSonyMoveController::getTrigger() {
         // Helper function to check for individual button presses
         auto isButtonPressed = [this](ControllerDetails* thisController, ButtonEnum button) {
             return thisController->isConnected &&
@@ -343,177 +381,173 @@ namespace droid::controller {
 
         // Base button on Right controller
         if (isButtonPressed(&PS3Right, ButtonEnum::UP) && !isModifierPressed(&PS3Left)) {
-            return "FullAwake";
+            return "Rup";
         }
         if (isButtonPressed(&PS3Right, ButtonEnum::DOWN) && !isModifierPressed(&PS3Left)) {
-            return "QuietMode";
+            return "Rdown";
         }
         if (isButtonPressed(&PS3Right, ButtonEnum::LEFT) && !isModifierPressed(&PS3Left)) {
-            return "MidAwake";
+            return "Rleft";
         }
         if (isButtonPressed(&PS3Right, ButtonEnum::RIGHT) && !isModifierPressed(&PS3Left)) {
-            return "FullAware";
+            return "Rright";
         }
 
         // CROSS + base buttons on Right controller
         if (checkCombo(&PS3Right, &PS3Left, ButtonEnum::UP, ButtonEnum::CROSS)) {
-            return "VolumeUp";
+            return "LX_Rup";
         }
         if (checkCombo(&PS3Right, &PS3Left, ButtonEnum::DOWN, ButtonEnum::CROSS)) {
-            return "VolumeDown";
+            return "LX_Rdown";
         }
         if (checkCombo(&PS3Right, &PS3Left, ButtonEnum::LEFT, ButtonEnum::CROSS)) {
-            return "HolosOn";
+            return "LX_Rleft";
         }
         if (checkCombo(&PS3Right, &PS3Left, ButtonEnum::RIGHT, ButtonEnum::CROSS)) {
-            return "HolosOff";
+            return "LX_Rright";
         }
 
         // CIRCLE + base buttons on Right controller
         if (checkCombo(&PS3Right, &PS3Left, ButtonEnum::UP, ButtonEnum::CIRCLE)) {
-            return "Scream";
+            return "LO_Rup";
         }
         if (checkCombo(&PS3Right, &PS3Left, ButtonEnum::DOWN, ButtonEnum::CIRCLE)) {
-            return "Disco";
+            return "LO_Rdown";
         }
         if (checkCombo(&PS3Right, &PS3Left, ButtonEnum::LEFT, ButtonEnum::CIRCLE)) {
-            return "FastSmirk";
+            return "LO_Rleft";
         }
         if (checkCombo(&PS3Right, &PS3Left, ButtonEnum::RIGHT, ButtonEnum::CIRCLE)) {
-            return "ShortCircuit";
+            return "LO_Rright";
         }
 
         // L1 + base buttons on Right controller
         if (checkL1Combo(&PS3Right, ButtonEnum::UP)) {
-            return "CantinaDance";
+            return "RL1_Rup";
         }
         if (checkL1Combo(&PS3Right, ButtonEnum::DOWN)) {
-            return "LeiaMessage";
+            return "RL1_Rdown";
         }
         if (checkL1Combo(&PS3Right, ButtonEnum::LEFT)) {
-            return "Wave";
+            return "RL1_Rleft";
         }
         if (checkL1Combo(&PS3Right, ButtonEnum::RIGHT)) {
-            return "Wave2";
+            return "RL1_Rright";
         }
 
         // PS + base buttons on Right controller
         if (checkCombo(&PS3Right, &PS3Left, ButtonEnum::UP, ButtonEnum::PS)) {
-            return "Custom1";
+            return "LPS_Rup";
         }
         if (checkCombo(&PS3Right, &PS3Left, ButtonEnum::DOWN, ButtonEnum::PS)) {
-            return "Custom2";
+            return "LPS_Rdown";
         }
         if (checkCombo(&PS3Right, &PS3Left, ButtonEnum::LEFT, ButtonEnum::PS)) {
-            return "Custom3";
+            return "LPS_Rleft";
         }
         if (checkCombo(&PS3Right, &PS3Left, ButtonEnum::RIGHT, ButtonEnum::PS)) {
-            return "Custom4";
+            return "LPS_Rright";
         }
 
         // Base button on Left controller
         if (isButtonPressed(&PS3Left, ButtonEnum::UP) && !isModifierPressed(&PS3Right)) {
-            return "BeepCantina";
+            return "Lup";
         }
         if (isButtonPressed(&PS3Left, ButtonEnum::DOWN) && !isModifierPressed(&PS3Right)) {
-            return "MarchingAnts";
+            return "Ldown";
         }
         if (isButtonPressed(&PS3Left, ButtonEnum::LEFT) && !isModifierPressed(&PS3Right)) {
-            return "OpenBodyP1";
+            return "Lleft";
         }
         if (isButtonPressed(&PS3Left, ButtonEnum::RIGHT) && !isModifierPressed(&PS3Right)) {
-            return "CloseBodyP1";
+            return "Lright";
         }
 
         // CROSS + base buttons on Left controller
         if (checkCombo(&PS3Left, &PS3Right, ButtonEnum::UP, ButtonEnum::CROSS)) {
-            return "VolumeMax";
+            return "RX_Lup";
         }
         if (checkCombo(&PS3Left, &PS3Right, ButtonEnum::DOWN, ButtonEnum::CROSS)) {
-            return "VolumeMid";
+            return "RX_Ldown";
         }
         if (checkCombo(&PS3Left, &PS3Right, ButtonEnum::LEFT, ButtonEnum::CROSS)) {
-            return "CloseDomeAll";
+            return "RX_Lleft";
         }
         if (checkCombo(&PS3Left, &PS3Right, ButtonEnum::RIGHT, ButtonEnum::CROSS)) {
-            return "OpenDomeAll";
+            return "RX_Lright";
         }
 
         // CIRCLE + base buttons on Left controller
         if (checkCombo(&PS3Left, &PS3Right, ButtonEnum::UP, ButtonEnum::CIRCLE)) {
-            return "HoloMoveOn";
+            return "RO_Lup";
         }
         if (checkCombo(&PS3Left, &PS3Right, ButtonEnum::DOWN, ButtonEnum::CIRCLE)) {
-            return "HoloReset";
+            return "RO_Ldown";
         }
         if (checkCombo(&PS3Left, &PS3Right, ButtonEnum::LEFT, ButtonEnum::CIRCLE)) {
-            return "HoloLightsOn";
+            return "RO_Lleft";
         }
         if (checkCombo(&PS3Left, &PS3Right, ButtonEnum::RIGHT, ButtonEnum::CIRCLE)) {
-            return "HoloLightsOff";
+            return "RO_Lright";
         }
 
         // L1 + base buttons on Left controller
         if (checkL1Combo(&PS3Left, ButtonEnum::UP)) {
-            return "OpenDomeP1";
+            return "LL1_Lup";
         }
         if (checkL1Combo(&PS3Left, ButtonEnum::DOWN)) {
-            return "CloseDomeP1";
+            return "LL1_Ldown";
         }
         if (checkL1Combo(&PS3Left, ButtonEnum::LEFT)) {
-            return "OpenDomeP2";
+            return "LL1_Lleft";
         }
         if (checkL1Combo(&PS3Left, ButtonEnum::RIGHT)) {
-            return "CloseDomeP2";
+            return "LL1_Lright";
         }
 
         // PS + base buttons on Left controller
         if (checkCombo(&PS3Left, &PS3Right, ButtonEnum::UP, ButtonEnum::PS)) {
-            return "OpenDomeP3";
+            return "RPS_Lup";
         }
         if (checkCombo(&PS3Left, &PS3Right, ButtonEnum::DOWN, ButtonEnum::PS)) {
-            return "CloseDomeP3";
+            return "RPS_Ldown";
         }
         if (checkCombo(&PS3Left, &PS3Right, ButtonEnum::LEFT, ButtonEnum::PS)) {
-            return "OpenDomeP4";
+            return "RPS_Lleft";
         }
         if (checkCombo(&PS3Left, &PS3Right, ButtonEnum::RIGHT, ButtonEnum::PS)) {
-            return "CloseDomeP4";
+            return "RPS_Lright";
         }
 
         // Triggers for command toggles
-
-        // enable / disable drive stick
         if (PS3Right.isConnected && 
             PS3Right.ps3BT.getButtonPress(ButtonEnum::PS) && 
-            PS3Right.ps3BT.getButtonClick(ButtonEnum::CROSS)) {
-            return "StickDisable";
+            PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS)) {
+            return "RX_RPS";
         }
         
         if(PS3Right.isConnected && 
             PS3Right.ps3BT.getButtonPress(ButtonEnum::PS) && 
-            PS3Right.ps3BT.getButtonClick(ButtonEnum::CIRCLE)){
-            return "StickEnable";
+            PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE)) {
+            return "RO_RPS";
         }
         
-        // Enable and Disable Overspeed
         if (PS3Right.isConnected && 
-            PS3Right.ps3BT.getButtonPress(L3) && 
+            PS3Right.ps3BT.getButtonPress(ButtonEnum::L3) && 
             PS3Right.ps3BT.getButtonPress(ButtonEnum::L1)) {
-            return "ToggleSpeed";
+            return "RL1_RL3";
         }
     
-        // Enable Disable Dome Automation
         if(PS3Right.isConnected && 
             PS3Right.ps3BT.getButtonPress(ButtonEnum::L2) && 
-            PS3Right.ps3BT.getButtonClick(ButtonEnum::CROSS)) {
-            return "AutoDomeOff";
+            PS3Right.ps3BT.getButtonPress(ButtonEnum::CROSS)) {
+            return "RX_RL2";
         } 
 
         if(PS3Right.isConnected && 
             PS3Right.ps3BT.getButtonPress(ButtonEnum::L2) && 
-            PS3Right.ps3BT.getButtonClick(ButtonEnum::CIRCLE)) {
-            return "AutoDomeOn";
+            PS3Right.ps3BT.getButtonPress(ButtonEnum::CIRCLE)) {
+            return "RO_RL2";
         } 
 
         return String("");

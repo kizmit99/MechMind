@@ -10,7 +10,7 @@
 
 #pragma once
 #include "droid/command/CmdHandler.h"
-#include "droid/core/hardware.h"
+#include "settings/hardware.config.h"
 
 namespace droid::brain {
     class PanelCmdHandler : public droid::command::CmdHandler {

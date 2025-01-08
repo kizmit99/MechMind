@@ -22,6 +22,13 @@ namespace droid::core {
         }
     }
 
+    void InstructionList::clear() {
+        Instruction* instruction = head;
+        while (instruction != NULL) {
+            instruction = deleteInstruction(instruction);
+        }
+    }
+
     Instruction* InstructionList::addInstruction() {
         Instruction* freeRec = NULL;
         uint8_t index;

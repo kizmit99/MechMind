@@ -1,0 +1,55 @@
+/*
+ * MechMind Program
+ * Author: Kizmit99
+ * License: CC BY-NC-SA 4.0
+ *
+ * This source code is open-source for non-commercial use. 
+ * For commercial use, please obtain a license from the author.
+ * For more information, visit https://github.com/kizmit99/MechMind
+ */
+
+triggerMap["LL1_Lup"]		= "DomeP1Open";
+triggerMap["LL1_Ldown"]		= "DomeP1Close";
+triggerMap["LL1_Lleft"]		= "DomeP2Open";
+triggerMap["LL1_Lright"]	= "DomeP2Close";
+triggerMap["RPS_Lup"]		= "DomeP3Open";
+triggerMap["RPS_Ldown"]		= "DomeP3Close";
+triggerMap["RPS_Lleft"]		= "DomeP4Open";
+triggerMap["RPS_Lright"]	= "DomeP4Close";
+triggerMap["Lup"]			= "BeepCantina";
+triggerMap["Ldown"]			= "MarchingAnts";
+triggerMap["Lleft"]			= "BodyP1Open";
+triggerMap["Lright"]		= "BodyP1Close";
+triggerMap["RO_Lup"]		= "HoloAutoOn";
+triggerMap["RO_Ldown"]		= "HoloReset";
+triggerMap["RO_Lleft"]		= "HoloLightsOn";
+triggerMap["RO_Lright"]		= "HoloLightsOff";
+triggerMap["RX_Lup"]		= "VolumeMax";
+triggerMap["RX_Ldown"]		= "VolumeMid";
+triggerMap["RX_Lleft"]		= "DomePAllClose";
+triggerMap["RX_Lright"]		= "DomePAllOpen";
+triggerMap["RX_RPS"]		= "StickDisable";
+triggerMap["RO_RPS"]		= "StickEnable";
+triggerMap["RL1_RL3"]		= "SpeedChange";
+triggerMap["RX_RL2"]		= "DomeAutoOff";
+triggerMap["RO_RL2"]		= "DomeAutoOn";
+triggerMap["Rup"]			= "FullAwake";
+triggerMap["Rdown"]			= "QuietMode";
+triggerMap["Rleft"]			= "MidAwake";
+triggerMap["Rright"]		= "FullAwake+";
+triggerMap["LO_Rup"]		= "Scream";
+triggerMap["LO_Rdown"]		= "Disco";
+triggerMap["LO_Rleft"]		= "FastSmirk";
+triggerMap["LO_Rright"]		= "ShortCircuit";
+triggerMap["LX_Rup"]		= "VolumeUp";
+triggerMap["LX_Rdown"]		= "VolumeDown";
+triggerMap["LX_Rleft"]		= "HoloAutoOn";
+triggerMap["LX_Rright"]		= "HoloAutoOff";
+triggerMap["RL1_Rup"]		= "CantinaDance";
+triggerMap["RL1_Rdown"]		= "LeiaFullMsg";
+triggerMap["RL1_Rleft"]		= "Wave";
+triggerMap["RL1_Rright"]	= "Wave2";
+triggerMap["LPS_Rup"]		= "Custom1";
+triggerMap["LPS_Rdown"]		= "Custom2";
+triggerMap["LPS_Rleft"]		= "Custom3";
+triggerMap["LPS_Rright"]	= "Custom4";
