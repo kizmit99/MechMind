@@ -10,7 +10,7 @@
 
 #include <Arduino.h>
 #include "settings/hardware.config.h"
-#include "droid/controller/DualSonyMoveController.h"
+#include "droid/controller/DualSonyNavController.h"
 #include <string>
 #include <stdexcept>
 
@@ -29,24 +29,24 @@
 #define CONFIG_DEFAULT_SONY_DEADBAND         20
 
 namespace droid::controller {
-    DualSonyMoveController::DualSonyMoveController(const char* name, droid::core::System* system) :
+    DualSonyNavController::DualSonyNavController(const char* name, droid::core::System* system) :
         Controller(name, system),
         Usb(),
         Btd(&Usb),
         PS3Right(&Btd),
         PS3Left(&Btd) {
 
-        if (DualSonyMoveController::instance != NULL) {
-            logger->log(name, FATAL, "Constructor for DualSonyMoveController called more than once!\n");
+        if (DualSonyNavController::instance != NULL) {
+            logger->log(name, FATAL, "Constructor for DualSonyNavController called more than once!\n");
             while (1);  //TODO Better way to handle this???
         }
-        DualSonyMoveController::instance = this;
+        DualSonyNavController::instance = this;
 
-        PS3Right.ps3BT.attachOnInit(DualSonyMoveController::onInitPS3RightWrapper);
-        PS3Left.ps3BT.attachOnInit(DualSonyMoveController::onInitPS3LeftWrapper);
+        PS3Right.ps3BT.attachOnInit(DualSonyNavController::onInitPS3RightWrapper);
+        PS3Left.ps3BT.attachOnInit(DualSonyNavController::onInitPS3LeftWrapper);
     }
 
-    void DualSonyMoveController::factoryReset() {
+    void DualSonyNavController::factoryReset() {
         config->clear(name);
         config->putString(name, CONFIG_KEY_SONY_RIGHT_MAC, CONFIG_DEFAULT_SONY_RIGHT_MAC);
         config->putString(name, CONFIG_KEY_SONY_ALT_RIGHT_MAC, CONFIG_DEFAULT_SONY_ALT_RIGHT_MAC);
@@ -69,7 +69,7 @@ namespace droid::controller {
         }
     }
 
-    void DualSonyMoveController::init() {
+    void DualSonyNavController::init() {
         logger->log(name, INFO, "init - called\n");
         strncpy(PS3Right.MAC, config->getString(name, CONFIG_KEY_SONY_RIGHT_MAC, CONFIG_DEFAULT_SONY_RIGHT_MAC).c_str(), sizeof(PS3Right.MAC));
         strncpy(PS3Right.MACBackup, config->getString(name, CONFIG_KEY_SONY_ALT_RIGHT_MAC, CONFIG_DEFAULT_SONY_ALT_RIGHT_MAC).c_str(), sizeof(PS3Right.MACBackup));
@@ -99,14 +99,14 @@ namespace droid::controller {
         }
     }
 
-    void DualSonyMoveController::task() {
+    void DualSonyNavController::task() {
         //logger->log(name, DEBUG, "task - called\n");
         Usb.Task();
         faultCheck(&PS3Right);
         faultCheck(&PS3Left);
     }
 
-    void DualSonyMoveController::logConfig() {
+    void DualSonyNavController::logConfig() {
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_RIGHT_MAC, config->getString(name, CONFIG_KEY_SONY_RIGHT_MAC, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_ALT_RIGHT_MAC, config->getString(name, CONFIG_KEY_SONY_ALT_RIGHT_MAC, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_SONY_LEFT_MAC, config->getString(name, CONFIG_KEY_SONY_LEFT_MAC, "").c_str());
@@ -124,15 +124,15 @@ namespace droid::controller {
         }
     }
 
-    void DualSonyMoveController::failsafe() {
+    void DualSonyNavController::failsafe() {
         //Noop
     }
 
-    void DualSonyMoveController::setCritical(bool isCritical) {
+    void DualSonyNavController::setCritical(bool isCritical) {
         this->isCritical = isCritical;
     }
 
-    void DualSonyMoveController::faultCheck(ControllerDetails* controller) {
+    void DualSonyNavController::faultCheck(ControllerDetails* controller) {
         if (!controller->isConnected) {
             return;
         }
@@ -197,7 +197,7 @@ namespace droid::controller {
         }
     }
 
-    void DualSonyMoveController::disconnect(ControllerDetails* controller) {
+    void DualSonyNavController::disconnect(ControllerDetails* controller) {
         controller->ps3BT.disconnect();
         controller->badDataCount = 0;
         controller->lastBadDataTime = 0;
@@ -207,7 +207,7 @@ namespace droid::controller {
     }
 
     // Note this method return normalized Joystick positions in the range of -100 to +100
-    int8_t DualSonyMoveController::getJoystickPosition(Joystick joystick, Axis axis) {
+    int8_t DualSonyNavController::getJoystickPosition(Joystick joystick, Axis axis) {
         //This class supports operating with either one or two controllers.
         //The general case is two controllers connected and this method returns the
         //position of that joystick as long as neither L1 nor L2 is pressed.
@@ -282,8 +282,8 @@ namespace droid::controller {
         return normalizedPosition;
     }
 
-    void DualSonyMoveController::onInitPS3(Joystick which) {
-        logger->log(name, INFO, "DualSonyMoveController::onInitPS3 called: %s\n", which == RIGHT ? "RIGHT" : "LEFT");
+    void DualSonyNavController::onInitPS3(Joystick which) {
+        logger->log(name, INFO, "DualSonyNavController::onInitPS3 called: %s\n", which == RIGHT ? "RIGHT" : "LEFT");
         ControllerDetails* controller;
         const char* whichStr;
         const char* configKey;
@@ -330,7 +330,7 @@ namespace droid::controller {
         } 
     }
 
-    String DualSonyMoveController::getAction() {
+    String DualSonyNavController::getAction() {
         //Button definitions for Dual Sony Triggers to mimic PenumbraShadowMD
         String trigger = getTrigger();
         if (trigger == "") {    //No trigger detected
@@ -339,7 +339,7 @@ namespace droid::controller {
         return triggerMap[trigger];
     }
 
-    String DualSonyMoveController::getTrigger() {
+    String DualSonyNavController::getTrigger() {
         // Helper function to check for individual button presses
         auto isButtonPressed = [this](ControllerDetails* thisController, ButtonEnum button) {
             return thisController->isConnected &&
@@ -553,5 +553,5 @@ namespace droid::controller {
         return String("");
     }
 
-    DualSonyMoveController* DualSonyMoveController::instance = NULL;
+    DualSonyNavController* DualSonyNavController::instance = NULL;
 }

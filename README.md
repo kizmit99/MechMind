@@ -14,7 +14,7 @@ It is designed to run exclusively on ESP32 based microcontrollers and to be comp
 
 - **Extensible Controller Support**:
   - Supports multiple game controllers including:
-    - Single/Dual Bluetooth Sony Move Controllers
+    - Single/Dual Bluetooth Sony Navigation Controllers
     - Generic PS3 Bluetooth controllers
     - Generic Xbox Bluetooth Controllers (Coming soon)
     - Widely available Bluetooth Low Energy (Magicsee R1) Ring style "VR controllers"

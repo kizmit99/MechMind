@@ -16,9 +16,9 @@
 #include <map>
 
 namespace droid::controller {
-    class DualSonyMoveController : public Controller {
+    class DualSonyNavController : public Controller {
     public:
-        DualSonyMoveController(const char* name, droid::core::System* system);
+        DualSonyNavController(const char* name, droid::core::System* system);
 
         //Override virtual methods from BaseComponent
         void init() override;
@@ -52,7 +52,7 @@ namespace droid::controller {
         BTD Btd;
         ControllerDetails PS3Right;
         ControllerDetails PS3Left;
-        static DualSonyMoveController* instance;
+        static DualSonyNavController* instance;
         void (*statusChangeCallback)(Controller*) = nullptr;
         bool isCritical = false;
         uint32_t activeTimeout = 0;

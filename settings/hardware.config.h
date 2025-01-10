@@ -19,7 +19,7 @@
 
 //Configuration Options for pluggeable components
 #define CONTROLLER_OPTION_DUALRING      "DualRing"
-#define CONTROLLER_OPTION_SONYMOVE      "SonyMove"
+#define CONTROLLER_OPTION_SONYNAV       "SonyNav"
 #define CONTROLLER_OPTION_PS3BT         "PS3Bt"
 #define CONTROLLER_OPTION_PS3USB        "PS3Usb"
 #define CONTROLLER_OPTION_STUB          "None"
@@ -39,7 +39,7 @@
 #define AUDIO_DRIVER_OPTION_STUB        "None"
 
 //Default Configuration Options (modify to suit your needs)
-#define CONFIG_DEFAULT_CONTROLLER       CONTROLLER_OPTION_SONYMOVE
+#define CONFIG_DEFAULT_CONTROLLER       CONTROLLER_OPTION_SONYNAV
 #define CONFIG_DEFAULT_PWMSERVICE       PWMSERVICE_OPTION_PCA9685
 #define CONFIG_DEFAULT_DRIVE_MOTOR      MOTOR_DRIVER_OPTION_PWMMOTOR
 #define CONFIG_DEFAULT_DOME_MOTOR       MOTOR_DRIVER_OPTION_PWMMOTOR
@@ -83,7 +83,7 @@ extern EspSoftwareSerial::UART Serial3;
 #define PWMSERVICE_DRIVE_MOTOR1_OUT1 2
 #define PWMSERVICE_DRIVE_MOTOR1_OUT2 3
 
-//DualSonyMoveController (modify to restrict connections to only the specified MAC addresses)
+//DualSonyNavController (modify to restrict connections to only the specified MAC addresses)
 #define CONFIG_DEFAULT_SONY_RIGHT_MAC       "XX:XX:XX:XX:XX:XX"
 #define CONFIG_DEFAULT_SONY_ALT_RIGHT_MAC   "XX:XX:XX:XX:XX:XX"
 #define CONFIG_DEFAULT_SONY_LEFT_MAC        "XX:XX:XX:XX:XX:XX"
