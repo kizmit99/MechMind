@@ -17,7 +17,7 @@
 #include "droid/brain/PanelCmdHandler.h"
 #include "droid/services/NoPWMService.h"
 #include "droid/services/PCA9685PWM.h"
-#include "droid/controller/DualSonyMoveController.h"
+#include "droid/controller/DualSonyNavController.h"
 #include "droid/controller/DualRingController.h"
 #include "droid/controller/PS3BtController.h"
 #include "droid/controller/PS3UsbController.h"
@@ -69,9 +69,9 @@ namespace droid::brain {
         if (whichService == CONTROLLER_OPTION_DUALRING) {
             logger->log(name, DEBUG, "Initializing DualRing\n");
             controller = new droid::controller::DualRingController(CONTROLLER_OPTION_DUALRING, system);
-        } else if (whichService == CONTROLLER_OPTION_SONYMOVE) {
-            logger->log(name, DEBUG, "Initializing DualSony\n");
-            controller = new droid::controller::DualSonyMoveController(CONTROLLER_OPTION_SONYMOVE, system);
+        } else if (whichService == CONTROLLER_OPTION_SONYNAV) {
+            logger->log(name, DEBUG, "Initializing SonyNav\n");
+            controller = new droid::controller::DualSonyNavController(CONTROLLER_OPTION_SONYNAV, system);
         } else if (whichService == CONTROLLER_OPTION_PS3BT) {
             logger->log(name, DEBUG, "Initializing PS3Bt\n");
             controller = new droid::controller::PS3BtController(CONTROLLER_OPTION_PS3BT, system);
@@ -196,7 +196,7 @@ namespace droid::brain {
         if (controller->getType() == droid::controller::Controller::ControllerType::DUAL_SONY) {
             controller->factoryReset();
         } else {
-            droid::controller::DualSonyMoveController* dsController = new droid::controller::DualSonyMoveController(CONTROLLER_OPTION_SONYMOVE, system);
+            droid::controller::DualSonyNavController* dsController = new droid::controller::DualSonyNavController(CONTROLLER_OPTION_SONYNAV, system);
             dsController->init();
             dsController->factoryReset();
         }
