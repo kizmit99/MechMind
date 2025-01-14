@@ -91,6 +91,14 @@ namespace blering {
             }
         };
 
+        bool onConnParamsUpdateRequest(NimBLEClient* pClient, const ble_gap_upd_params* params) {
+            logger->log(name, WARN, "Connection parameter update request received, min=%d, max=%d, latency=%d, timeout=%d\n",
+                params->itvl_min, params->itvl_max, params->latency, params->supervision_timeout);
+
+            //Rejecting the update, because the rings are asking for a longer timeout
+            return false;
+        }
+
         const char* name;
         Logger* logger;
     };
