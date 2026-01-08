@@ -108,7 +108,7 @@ namespace blering {
         return myRing.isButtonClicked(button);
     }
 
-    #define SLOW 32
+    #define SLOW 70
     #define FAST 127
     #define MID (SLOW + (FAST - SLOW)/2)
 
