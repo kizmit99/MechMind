@@ -48,10 +48,10 @@
 extern EspSoftwareSerial::UART Serial3;
 
 //Stream configurations (modify to suit your needs)
-#define LOGGER_STREAM &Serial
-#define LOGGER_STREAM_SETUP Serial.begin(115200)
-#define CONSOLE_STREAM LOGGER_STREAM
-#define CONSOLE_STREAM_SETUP
+// Console stream for user interaction (used by SmartCLI)
+#define CONSOLE_STREAM &Serial
+#define CONSOLE_STREAM_SETUP Serial.begin(115200)
+// Logger output is routed through ConsoleStream adapter (no LOGGER_STREAM needed)
 #define DOME_STREAM &Serial3
 #define DOME_STREAM_SETUP Serial3.begin(2400, SWSERIAL_8N1, 32, 4)
 #define SABERTOOTH_STREAM &Serial2

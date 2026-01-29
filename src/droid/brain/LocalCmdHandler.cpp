@@ -76,9 +76,8 @@ namespace {
 }
 
 namespace droid::brain {
-    LocalCmdHandler::LocalCmdHandler(const char* name, droid::core::System* system, Brain* brain, Stream* console) :
+    LocalCmdHandler::LocalCmdHandler(const char* name, droid::core::System* system, Brain* brain) :
         CmdHandler(name, system),
-        console(console),
         brain(brain) {}
 
     bool LocalCmdHandler::process(const char* device, const char* command) {
@@ -156,118 +155,12 @@ namespace droid::brain {
             } else if (strcasecmp(cmd, "Gesture") == 0) {
                 //TODO
 
-            } else if (strcasecmp(cmd, "Restart") == 0) {
-                //Restart the controller.
-                brain->reboot();
-
-            } else if (strcasecmp(cmd, "FactoryReset") == 0) {
-                //Delete all preferences, reset button actions to sketch defaults, unpair controllers.
-                logger->log(name, WARN, "Initiating factory reset...\n");
-                brain->factoryReset();
-                brain->reboot();
-
-            } else if (strcasecmp(cmd, "ListConfig") == 0) {
-                //List all configuration data
-                brain->logConfig();
-
-            } else if (strcasecmp(cmd, "SetAction") == 0) {
-                //Set the button action (parm1) to the specified cmdList (parm2).
-                brain->overrideCmdMap(parm1, parm2);
-
-            } else if (strcasecmp(cmd, "Play") == 0) {
-                //Play any action associated with the specified action or cmd string
-                //Note that you cannot directly play cmd strings that contain spaces!
-                brain->fireAction(parm1);
-
-            } else if (strcasecmp(cmd, "ResetAction") == 0) {
-                //Reset command for specified action to default.
-                brain->overrideCmdMap(parm1, NULL);
-
-            } else if (strcasecmp(cmd, "SetConfig") == 0) {
-                //This has 3 parms, so have to reparse parm2
-                split(parm2, parm2a, sizeof(parm2a), parm3, sizeof(parm3));
-                if (strlen(parm1) > 15) {
-                    logger->log(name, WARN, "Invalid config-name (%s) is longer than 15 characters\n", parm1);
-                } else if (strlen(parm1) == 0) {
-                    logger->log(name, WARN, "Invalid config-name must be specified\n");
-                } else if (strlen(parm2a) > 15) {
-                    logger->log(name, WARN, "Invalid config-key (%s) is longer than 15 characters\n", parm2a);
-                } else if (strlen(parm2a) == 0) {
-                    logger->log(name, WARN, "Invalid config-key must be specified\n");
-                } else {
-                    logger->log(name, DEBUG, "SetConfig Name: '%s', Key: '%s', Value: '%s'\n",parm1, parm2a, parm3);
-                    config->putString((const char*) &parm1, (const char*) &parm2a, (const char*) &parm3);
-                }
-
-            } else if (strcasecmp(cmd, "TestPanel") == 0) {
-                //Test a panel
-                char buf[100];
-                snprintf(buf, sizeof(buf), "Panel>:TP%03d%04d", atoi(parm1), atoi(parm2));
-                brain->fireAction(buf);
-
-            } else if (strcasecmp(cmd, "LogLevel") == 0) {
-                logger->setLogLevel(parm1, (LogLevel) atoi(parm2));
-
-            } else if ((strcasecmp(cmd, "Help") == 0) ||
-                       (strcasecmp(cmd, "?") == 0)) {
-                //Provide help on using Local Commands
-                printHelp();
-
             } else {
                 logger->log(name, WARN, "LocalCmdHandler asked to process an undefined command: %s\n", command);
             }
             return true;
         } else {
             return false;
-        }
-    }
-
-    void LocalCmdHandler::printHelp() {
-        if (console != NULL) {
-            console->print("\n");
-            console->print("Commands:");
-            printCmdHelp("Help or ?", "Print this list of commands");
-            printCmdHelp("StickEnable", "Enable the Drive joystick");
-            printCmdHelp("StickDisable", "Disable the Drive joystick");
-            printCmdHelp("StickToggle", "Toggle the enabled state of the Drive joystick");
-            printCmdHelp("DomeAutoOn", "Enable the Auto Dome functionality");
-            printCmdHelp("DomeAutoOff", "Disable the Auto Dome functionality");
-            printCmdHelp("DomeAutoToggle", "Toggle the enabled state of the Auto Dome Functionality");
-            printCmdHelp("Restart", "Perform a complete system restart");
-            printCmdHelp("FactoryReset", "Restore all configuration parameters to defaults and restart the system");
-            printCmdHelp("ListConfig", "Print out all of the configuration parameters");
-            printCmdHelp("SetAction <action> <cmdList>", "Configure the Command List associated with the specified Action - persistent across restarts");
-            printParmHelp("action", "The Action to override");
-            printParmHelp("cmdList", "The new Command List (list of instructions) to associate with the Action");
-            printCmdHelp("Play <command>", "Execute the specified Action or Command List");
-            printParmHelp("command", "This can be an Action, or a list of instructions (see ListConfig for examples)");
-            printCmdHelp("ResetAction <action>", "Restore the default Command List associated with the specified Action - persistent across restarts");
-            printParmHelp("action", "The Action to override");
-            printCmdHelp("SetConfig <namespace> <key> <newValue>", "Update the specified configuration value - persistent across restarts");
-            printParmHelp("namespace", "The namespace of the configuration entry to update (see ListConfig for valid options)");
-            printParmHelp("key", "The key name of the configuration entry to update (see ListConfig for valid options)");
-            printParmHelp("newValue", "The new value for the specified configuration namespace/key");
-            printCmdHelp("TestPanel <panel> <value>", "Test a panel by setting its servo controller to the specified (uS) value");
-            printParmHelp("panel", "Number identifying the panel to test (between 1 and " TOSTRING(LOCAL_PANEL_COUNT) ")");
-            printParmHelp("value", "The microSecond value to send to the PWM controlling the panel (generally between 500 and 2500)");
-            printCmdHelp("LogLevel <component> <level>", "Set the logger for the component to the level specified");
-            printParmHelp("component", "The name of the component to set level for");
-            printParmHelp("level", "The new log level: 0=DEBUG, 1=INFO, 2=WARN, 3=ERROR or 4=FATAL");
-            console->print("\n");
-        }
-    }
-
-    void LocalCmdHandler::printCmdHelp(const char* cmdName, const char* cmdDescription) {
-        if (console != NULL) {
-            console->print("\n");
-            console->printf("  %s\n", cmdName);
-            console->printf("    %s\n", cmdDescription);
-        }
-    }
-
-    void LocalCmdHandler::printParmHelp(const char* parmName, const char* parmDescription) {
-        if (console != NULL) {
-            console->printf("    -- %s: %s\n", parmName, parmDescription);
         }
     }
 }

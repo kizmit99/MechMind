@@ -20,6 +20,8 @@
 #include "droid/audio/AudioDriver.h"
 
 namespace droid::brain {
+    class ConsoleHandler;  // Forward declaration
+    
     class Brain : droid::core::BaseComponent {
     public:
         Brain(const char* name, droid::core::System* system);
@@ -31,9 +33,11 @@ namespace droid::brain {
         void logConfig() override;
         void failsafe() override;
         
+        // Public API for ConsoleHandler
         void reboot();
         void overrideCmdMap(const char* action, const char* cmd);
         void fireAction(const char* action);
+        droid::core::System* getSystem() { return system; }
 
     private:
         droid::brain::DomeMgr* domeMgr;
@@ -46,12 +50,8 @@ namespace droid::brain {
         droid::motor::MotorDriver* driveMotorDriver;
         droid::motor::MotorDriver* domeMotorDriver;
         droid::audio::AudioDriver* audioDriver;
+        droid::brain::ConsoleHandler* consoleHandler;
 
         std::vector<droid::core::BaseComponent*> componentList;
-
-        char inputBuf[100] = {0};
-        uint8_t bufIndex = 0;
-
-        void processConsoleInput(Stream* cmdStream);
     };
 }

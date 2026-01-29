@@ -13,17 +13,18 @@
 #include "droid/brain/Brain.h"
 
 namespace droid::brain {
+    /**
+     * Handles Category B commands (runtime state) triggered programmatically
+     * via ActionMgr from controller events or automation.
+     * 
+     * Category A commands (admin/provisioning) are handled by ConsoleHandler.
+     */
     class LocalCmdHandler : public droid::command::CmdHandler {
     public:
-        LocalCmdHandler(const char* name, droid::core::System* system, Brain* brain, Stream* console);
+        LocalCmdHandler(const char* name, droid::core::System* system, Brain* brain);
         bool process(const char* device, const char* command);
 
     private:
         Brain* brain = nullptr;
-        Stream* console = nullptr;
-
-        void printHelp();
-        void printCmdHelp(const char* cmdName, const char* cmdDescription);
-        void printParmHelp(const char* parmName, const char* parmDescription);
     };
 }

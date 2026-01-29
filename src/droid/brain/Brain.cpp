@@ -9,6 +9,7 @@
  */
 
 #include "droid/brain/Brain.h"
+#include "droid/brain/ConsoleHandler.h"
 #include "settings/hardware.config.h"
 #include "droid/command/CmdLogger.h"
 #include "droid/command/StreamCmdHandler.h"
@@ -137,9 +138,16 @@ namespace droid::brain {
         actionMgr->addCmdHandler(new droid::command::StreamCmdHandler("Dome", system, DOME_STREAM));
         actionMgr->addCmdHandler(new droid::command::StreamCmdHandler("Body", system, BODY_STREAM));
         actionMgr->addCmdHandler(new droid::audio::AudioCmdHandler("Audio", system, audioMgr));
-        actionMgr->addCmdHandler(new droid::brain::LocalCmdHandler("Brain", system, this, CONSOLE_STREAM));
+        actionMgr->addCmdHandler(new droid::brain::LocalCmdHandler("Brain", system, this));
         droid::brain::PanelCmdHandler* panelCmdHandler = new droid::brain::PanelCmdHandler("Panel", system);
         actionMgr->addCmdHandler(panelCmdHandler);
+
+        // Create ConsoleHandler (if CONSOLE_STREAM defined)
+        #ifdef CONSOLE_STREAM
+            consoleHandler = new ConsoleHandler(*CONSOLE_STREAM, this);
+        #else
+            consoleHandler = nullptr;
+        #endif
 
         //Setup list of all Active BaseComponents
         componentList.push_back(pwmService);
@@ -171,6 +179,11 @@ namespace droid::brain {
         //Initialize all BaseComponents
         for (droid::core::BaseComponent* component : componentList) {
             component->init();
+        }
+        
+        // Initialize ConsoleHandler after all components
+        if (consoleHandler) {
+            consoleHandler->begin();
         }
     }
 
@@ -245,7 +258,7 @@ namespace droid::brain {
         (new droid::command::StreamCmdHandler("Body", system, BODY_STREAM))->factoryReset();
         (new droid::brain::DomeMgr("DomeMgr", system, controller, domeMotorDriver))->factoryReset();
         (new droid::brain::DriveMgr("DriveMgr", system, controller, driveMotorDriver))->factoryReset();
-        (new droid::brain::LocalCmdHandler("Brain", system, this, CONSOLE_STREAM))->factoryReset();
+        (new droid::brain::LocalCmdHandler("Brain", system, this))->factoryReset();
         (new droid::brain::PanelCmdHandler("Panel", system))->factoryReset();
     }
 
@@ -269,43 +282,14 @@ namespace droid::brain {
         actionMgr->fireAction(action);
     }
 
-    void Brain::processConsoleInput(Stream* cmdStream) {
-        //Check for incoming serial commands
-        while (cmdStream->available()) {
-            char in = cmdStream->read();
-            if (in == '\b') {    //backspace
-                cmdStream->print("\b \b");
-                if (bufIndex > 0) {
-                    bufIndex--;
-                }
-            } else {
-                cmdStream->print(in);
-                if (in == '\r') {
-                    cmdStream->print('\n');
-                }
-                if (bufIndex < sizeof(inputBuf)) {
-                    inputBuf[bufIndex] = in;
-                    bufIndex++;
-                } else {
-                    //Buffer overrun, don't store incoming char
-                }
-            }
-            if ((in == '\r') || (in == '\n')) {
-                //end of input
-                if (bufIndex > 1) {     //Skip empty commands
-                    inputBuf[bufIndex - 1] = 0;
-                    actionMgr->queueCommand("Brain", inputBuf, millis());
-                }
-                bufIndex = 0;
-            }
-        }
-    }
-
     void Brain::task() {
         unsigned long begin = millis();
-        if (CONSOLE_STREAM != NULL) {
-            processConsoleInput(CONSOLE_STREAM);
+        
+        // Process console input (SmartCLI)
+        if (consoleHandler) {
+            consoleHandler->process();
         }
+        
         for (droid::core::BaseComponent* component : componentList) {
             unsigned long compBegin = millis();
             component->task();
