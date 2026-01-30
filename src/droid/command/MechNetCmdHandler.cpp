@@ -24,20 +24,28 @@ namespace droid::command {
             return false;  // MechNet not available
         }
 
-        // Try to find a connected node matching the device prefix
-        char nodeName[32];
-        if (mechNetMasterNode->findNodeByPrefix(device, nodeName, sizeof(nodeName))) {
-            logger->log(name, DEBUG, "Routing %s>%s to node %s\n", 
-                       device, command, nodeName);
+        // Track if any nodes matched
+        bool foundNodes = false;
+
+        // Send to all nodes matching device prefix
+        mechNetMasterNode->findAllNodesByPrefix(device, [&](const char* nodeName) {
+            foundNodes = true;
             
-            bool sent = mechNetMasterNode->sendCommand(nodeName, command, true);
-            if (!sent) {
-                logger->log(name, WARN, "Failed to send to %s: %s\n", nodeName, command);
+            bool sent = mechNetMasterNode->sendCommand(nodeName, command);
+            if (sent) {
+                logger->log(name, DEBUG, "TX [%s]: %s>%s\n", 
+                           nodeName, device, command);
+            } else {
+                logger->log(name, WARN, "Failed to send to %s: %s>%s\n", 
+                           nodeName, device, command);
             }
-            return true;  // Command consumed (even if send failed)
+        });
+
+        // If no matching nodes found, let other handlers try
+        if (!foundNodes) {
+            return false;
         }
 
-        // No matching node found, let other handlers try
-        return false;
+        return true;  // Command consumed (sent to one or more nodes)
     }
 }

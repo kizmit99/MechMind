@@ -18,6 +18,7 @@
 #include "droid/brain/LocalCmdHandler.h"
 #include "droid/audio/AudioCmdHandler.h"
 #include "droid/brain/PanelCmdHandler.h"
+#include "droid/message/DataPortMsgHandler.h"
 #include "droid/services/NoPWMService.h"
 #include "droid/services/PCA9685PWM.h"
 #include "droid/controller/DualSonyNavController.h"
@@ -148,6 +149,9 @@ namespace droid::brain {
         droid::brain::PanelCmdHandler* panelCmdHandler = new droid::brain::PanelCmdHandler("Panel", system);
         actionMgr->addCmdHandler(panelCmdHandler);
 
+        // Register inbound message handlers
+        inboundMsgHandlers.push_back(new droid::message::DataPortMsgHandler("DataPortMsg", system));
+
         // Create ConsoleHandler (if CONSOLE_STREAM defined)
         #ifdef CONSOLE_STREAM
             consoleHandler = new ConsoleHandler(*CONSOLE_STREAM, this);
@@ -186,6 +190,11 @@ namespace droid::brain {
         //Initialize all BaseComponents
         for (droid::core::BaseComponent* component : componentList) {
             component->init();
+        }
+        
+        // Initialize inbound message handlers
+        for (droid::message::MsgHandler* handler : inboundMsgHandlers) {
+            handler->init();
         }
         
         // Initialize ConsoleHandler after all components
@@ -268,11 +277,15 @@ namespace droid::brain {
         (new droid::brain::LocalCmdHandler("Brain", system, this))->factoryReset();
         (new droid::brain::PanelCmdHandler("Panel", system))->factoryReset();
         (new droid::network::MechNetNode("MechNet", system))->factoryReset();
+        (new droid::message::DataPortMsgHandler("DataPortMsg", system))->factoryReset();
     }
 
     void Brain::failsafe() {
         for (droid::core::BaseComponent* component : componentList) {
             component->failsafe();
+        }
+        for (droid::message::MsgHandler* handler : inboundMsgHandlers) {
+            handler->failsafe();
         }
     }
 
@@ -333,6 +346,9 @@ namespace droid::brain {
         for (droid::core::BaseComponent* component : componentList) {
             component->logConfig();
         }
+        for (droid::message::MsgHandler* handler : inboundMsgHandlers) {
+            handler->logConfig();
+        }
     }
 
     void Brain::processInboundMechNetMessages() {
@@ -349,10 +365,15 @@ namespace droid::brain {
     }
 
     void Brain::routeMessageToHandler(const String& sender, const String& message) {
-        // Phase 2: Log all incoming messages (routing logic added in later phases)
-        logger->log("MechNet", DEBUG, "RX [%s]: %s\n", sender.c_str(), message.c_str());
+        // Try each registered message handler
+        for (droid::message::MsgHandler* handler : inboundMsgHandlers) {
+            if (handler->handleMessage(sender, message)) {
+                return;  // Handler processed the message
+            }
+        }
         
-        // Phase 4 will add: if (sender.startsWith("DriveRing") || sender.startsWith("DomeRing"))
-        // Phase 3 will add: if (sender.startsWith("DataPort"))
+        // No handler claimed the message
+        logger->log(name, DEBUG, "Unhandled MechNet RX [%s]: %s\n", 
+                   sender.c_str(), message.c_str());
     }
 }

@@ -39,7 +39,7 @@ namespace droid::network {
         MechNetConfig getConfig();
         void saveConfig(const MechNetConfig& cfg);
         bool sendCommand(const char* nodeName, const char* command, bool requiresAck = true);
-        bool findNodeByPrefix(const char* prefix, char* nodeNameOut, size_t buflen);
+        void findAllNodesByPrefix(const char* prefix, std::function<void(const char*)> callback);
         uint8_t connectedNodeCount();
         bool getConnectedNodeName(uint8_t index, char* nameOut, size_t buflen);
         bool messageAvailable();

@@ -143,20 +143,17 @@ namespace droid::network {
         return mechNetMaster->sendTo(nodeName, command, requiresAck);
     }
 
-    bool MechNetNode::findNodeByPrefix(const char* prefix, char* nodeNameOut, size_t buflen) {
-        if (!mechNetMaster) return false;
+    void MechNetNode::findAllNodesByPrefix(const char* prefix, std::function<void(const char*)> callback) {
+        if (!mechNetMaster) return;
 
         char nodeName[32];
         for (uint8_t i = 0; i < mechNetMaster->connectedNodeCount(); i++) {
             if (mechNetMaster->getConnectedNodeName(i, nodeName, sizeof(nodeName))) {
                 if (strncmp(nodeName, prefix, strlen(prefix)) == 0) {
-                    strncpy(nodeNameOut, nodeName, buflen);
-                    nodeNameOut[buflen - 1] = '\0';
-                    return true;
+                    callback(nodeName);  // Invoke callback for each match
                 }
             }
         }
-        return false;
     }
 
     uint8_t MechNetNode::connectedNodeCount() {

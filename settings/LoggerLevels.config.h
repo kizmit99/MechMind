@@ -39,6 +39,7 @@ LOGGER->setLogLevel("Panel", INFO);
 LOGGER->setLogLevel("Brain", INFO);
 LOGGER->setLogLevel("MechNet", DEBUG);
 LOGGER->setLogLevel("MechNetOut", DEBUG);
+LOGGER->setLogLevel("DataPortMsg", INFO);
 LOGGER->setLogLevel("DualRingBLE", INFO);
 LOGGER->setLogLevel("driveRing", INFO);
 LOGGER->setLogLevel("domeRing", INFO);

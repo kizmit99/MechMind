@@ -27,6 +27,10 @@ namespace droid::network {
     class MechNetNode;  // Forward declaration
 }
 
+namespace droid::message {
+    class MsgHandler;  // Forward declaration
+}
+
 namespace droid::brain {
     class Brain : droid::core::BaseComponent {
     public:
@@ -61,6 +65,7 @@ namespace droid::brain {
         droid::brain::ConsoleHandler* consoleHandler;
 
         std::vector<droid::core::BaseComponent*> componentList;
+        std::vector<droid::message::MsgHandler*> inboundMsgHandlers;
         
         void processInboundMechNetMessages();
         void routeMessageToHandler(const String& sender, const String& message);
