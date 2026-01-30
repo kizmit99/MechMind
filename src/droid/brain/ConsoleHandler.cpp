@@ -78,6 +78,8 @@ namespace droid::brain {
         _console.println("MechNet:");
         _console.println("  mechnet-status        - Show MechNet status and connected nodes");
         _console.println("  mechnet-provision     - Configure MechNet (network, channel, PSK)");
+        _console.println("  mechnet-start         - Enable MechNet (hot-start without restart)");
+        _console.println("  mechnet-stop          - Disable MechNet (stops network)");
         _console.println("  mechnet-send <node> <msg> - Send message (no ACK)");
         _console.println("  mechnet-send-ack <node> <msg> - Send message (requires ACK)");
         _console.println("");
@@ -159,6 +161,12 @@ namespace droid::brain {
         }
         else if (strcmp(cmdBuf, "mechnet-provision") == 0) {
             handleMechNetProvision();
+        }
+        else if (strcmp(cmdBuf, "mechnet-start") == 0) {
+            handleMechNetStart();
+        }
+        else if (strcmp(cmdBuf, "mechnet-stop") == 0) {
+            handleMechNetStop();
         }
         else if (strcmp(cmdBuf, "mechnet-send") == 0) {
             handleMechNetSend(argsBuf, false);
@@ -369,16 +377,11 @@ namespace droid::brain {
         droid::network::MechNetConfig mnCfg = mechNet->getConfig();
         
         _console.println("Enabled:      %s", mnCfg.enabled ? "Yes" : "No");
-        _console.println("Provisioned:  %s", mnCfg.initialized ? "Yes" : "No");
-        
-        if (mnCfg.initialized) {
-            _console.println("Network Name: %s", mnCfg.networkName.c_str());
-            _console.println("WiFi Channel: %d", mnCfg.channel);
-            _console.println("PSK:          %s", mnCfg.pskHex.c_str());
-        }
-        
-        _console.println("Initialized:  %s", (mechNet && mechNet->isInitialized()) ? "Yes" : "No");
-        _console.println("");
+        _console.println("Network Name: %s", mnCfg.networkName.c_str());
+        _console.println("WiFi Channel: %d", mnCfg.channel);
+        _console.println("PSK:          %s", mnCfg.pskHex.c_str());
+        _console.println("───────────────────────────────────");
+        _console.println("Running:      %s", (mechNet && mechNet->isInitialized()) ? "Yes" : "No");
         
         if (mechNet && mechNet->isInitialized()) {
             uint8_t nodeCount = mechNet->connectedNodeCount();
@@ -403,6 +406,45 @@ namespace droid::brain {
         startProvisionWizard();
     }
     
+    void ConsoleHandler::handleMechNetStart() {
+        auto* mechNet = _brain->getMechNetMaster();
+        
+        if (mechNet->isInitialized()) {
+            _console.println("! MechNet already running");
+            return;
+        }
+        
+        // Validate config before starting
+        droid::network::MechNetConfig mnCfg = mechNet->getConfig();
+        bool validPsk = (mnCfg.pskHex.length() == 64);
+        bool validName = (mnCfg.networkName.length() > 0);
+        
+        if (!validPsk || !validName) {
+            _console.println("! MechNet config invalid - run mechnet-provision first");
+            return;
+        }
+        
+        // Hot-start (runtime only, doesn't change config)
+        if (mechNet->start()) {
+            _console.println("✓ MechNet started: %s (channel %d)", mnCfg.networkName.c_str(), mnCfg.channel);
+        } else {
+            _console.println("! MechNet start failed (see logs)");
+        }
+    }
+    
+    void ConsoleHandler::handleMechNetStop() {
+        auto* mechNet = _brain->getMechNetMaster();
+        
+        if (!mechNet->isInitialized()) {
+            _console.println("! MechNet not running");
+            return;
+        }
+        
+        // Hot-stop (runtime only, doesn't change config)
+        mechNet->stop();
+        _console.println("✓ MechNet stopped");
+    }
+    
     // ============================================================================
     // Wizard State Machine Implementation
     // ============================================================================
@@ -417,6 +459,9 @@ namespace droid::brain {
                 break;
             case WizardState::PROVISION_PSK:
                 handleProvisionPsk(input);
+                break;
+            case WizardState::PROVISION_ENABLED:
+                handleProvisionEnabled(input);
                 break;
             case WizardState::PROVISION_CONFIRM:
                 handleProvisionConfirm(input);
@@ -532,11 +577,37 @@ namespace droid::brain {
             _wizardPskHex = trimmed;
         }
         
+        // Transition to enabled prompt
+        _wizardState = WizardState::PROVISION_ENABLED;
+        
+        bool currentEnabled = config->getBool("MechNet", "MNEnable", false);
+        _console.print("Enable at startup? (yes/no) [%s]: ", currentEnabled ? "yes" : "no");
+    }
+    
+    void ConsoleHandler::handleProvisionEnabled(const String& input) {
+        auto* config = _brain->getSystem()->getConfig();
+        String trimmed = input;
+        trimmed.trim();
+        trimmed.toLowerCase();
+        
+        if (trimmed.length() == 0) {
+            // Keep current value
+            _wizardEnabled = config->getBool("MechNet", "MNEnable", false);
+        } else if (trimmed == "yes" || trimmed == "y") {
+            _wizardEnabled = true;
+        } else if (trimmed == "no" || trimmed == "n") {
+            _wizardEnabled = false;
+        } else {
+            _console.println("! Invalid input - keeping current");
+            _wizardEnabled = config->getBool("MechNet", "MNEnable", false);
+        }
+        
         // Transition to confirmation
         _wizardState = WizardState::PROVISION_CONFIRM;
         _console.println("");
-        _console.println("Network: %s | Channel: %d | PSK: %s", 
-                        _wizardNetworkName.c_str(), _wizardChannel, _wizardPskHex.c_str());
+        _console.println("Network: %s | Channel: %d | Enabled: %s", 
+                        _wizardNetworkName.c_str(), _wizardChannel, _wizardEnabled ? "Yes" : "No");
+        _console.println("PSK: %s", _wizardPskHex.c_str());
         _console.print("Save? (yes/no) [no]: ");
     }
     
@@ -550,13 +621,17 @@ namespace droid::brain {
             // Save configuration using instance method
             auto* mechNet = _brain->getMechNetMaster();
             droid::network::MechNetConfig mnCfg;
-            mnCfg.enabled = true;
-            mnCfg.initialized = true;
+            mnCfg.enabled = _wizardEnabled;
             mnCfg.networkName = _wizardNetworkName;
             mnCfg.channel = _wizardChannel;
             mnCfg.pskHex = _wizardPskHex;
             mechNet->saveConfig(mnCfg);
-            _console.println("✓ Saved. Restart to activate.");
+            
+            if (_wizardEnabled) {
+                _console.println("✓ Provisioned (enabled at startup). Restart or use 'mechnet-start' to activate.");
+            } else {
+                _console.println("✓ Provisioned (disabled at startup). Use 'mechnet-start' to activate.");
+            }
         } else {
             _console.println("Provisioning cancelled.");
         }

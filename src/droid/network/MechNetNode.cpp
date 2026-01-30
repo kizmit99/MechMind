@@ -11,13 +11,11 @@
 #include "droid/network/MechNetNode.h"
 
 #define CONFIG_KEY_MECHNET_ENABLE        "MNEnable"
-#define CONFIG_KEY_MECHNET_INITIALIZED   "MNInit"
 #define CONFIG_KEY_MECHNET_NETWORK_NAME  "MNNetName"
 #define CONFIG_KEY_MECHNET_CHANNEL       "MNChannel"
 #define CONFIG_KEY_MECHNET_PSK           "MNPSK"
 
 #define CONFIG_DEFAULT_MECHNET_ENABLE       false
-#define CONFIG_DEFAULT_MECHNET_INITIALIZED  false
 #define CONFIG_DEFAULT_MECHNET_NETWORK_NAME "MechNet"
 #define CONFIG_DEFAULT_MECHNET_CHANNEL      6
 #define CONFIG_DEFAULT_MECHNET_PSK          "0000000000000000000000000000000000000000000000000000000000000000"
@@ -36,65 +34,19 @@ namespace droid::network {
     }
 
     void MechNetNode::init() {
-        // Check if MechNet is enabled
+        // Check if MechNet is enabled at startup
         bool enabled = config->getBool(name, CONFIG_KEY_MECHNET_ENABLE, CONFIG_DEFAULT_MECHNET_ENABLE);
         if (!enabled) {
-            logger->log(name, INFO, "MechNet disabled\n");
+            logger->log(name, INFO, "MechNet disabled at startup\n");
             return;
         }
 
-        bool provisioned = config->getBool(name, CONFIG_KEY_MECHNET_INITIALIZED, CONFIG_DEFAULT_MECHNET_INITIALIZED);
-
-        if (!provisioned) {
-            logger->log(name, WARN, "MechNet enabled but not provisioned - run mechnet-provision\n");
-            return;
-        }
-
-        // Load provisioned configuration
-        String networkName = config->getString(name, CONFIG_KEY_MECHNET_NETWORK_NAME, CONFIG_DEFAULT_MECHNET_NETWORK_NAME);
-        uint8_t channel = config->getInt(name, CONFIG_KEY_MECHNET_CHANNEL, CONFIG_DEFAULT_MECHNET_CHANNEL);
-        String pskHex = config->getString(name, CONFIG_KEY_MECHNET_PSK, CONFIG_DEFAULT_MECHNET_PSK);
-
-        // Validate PSK (must be 64 hex characters = 32 bytes)
-        if (pskHex.length() != 64) {
-            logger->log(name, ERROR, "Invalid PSK length: %d (expected 64 hex chars)\n", pskHex.length());
-            return;
-        }
-
-        // Convert hex string to bytes
-        uint8_t psk[32];
-        for (size_t i = 0; i < 32; i++) {
-            char byteStr[3] = {pskHex[i*2], pskHex[i*2 + 1], 0};
-            psk[i] = (uint8_t)strtol(byteStr, NULL, 16);
-        }
-
-        // Create MechNetMaster instance
-        // Note: MechNetMaster constructor requires network name and optional Stream for logging
-        // We don't pass a stream for logging to avoid duplicate logs (MechNet logs through its facade)
-        mechNetMaster = new MechNet::MechNetMaster(networkName.c_str(), nullptr);
-
-        // Configure MechNet
-        MechNet::NetworkConfig netCfg;
-        netCfg.psk = psk;
-        netCfg.pskLen = 32;
-        netCfg.channel = channel;
-
-        // Initialize MechNet
-        if (!mechNetMaster->begin(&netCfg)) {
-            logger->log(name, ERROR, "MechNet initialization failed\n");
-            delete mechNetMaster;
-            mechNetMaster = nullptr;
-            return;
-        }
-
-        initialized = true;
-        logger->log(name, INFO, "MechNet Master initialized: %s (channel %d)\n", 
-                   networkName.c_str(), channel);
+        // Delegate to start() for actual initialization
+        start();
     }
 
     void MechNetNode::factoryReset() {
         config->putBool(name, CONFIG_KEY_MECHNET_ENABLE, CONFIG_DEFAULT_MECHNET_ENABLE);
-        config->putBool(name, CONFIG_KEY_MECHNET_INITIALIZED, CONFIG_DEFAULT_MECHNET_INITIALIZED);
         config->putString(name, CONFIG_KEY_MECHNET_NETWORK_NAME, CONFIG_DEFAULT_MECHNET_NETWORK_NAME);
         config->putInt(name, CONFIG_KEY_MECHNET_CHANNEL, CONFIG_DEFAULT_MECHNET_CHANNEL);
         config->putString(name, CONFIG_KEY_MECHNET_PSK, CONFIG_DEFAULT_MECHNET_PSK);
@@ -109,7 +61,6 @@ namespace droid::network {
 
     void MechNetNode::logConfig() {
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_MECHNET_ENABLE, config->getString(name, CONFIG_KEY_MECHNET_ENABLE, "").c_str());
-        logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_MECHNET_INITIALIZED, config->getString(name, CONFIG_KEY_MECHNET_INITIALIZED, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_MECHNET_NETWORK_NAME, config->getString(name, CONFIG_KEY_MECHNET_NETWORK_NAME, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_MECHNET_CHANNEL, config->getString(name, CONFIG_KEY_MECHNET_CHANNEL, "").c_str());
         logger->log(name, INFO, "Config %s = %s\n", CONFIG_KEY_MECHNET_PSK, config->getString(name, CONFIG_KEY_MECHNET_PSK, "").c_str());
@@ -123,7 +74,6 @@ namespace droid::network {
     MechNetConfig MechNetNode::getConfig() {
         MechNetConfig cfg;
         cfg.enabled = config->getBool(name, CONFIG_KEY_MECHNET_ENABLE, CONFIG_DEFAULT_MECHNET_ENABLE);
-        cfg.initialized = config->getBool(name, CONFIG_KEY_MECHNET_INITIALIZED, CONFIG_DEFAULT_MECHNET_INITIALIZED);
         cfg.networkName = config->getString(name, CONFIG_KEY_MECHNET_NETWORK_NAME, CONFIG_DEFAULT_MECHNET_NETWORK_NAME);
         cfg.channel = config->getInt(name, CONFIG_KEY_MECHNET_CHANNEL, CONFIG_DEFAULT_MECHNET_CHANNEL);
         cfg.pskHex = config->getString(name, CONFIG_KEY_MECHNET_PSK, CONFIG_DEFAULT_MECHNET_PSK);
@@ -132,10 +82,82 @@ namespace droid::network {
 
     void MechNetNode::saveConfig(const MechNetConfig& cfg) {
         config->putBool(name, CONFIG_KEY_MECHNET_ENABLE, cfg.enabled);
-        config->putBool(name, CONFIG_KEY_MECHNET_INITIALIZED, cfg.initialized);
         config->putString(name, CONFIG_KEY_MECHNET_NETWORK_NAME, cfg.networkName.c_str());
         config->putInt(name, CONFIG_KEY_MECHNET_CHANNEL, cfg.channel);
         config->putString(name, CONFIG_KEY_MECHNET_PSK, cfg.pskHex.c_str());
+    }
+    
+    bool MechNetNode::start() {
+        // If already running, nothing to do
+        if (mechNetMaster && initialized) {
+            logger->log(name, INFO, "MechNet already running\n");
+            return true;
+        }
+        
+        // Clean up any partial state
+        if (mechNetMaster) {
+            delete mechNetMaster;
+            mechNetMaster = nullptr;
+            initialized = false;
+        }
+        
+        // Load configuration
+        String networkName = config->getString(name, CONFIG_KEY_MECHNET_NETWORK_NAME, CONFIG_DEFAULT_MECHNET_NETWORK_NAME);
+        uint8_t channel = config->getInt(name, CONFIG_KEY_MECHNET_CHANNEL, CONFIG_DEFAULT_MECHNET_CHANNEL);
+        String pskHex = config->getString(name, CONFIG_KEY_MECHNET_PSK, CONFIG_DEFAULT_MECHNET_PSK);
+
+        // Validate configuration
+        if (pskHex.length() != 64) {
+            logger->log(name, WARN, "Cannot start - PSK invalid (expected 64 hex chars, got %d)\n", pskHex.length());
+            return false;
+        }
+        
+        if (networkName.length() == 0) {
+            logger->log(name, WARN, "Cannot start - network name is empty\n");
+            return false;
+        }
+
+        // Convert hex string to bytes
+        uint8_t psk[32];
+        for (size_t i = 0; i < 32; i++) {
+            char byteStr[3] = {pskHex[i*2], pskHex[i*2 + 1], 0};
+            psk[i] = (uint8_t)strtol(byteStr, NULL, 16);
+        }
+
+        // Create MechNetMaster instance
+        mechNetMaster = new MechNet::MechNetMaster(networkName.c_str(), nullptr);
+
+        // Configure MechNet
+        MechNet::NetworkConfig netCfg;
+        netCfg.psk = psk;
+        netCfg.pskLen = 32;
+        netCfg.channel = channel;
+
+        // Initialize MechNet
+        if (!mechNetMaster->begin(&netCfg)) {
+            logger->log(name, ERROR, "MechNet start failed\n");
+            delete mechNetMaster;
+            mechNetMaster = nullptr;
+            return false;
+        }
+
+        initialized = true;
+        logger->log(name, INFO, "MechNet Master started: %s (channel %d)\n", 
+                   networkName.c_str(), channel);
+        return true;
+    }
+    
+    bool MechNetNode::stop() {
+        if (!mechNetMaster) {
+            logger->log(name, INFO, "MechNet already stopped\n");
+            return true;
+        }
+        
+        logger->log(name, INFO, "Stopping MechNet Master\n");
+        delete mechNetMaster;
+        mechNetMaster = nullptr;
+        initialized = false;
+        return true;
     }
     
     bool MechNetNode::sendCommand(const char* nodeName, const char* command, bool requiresAck) {

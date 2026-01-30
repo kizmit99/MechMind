@@ -16,7 +16,6 @@ namespace droid::network {
     // Configuration structure for MechNet provisioning
     struct MechNetConfig {
         bool enabled;
-        bool initialized;
         String networkName;
         int channel;
         String pskHex;  // 64 hex characters
@@ -38,6 +37,8 @@ namespace droid::network {
         // Public API for handlers and Brain
         MechNetConfig getConfig();
         void saveConfig(const MechNetConfig& cfg);
+        bool start();  // Hot-start MechNet without restart
+        bool stop();   // Hot-stop MechNet
         bool sendCommand(const char* nodeName, const char* command, bool requiresAck = true);
         void findAllNodesByPrefix(const char* prefix, std::function<void(const char*)> callback);
         uint8_t connectedNodeCount();
