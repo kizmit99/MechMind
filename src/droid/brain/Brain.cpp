@@ -13,6 +13,8 @@
 #include "settings/hardware.config.h"
 #include "droid/command/CmdLogger.h"
 #include "droid/command/StreamCmdHandler.h"
+#include "droid/command/MechNetCmdHandler.h"
+#include "droid/network/MechNetNode.h"
 #include "droid/brain/LocalCmdHandler.h"
 #include "droid/audio/AudioCmdHandler.h"
 #include "droid/brain/PanelCmdHandler.h"
@@ -50,7 +52,11 @@
 
 namespace droid::brain {
     Brain::Brain(const char* name, droid::core::System* system) : 
-        BaseComponent(name, system) {
+        BaseComponent(name, system),
+        mechNetMasterNode(nullptr) {
+
+        // Always create MechNetMasterNode (lightweight until init() is called)
+        mechNetMasterNode = new droid::network::MechNetNode("MechNet", system);
 
         //Construct optional/pluggable components
 
@@ -134,7 +140,7 @@ namespace droid::brain {
 
 
         actionMgr->addCmdHandler(new droid::command::CmdLogger("CmdLogger", system));
-
+        actionMgr->addCmdHandler(new droid::command::MechNetCmdHandler("MechNetOut", system, mechNetMasterNode));
         actionMgr->addCmdHandler(new droid::command::StreamCmdHandler("Dome", system, DOME_STREAM));
         actionMgr->addCmdHandler(new droid::command::StreamCmdHandler("Body", system, BODY_STREAM));
         actionMgr->addCmdHandler(new droid::audio::AudioCmdHandler("Audio", system, audioMgr));
@@ -151,6 +157,7 @@ namespace droid::brain {
 
         //Setup list of all Active BaseComponents
         componentList.push_back(pwmService);
+        componentList.push_back(mechNetMasterNode);
         componentList.push_back(controller);
         componentList.push_back(domeMotorDriver);
         componentList.push_back(driveMotorDriver);
@@ -260,6 +267,7 @@ namespace droid::brain {
         (new droid::brain::DriveMgr("DriveMgr", system, controller, driveMotorDriver))->factoryReset();
         (new droid::brain::LocalCmdHandler("Brain", system, this))->factoryReset();
         (new droid::brain::PanelCmdHandler("Panel", system))->factoryReset();
+        (new droid::network::MechNetNode("MechNet", system))->factoryReset();
     }
 
     void Brain::failsafe() {
@@ -289,6 +297,9 @@ namespace droid::brain {
         if (consoleHandler) {
             consoleHandler->process();
         }
+        
+        // Process inbound MechNet messages (before component tasks)
+        processInboundMechNetMessages();
         
         for (droid::core::BaseComponent* component : componentList) {
             unsigned long compBegin = millis();
@@ -322,5 +333,26 @@ namespace droid::brain {
         for (droid::core::BaseComponent* component : componentList) {
             component->logConfig();
         }
+    }
+
+    void Brain::processInboundMechNetMessages() {
+        if (!mechNetMasterNode || !mechNetMasterNode->isInitialized()) {
+            return;
+        }
+        
+        while (mechNetMasterNode->messageAvailable()) {
+            String message = mechNetMasterNode->nextMessage();
+            String sender = mechNetMasterNode->lastSender();
+            
+            routeMessageToHandler(sender, message);
+        }
+    }
+
+    void Brain::routeMessageToHandler(const String& sender, const String& message) {
+        // Phase 2: Log all incoming messages (routing logic added in later phases)
+        logger->log("MechNet", DEBUG, "RX [%s]: %s\n", sender.c_str(), message.c_str());
+        
+        // Phase 4 will add: if (sender.startsWith("DriveRing") || sender.startsWith("DomeRing"))
+        // Phase 3 will add: if (sender.startsWith("DataPort"))
     }
 }

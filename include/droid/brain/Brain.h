@@ -21,7 +21,13 @@
 
 namespace droid::brain {
     class ConsoleHandler;  // Forward declaration
-    
+}
+
+namespace droid::network {
+    class MechNetNode;  // Forward declaration
+}
+
+namespace droid::brain {
     class Brain : droid::core::BaseComponent {
     public:
         Brain(const char* name, droid::core::System* system);
@@ -38,6 +44,7 @@ namespace droid::brain {
         void overrideCmdMap(const char* action, const char* cmd);
         void fireAction(const char* action);
         droid::core::System* getSystem() { return system; }
+        droid::network::MechNetNode* getMechNetMaster() { return mechNetMasterNode; }
 
     private:
         droid::brain::DomeMgr* domeMgr;
@@ -46,6 +53,7 @@ namespace droid::brain {
         droid::audio::AudioMgr* audioMgr;
 
         droid::services::PWMService* pwmService;
+        droid::network::MechNetNode* mechNetMasterNode;
         droid::controller::Controller* controller;
         droid::motor::MotorDriver* driveMotorDriver;
         droid::motor::MotorDriver* domeMotorDriver;
@@ -53,5 +61,8 @@ namespace droid::brain {
         droid::brain::ConsoleHandler* consoleHandler;
 
         std::vector<droid::core::BaseComponent*> componentList;
+        
+        void processInboundMechNetMessages();
+        void routeMessageToHandler(const String& sender, const String& message);
     };
 }

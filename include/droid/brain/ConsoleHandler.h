@@ -60,5 +60,29 @@ namespace droid::brain {
         void handlePlay(const char* args);
         void handleTestPanel(const char* args);
         void handleLogLevel(const char* args);
+        void handleMechNetStatus();
+        void handleMechNetProvision();
+        void handleMechNetSend(const char* args, bool requiresAck);
+        
+        // Wizard state machine
+        enum class WizardState {
+            NONE,                        // Not in wizard
+            PROVISION_NETWORK_NAME,      // Step 1: Network name
+            PROVISION_CHANNEL,           // Step 2: WiFi channel
+            PROVISION_PSK,               // Step 3: PSK input
+            PROVISION_CONFIRM            // Step 4: Confirmation
+        };
+        
+        WizardState _wizardState;
+        String _wizardNetworkName;
+        int _wizardChannel;
+        String _wizardPskHex;
+        
+        void processWizardInput(const String& input);
+        void startProvisionWizard();
+        void handleProvisionNetworkName(const String& input);
+        void handleProvisionChannel(const String& input);
+        void handleProvisionPsk(const String& input);
+        void handleProvisionConfirm(const String& input);
     };
 }

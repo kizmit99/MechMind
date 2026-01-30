@@ -37,6 +37,8 @@ LOGGER->setLogLevel("Body", INFO);
 LOGGER->setLogLevel("Audio", INFO);
 LOGGER->setLogLevel("Panel", INFO);
 LOGGER->setLogLevel("Brain", INFO);
+LOGGER->setLogLevel("MechNet", DEBUG);
+LOGGER->setLogLevel("MechNetOut", DEBUG);
 LOGGER->setLogLevel("DualRingBLE", INFO);
 LOGGER->setLogLevel("driveRing", INFO);
 LOGGER->setLogLevel("domeRing", INFO);

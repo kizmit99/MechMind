@@ -89,6 +89,14 @@ public:
         entry->level = level;
     }
 
+    void setAllLogLevels(LogLevel level) {
+        LogConfigEntry* entry = logConfigList;
+        while (entry != NULL) {
+            entry->level = level;
+            entry = entry->next;
+        }
+    }
+
     LogLevel getLogLevel(const char* compName) {
         LogConfigEntry* head = logConfigList;
         LogConfigEntry* entry = head;
