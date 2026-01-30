@@ -84,7 +84,7 @@ cmdMap["MarchingAnts"]		= "Dome>:SE55";
 cmdMap["Scream"]			= "Dome>:SE01;Audio>$61";
 cmdMap["Disco"]				= "Dome>:SE09;Audio>$D";
 cmdMap["FastSmirk"]			= "Dome>:SE03";
-cmdMap["ShortCircuit"]		= "Dome>:SE06;Audio>$63;DataPort>@V1 flicker en=1;#10000;DataPort>@V1 flicker en=0";
+cmdMap["ShortCircuit"]		= "Action>DPFlickerOn;Dome>:SE06;Audio>$63;#10000;Action>DPFlickerOff";
 cmdMap["LeiaFullMsg"]		= "Dome>:SE08;Audio>$L";
 cmdMap["LeiaShortMsg"]		= "Audio>$72";
 cmdMap["Wave"]				= "Dome>:SE02";

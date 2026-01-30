@@ -156,6 +156,18 @@ namespace droid::command {
 
                 logger->log(name, DEBUG, "Sending command to %s: %s at time: %d\n", instruction->device, instruction->command, currentTime);
 
+                // Check for Action chaining
+                if (strcmp(instruction->device, "Action") == 0) {
+                    logger->log(name, DEBUG, "Expanding action: %s\n", instruction->command);
+                    if (cmdMap.count(instruction->command) > 0) {
+                        parseCommands(cmdMap[instruction->command].c_str());
+                    } else {
+                        logger->log(name, WARN, "Action not found in cmdMap: %s\n", instruction->command);
+                    }
+                    instruction = instructionList.deleteInstruction(instruction);
+                    continue;
+                }
+
                 bool consumed = false;
                 for (droid::command::CmdHandler* cmdHandler : cmdHandlers) {
                     consumed |= cmdHandler->process(instruction->device, instruction->command);
