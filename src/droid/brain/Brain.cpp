@@ -25,6 +25,7 @@
 #include "droid/controller/DualRingController.h"
 #include "droid/controller/PS3BtController.h"
 #include "droid/controller/PS3UsbController.h"
+#include "droid/controller/MechRingController.h"
 #include "droid/controller/StubController.h"
 #include "droid/motor/PWMMotorDriver.h"
 #include "droid/motor/SabertoothDriver.h"
@@ -74,7 +75,10 @@ namespace droid::brain {
 
         whichService = config->getString(name, CONFIG_KEY_BRAIN_CONTROLLER, CONFIG_DEFAULT_CONTROLLER);
         logger->log(name, DEBUG, "Requested Controller: %s\n", whichService);
-        if (whichService == CONTROLLER_OPTION_DUALRING) {
+        if (whichService == CONTROLLER_OPTION_MECHRING) {
+            logger->log(name, DEBUG, "Initializing MechRing\n");
+            controller = new droid::controller::MechRingController(CONTROLLER_OPTION_MECHRING, system, mechNetMasterNode);
+        } else if (whichService == CONTROLLER_OPTION_DUALRING) {
             logger->log(name, DEBUG, "Initializing DualRing\n");
             controller = new droid::controller::DualRingController(CONTROLLER_OPTION_DUALRING, system);
         } else if (whichService == CONTROLLER_OPTION_SONYNAV) {
@@ -244,8 +248,14 @@ namespace droid::brain {
             droid::controller::PS3UsbController* ps3Controller = new droid::controller::PS3UsbController(CONTROLLER_OPTION_PS3USB, system);
             ps3Controller->init();
             ps3Controller->factoryReset();
-        }
-        if (controller->getType() == droid::controller::Controller::ControllerType::STUB) {
+        }        if (controller->getType() == droid::controller::Controller::MECHRING) {
+            controller->factoryReset();
+        } else {
+            droid::controller::MechRingController* mechRingController = 
+                new droid::controller::MechRingController(CONTROLLER_OPTION_MECHRING, system, mechNetMasterNode);
+            mechRingController->init();
+            mechRingController->factoryReset();
+        }        if (controller->getType() == droid::controller::Controller::ControllerType::STUB) {
             controller->factoryReset();
         } else {
             droid::controller::StubController* stubController = new droid::controller::StubController("ControllerStub", system);
@@ -365,6 +375,19 @@ namespace droid::brain {
     }
 
     void Brain::routeMessageToHandler(const String& sender, const String& message) {
+        // Route to MechRingController if sender is a ring
+        if (sender.startsWith("DriveRing") || sender.startsWith("DomeRing")) {
+            if (controller && controller->getType() == droid::controller::Controller::MECHRING) {
+                droid::controller::MechRingController* ringController = 
+                    static_cast<droid::controller::MechRingController*>(controller);
+                ringController->handleRingMessage(sender, message);
+                return;
+            }
+            // If MechRing controller not active, log unhandled
+            logger->log(name, DEBUG, "Unhandled ring message (no MechRing controller): %s\n", sender.c_str());
+            return;
+        }
+        
         // Try each registered message handler
         for (droid::message::MsgHandler* handler : inboundMsgHandlers) {
             if (handler->handleMessage(sender, message)) {

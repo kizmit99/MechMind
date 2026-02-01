@@ -178,6 +178,11 @@ namespace droid::network {
         }
     }
 
+    bool MechNetNode::isNodeConnected(const char* nodeName) {
+        if (!mechNetMaster) return false;
+        return mechNetMaster->isNodeConnected(nodeName);
+    }
+
     uint8_t MechNetNode::connectedNodeCount() {
         if (!mechNetMaster) return 0;
         return mechNetMaster->connectedNodeCount();

@@ -22,6 +22,7 @@
 #define CONTROLLER_OPTION_SONYNAV       "SonyNav"
 #define CONTROLLER_OPTION_PS3BT         "PS3Bt"
 #define CONTROLLER_OPTION_PS3USB        "PS3Usb"
+#define CONTROLLER_OPTION_MECHRING      "MechRing"
 #define CONTROLLER_OPTION_STUB          "None"
 
 #define PWMSERVICE_OPTION_PCA9685       "PCA9685"

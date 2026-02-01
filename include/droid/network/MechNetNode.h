@@ -41,6 +41,7 @@ namespace droid::network {
         bool stop();   // Hot-stop MechNet
         bool sendCommand(const char* nodeName, const char* command, bool requiresAck = true);
         void findAllNodesByPrefix(const char* prefix, std::function<void(const char*)> callback);
+        bool isNodeConnected(const char* nodeName);
         uint8_t connectedNodeCount();
         bool getConnectedNodeName(uint8_t index, char* nameOut, size_t buflen);
         bool messageAvailable();

@@ -17,6 +17,7 @@ LOGGER->setLogLevel("PCA9685", INFO);
 LOGGER->setLogLevel("PWMStub", INFO);
 LOGGER->setLogLevel("DualSony", DEBUG);
 LOGGER->setLogLevel("DualRing", DEBUG);
+LOGGER->setLogLevel("MechRing", DEBUG);
 LOGGER->setLogLevel("ControllerStub", INFO);
 LOGGER->setLogLevel("DomePWM", INFO);
 LOGGER->setLogLevel("DomeStub", INFO);

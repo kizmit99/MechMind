@@ -1,0 +1,60 @@
+/*
+ * MechMind Program
+ * Author: Kizmit99
+ * License: CC BY-NC-SA 4.0
+ *
+ * This source code is open-source for non-commercial use. 
+ * For commercial use, please obtain a license from the author.
+ * For more information, visit https://github.com/kizmit99/MechMind
+ *
+ * MechRing Controller Trigger Map
+ * Maps button combinations to MechMind actions
+ * 
+ * Button naming convention:
+ *   R_ prefix = DriveRing (RIGHT joystick)
+ *   L_ prefix = DomeRing (LEFT joystick)
+ * 
+ * Button identifiers:
+ *   TRIG    = Trigger button (bit 1)
+ *   BTN1-4  = Push buttons 1-4 (bits 2-5)
+ *   JOY     = Joystick press button (bit 0)
+ *   RECESS  = Recessed mode button (bit 6)
+ */
+
+// ===== DriveRing (RIGHT joystick) - Single Buttons =====
+triggerMap["R_TRIG"]    = "VolumeUp";
+triggerMap["R_BTN1"]    = "Happy";
+triggerMap["R_BTN2"]    = "Sad";
+triggerMap["R_BTN3"]    = "DomePAllToggle";
+triggerMap["R_BTN4"]    = "BodyPAllToggle";
+triggerMap["R_JOY"]     = "StickToggle";
+triggerMap["R_RECESS"]  = "QuietMode";
+
+// ===== DomeRing (LEFT joystick) - Single Buttons =====
+triggerMap["L_TRIG"]    = "VolumeDown";
+triggerMap["L_BTN1"]    = "Scream";
+triggerMap["L_BTN2"]    = "Wave";
+triggerMap["L_BTN3"]    = "HoloLightsTogl";
+triggerMap["L_BTN4"]    = "MusingsToggle";
+triggerMap["L_JOY"]     = "DomeAutoToggle";
+triggerMap["L_RECESS"]  = "FullAwake";
+
+// ===== DriveRing (RIGHT) - Combinations =====
+triggerMap["R_TRIG+R_BTN1"] = "CantinaDance";
+triggerMap["R_TRIG+R_BTN2"] = "Disco";
+triggerMap["R_TRIG+R_BTN3"] = "LeiaShortMsg";
+triggerMap["R_TRIG+R_BTN4"] = "BeepCantina";
+
+// ===== DomeRing (LEFT) - Combinations =====
+triggerMap["L_TRIG+L_BTN1"] = "ShortCircuit";
+triggerMap["L_TRIG+L_BTN2"] = "Wave2";
+triggerMap["L_TRIG+L_BTN3"] = "MarchingAnts";
+triggerMap["L_TRIG+L_BTN4"] = "WolfWhistle";
+
+// ===== Both Rings - Combinations =====
+triggerMap["R_TRIG+L_TRIG"]     = "LeiaFullMsg";
+triggerMap["R_BTN1+L_BTN1"]     = "FastSmirk";
+triggerMap["R_BTN2+L_BTN2"]     = "Anger";
+triggerMap["R_BTN3+L_BTN3"]     = "Fear";
+triggerMap["R_JOY+L_JOY"]       = "SpeedChange";
+triggerMap["R_RECESS+L_RECESS"] = "FactoryReset";
