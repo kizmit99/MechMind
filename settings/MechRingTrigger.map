@@ -14,47 +14,47 @@
  *   R_ prefix = DriveRing (RIGHT joystick)
  *   L_ prefix = DomeRing (LEFT joystick)
  * 
- * Button identifiers:
- *   TRIG    = Trigger button (bit 1)
- *   BTN1-4  = Push buttons 1-4 (bits 2-5)
- *   JOY     = Joystick press button (bit 0)
- *   RECESS  = Recessed mode button (bit 6)
+ * Button identifiers (v2.0 protocol):
+ *   BTNA-D  = Push buttons A-D (bits 0-3)
+ *   TRIG    = Trigger button (bit 8)
+ *   JOY     = Joystick press button (bit 9)
+ *   MODE    = Mode button (bit 10)
  */
 
 // ===== DriveRing (RIGHT joystick) - Single Buttons =====
 triggerMap["R_TRIG"]    = "VolumeUp";
-triggerMap["R_BTN1"]    = "Happy";
-triggerMap["R_BTN2"]    = "Sad";
-triggerMap["R_BTN3"]    = "DomePAllToggle";
-triggerMap["R_BTN4"]    = "BodyPAllToggle";
+triggerMap["R_BTNA"]    = "Happy";
+triggerMap["R_BTNB"]    = "Sad";
+triggerMap["R_BTNC"]    = "DomePAllToggle";
+triggerMap["R_BTND"]    = "BodyPAllToggle";
 triggerMap["R_JOY"]     = "StickToggle";
-triggerMap["R_RECESS"]  = "QuietMode";
+triggerMap["R_MODE"]    = "QuietMode";
 
 // ===== DomeRing (LEFT joystick) - Single Buttons =====
 triggerMap["L_TRIG"]    = "VolumeDown";
-triggerMap["L_BTN1"]    = "Scream";
-triggerMap["L_BTN2"]    = "Wave";
-triggerMap["L_BTN3"]    = "HoloLightsTogl";
-triggerMap["L_BTN4"]    = "MusingsToggle";
+triggerMap["L_BTNA"]    = "Scream";
+triggerMap["L_BTNB"]    = "Wave";
+triggerMap["L_BTNC"]    = "HoloLightsTogl";
+triggerMap["L_BTND"]    = "MusingsToggle";
 triggerMap["L_JOY"]     = "DomeAutoToggle";
-triggerMap["L_RECESS"]  = "FullAwake";
+triggerMap["L_MODE"]    = "FullAwake";
 
 // ===== DriveRing (RIGHT) - Combinations =====
-triggerMap["R_TRIG+R_BTN1"] = "CantinaDance";
-triggerMap["R_TRIG+R_BTN2"] = "Disco";
-triggerMap["R_TRIG+R_BTN3"] = "LeiaShortMsg";
-triggerMap["R_TRIG+R_BTN4"] = "BeepCantina";
+triggerMap["R_TRIG+R_BTNA"] = "CantinaDance";
+triggerMap["R_TRIG+R_BTNB"] = "Disco";
+triggerMap["R_TRIG+R_BTNC"] = "LeiaShortMsg";
+triggerMap["R_TRIG+R_BTND"] = "BeepCantina";
 
 // ===== DomeRing (LEFT) - Combinations =====
-triggerMap["L_TRIG+L_BTN1"] = "ShortCircuit";
-triggerMap["L_TRIG+L_BTN2"] = "Wave2";
-triggerMap["L_TRIG+L_BTN3"] = "MarchingAnts";
-triggerMap["L_TRIG+L_BTN4"] = "WolfWhistle";
+triggerMap["L_TRIG+L_BTNA"] = "ShortCircuit";
+triggerMap["L_TRIG+L_BTNB"] = "Wave2";
+triggerMap["L_TRIG+L_BTNC"] = "MarchingAnts";
+triggerMap["L_TRIG+L_BTND"] = "WolfWhistle";
 
 // ===== Both Rings - Combinations =====
 triggerMap["R_TRIG+L_TRIG"]     = "LeiaFullMsg";
-triggerMap["R_BTN1+L_BTN1"]     = "FastSmirk";
-triggerMap["R_BTN2+L_BTN2"]     = "Anger";
-triggerMap["R_BTN3+L_BTN3"]     = "Fear";
+triggerMap["R_BTNA+L_BTNA"]     = "FastSmirk";
+triggerMap["R_BTNB+L_BTNB"]     = "Anger";
+triggerMap["R_BTNC+L_BTNC"]     = "Fear";
 triggerMap["R_JOY+L_JOY"]       = "SpeedChange";
-triggerMap["R_RECESS+L_RECESS"] = "FactoryReset";
+triggerMap["R_MODE+L_MODE"]     = "FactoryReset";

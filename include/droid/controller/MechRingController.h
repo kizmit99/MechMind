@@ -40,9 +40,8 @@ namespace droid::controller {
             char uniqueName[32];           // "DriveRing-A3F2"
             volatile int8_t joystick_x;    // -128 to +127
             volatile int8_t joystick_y;    // -128 to +127
-            volatile uint32_t buttonState; // Bitmask
+            volatile uint16_t buttonState; // 16-bit bitmask
             volatile uint32_t lastMsgTime; // millis()
-            volatile uint16_t batteryVoltage; // mV
             volatile bool isConnected;
         };
         

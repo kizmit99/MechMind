@@ -1,7 +1,7 @@
 # MechRing Controller Protocol Specification
 
-**Version**: 1.0  
-**Date**: January 31, 2026  
+**Version**: 2.0  
+**Date**: February 2, 2026  
 **Status**: Specification Ready for Implementation
 
 ---
@@ -69,7 +69,7 @@ PSK: [paste 64-char hex]
 **Purpose**: Report current joystick position and button states  
 **Frequency**: Adaptive (50 Hz active, 1 Hz idle)  
 **Reliability**: Unreliable (`requiresAck=false`) - high frequency makes retries unnecessary  
-**Format**: `S:<x>,<y>,<bitmask>[,<voltage>]`
+**Format**: `S:<x>,<y>,<bitmask>`
 
 #### Fields
 
@@ -78,51 +78,52 @@ PSK: [paste 64-char hex]
 | `S:` | Literal | - | Message type identifier (State) |
 | `<x>` | int8_t | -128 to +127 | Joystick X-axis (negative = left, positive = right, 0 = center) |
 | `<y>` | int8_t | -128 to +127 | Joystick Y-axis (negative = back, positive = forward, 0 = center) |
-| `<bitmask>` | uint8_t hex | 00 to FF | Button state bitmask (see section 3.2) |
-| `<voltage>` | uint16_t | 0 to 9999 | *Optional* Battery voltage in millivolts (e.g., 3750 = 3.75V) |
+| `<bitmask>` | uint16_t hex | 0000 to FFFF | Button state bitmask (see section 3.2) |
 
-#### Button Bitmask (8 bits)
+#### Button Bitmask (16 bits)
 
 ```
-Bit 7: Reserved (must be 0)
-Bit 6: Recessed button (mode change, not for quick input)
-Bit 5: Push button 4
-Bit 4: Push button 3
-Bit 3: Push button 2
-Bit 2: Push button 1
-Bit 1: Trigger button
-Bit 0: Joystick press button
+Bit 15-11: Reserved (must be 0)
+Bit 10: Mode button
+Bit 9:  Joystick press button
+Bit 8:  Trigger button
+Bit 7:  Virtual Right (joystick X > +64)
+Bit 6:  Virtual Left (joystick X < -64)
+Bit 5:  Virtual Down (joystick Y < -64)
+Bit 4:  Virtual Up (joystick Y > +64)
+Bit 3:  Push button D
+Bit 2:  Push button C
+Bit 1:  Push button B
+Bit 0:  Push button A
 ```
+
+**Virtual Buttons**: Generated automatically by ring firmware when joystick exceeds ±64 threshold (~50% deflection). This allows button-like actions from joystick gestures.
 
 **Examples**:
-- `0x00` = No buttons pressed
-- `0x01` = Joystick button pressed
-- `0x02` = Trigger pressed
-- `0x03` = Joystick + trigger (combo)
-- `0x06` = Trigger + button 1
-- `0x4F` = Multiple buttons (trigger + buttons 1, 2, 3, recessed)
-
-#### Battery Voltage Reporting
-
-- **Included**: Every 5 seconds only (reduces message size most of the time)
-- **Omitted**: If hardware doesn't support battery reading
-- **Brain behavior**: Logs voltage when received, optional low-battery warning
-
+- `0x0000` = No buttons pressed, joystick centered
+- `0x0001` = Button A pressed
+- `0x0100` = Trigger pressed
+- `0x0200` = Joystick press button
+- `0x0010` = Virtual Up (joystick pushed forward > +64)
+- `0x0080` = Virtual Right (joystick pushed right > +64)
+- `0x0101` = Trigger + button A (combo)
+- `0x030F` = Trigger + joystick press + buttons A, B, C, D
 #### Example Messages
 
 ```
-S:0,0,00                    // Centered joystick, no buttons
-S:64,-64,02                 // X=64 (right), Y=-64 (back), trigger pressed
-S:0,127,00,3750             // Full forward, battery at 3.75V (periodic report)
-S:-128,-45,4F               // Full left, multiple buttons pressed
-S:0,0,00,3200               // Centered, no buttons, battery low (3.2V)
+S:0,0,0000                  // Centered joystick, no buttons
+S:64,-64,0100               // X=64 (right), Y=-64 (back), trigger pressed
+S:0,127,0010                // Full forward, virtual up button generated
+S:-128,0,0040               // Full left, virtual left button generated
+S:0,0,0101                  // Centered, trigger + button A pressed
+S:80,80,0190                // Diagonal right-forward, virtual up + right + trigger
+S:0,0,0400                  // Centered, mode button pressed
 ```
 
 #### Message Size
 
-- **Typical**: 10-15 bytes (`S:64,-64,02`)
-- **With battery**: 15-20 bytes (`S:0,127,00,3750`)
-- **ESP-NOW payload limit**: 250 bytes (5-12x headroom for future fields)
+- **Typical**: 12-17 bytes (`S:64,-64,0100`)
+- **ESP-NOW payload limit**: 250 bytes (12-20x headroom for future fields)
 
 ---
 
@@ -156,7 +157,7 @@ bool hasActivity = (abs(x) > DEADZONE || abs(y) > DEADZONE || buttons != 0);
 
 This prevents noise/drift from keeping ring in active mode.
 
-### 4.3 Battery Impact
+### 4.3 Power Consumption Impact
 
 | Mode | TX Rate | WiFi Power | Estimated Current |
 |------|---------|------------|-------------------|
@@ -330,7 +331,7 @@ STATUS:CAL_ERROR      // Joystick calibration issue
 
 ### 8.3 Multi-Mode Support (Potential)
 
-Rings could support multiple control modes (drive, panel, manipulator) selected via recessed button, with mode indicator via LED.
+Rings could support multiple control modes (drive, panel, manipulator) selected via mode button, with mode indicator via LED.
 
 ---
 
@@ -346,20 +347,15 @@ void MechRingController::parseRingMessage(const String& msg, RingState& ring) {
     
     int x, y;
     unsigned int buttons;
-    int voltage = 0;
     
-    // Parse: S:<x>,<y>,<hex>[,<voltage>]
-    int parsed = sscanf(msg.c_str() + 2, "%d,%d,%x,%d", &x, &y, &buttons, &voltage);
+    // Parse: S:<x>,<y>,<hex>
+    int parsed = sscanf(msg.c_str() + 2, "%d,%d,%x", &x, &y, &buttons);
     
-    if (parsed >= 3) {
+    if (parsed == 3) {
         ring.joystick_x = constrain(x, -128, 127);
         ring.joystick_y = constrain(y, -128, 127);
-        ring.buttonState = buttons & 0xFF;
+        ring.buttonState = buttons & 0xFFFF;  // 16-bit mask
         ring.lastMsgTime = millis();
-        
-        if (parsed == 4 && voltage > 0) {
-            ring.batteryVoltage = voltage;
-        }
     }
 }
 ```
@@ -369,20 +365,24 @@ void MechRingController::parseRingMessage(const String& msg, RingState& ring) {
 ### 9.2 Message Construction (Ring Side)
 
 ```cpp
-void sendStateUpdate(int8_t x, int8_t y, uint8_t buttons) {
-    static unsigned long lastBatteryReport = 0;
+const int8_t VIRTUAL_BUTTON_THRESHOLD = 64;  // ~50% of ±128 range
+
+uint16_t generateButtonMask(int8_t x, int8_t y, uint8_t physicalButtons) {
+    uint16_t mask = physicalButtons;  // Lower 8 bits (buttons A-D, trigger, joystick press, mode)
+    
+    // Add virtual directional buttons based on joystick position
+    if (y > VIRTUAL_BUTTON_THRESHOLD)  mask |= 0x0010;  // Virtual Up (bit 4)
+    if (y < -VIRTUAL_BUTTON_THRESHOLD) mask |= 0x0020;  // Virtual Down (bit 5)
+    if (x < -VIRTUAL_BUTTON_THRESHOLD) mask |= 0x0040;  // Virtual Left (bit 6)
+    if (x > VIRTUAL_BUTTON_THRESHOLD)  mask |= 0x0080;  // Virtual Right (bit 7)
+    
+    return mask;
+}
+
+void sendStateUpdate(int8_t x, int8_t y, uint8_t physicalButtons) {
     char msg[64];
-    int len = snprintf(msg, sizeof(msg), "S:%d,%d,%02X", x, y, buttons);
-    
-    // Add battery voltage every 5 seconds
-    if (millis() - lastBatteryReport >= 5000) {
-        uint16_t voltage = readBatteryVoltage();  // If available
-        if (voltage > 0) {
-            snprintf(msg + len, sizeof(msg) - len, ",%u", voltage);
-            lastBatteryReport = millis();
-        }
-    }
-    
+    uint16_t buttonMask = generateButtonMask(x, y, physicalButtons);
+    snprintf(msg, sizeof(msg), "S:%d,%d,%04X", x, y, buttonMask);
     mechNetRemote.sendTo(msg, false);  // Unreliable send
 }
 ```
@@ -458,6 +458,7 @@ void sendStateUpdate(int8_t x, int8_t y, uint8_t buttons) {
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2026-01-31 | Kizmit99 | Initial specification |
+| 2.0 | 2026-02-02 | Kizmit99 | Expanded to 16-bit button field, added virtual directional buttons (Up/Down/Left/Right), renamed buttons 1-4 to A-D, renamed recessed button to mode button, removed battery voltage reporting |
 
 ---
 
