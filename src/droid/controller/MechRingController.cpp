@@ -275,74 +275,156 @@ namespace droid::controller {
         uint16_t driveButtons = driveRing.buttonState;
         uint16_t domeButtons = domeRing.buttonState;
         
-        // Priority order: combinations first, then single buttons
+        // Left button (A/B/C/D) + Right direction (Up/Down/Left/Right)
+        // Pattern: Left trigger NOT pressed, Left button pressed, Right trigger NOT pressed, Right direction pressed
         
-        // Check for both-ring combinations first
-        if ((driveButtons & BTN_TRIGGER) && (domeButtons & BTN_TRIGGER)) {
-            return "R_TRIG+L_TRIG";
+        // LA_R* combinations (Left A + Right directions)
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_A) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_UP)) {
+            return "LA_Rup";
         }
-        if ((driveButtons & BTN_A) && (domeButtons & BTN_A)) {
-            return "R_BTNA+L_BTNA";
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_A) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_DOWN)) {
+            return "LA_Rdown";
         }
-        if ((driveButtons & BTN_B) && (domeButtons & BTN_B)) {
-            return "R_BTNB+L_BTNB";
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_A) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_LEFT)) {
+            return "LA_Rleft";
         }
-        if ((driveButtons & BTN_C) && (domeButtons & BTN_C)) {
-            return "R_BTNC+L_BTNC";
-        }
-        if ((driveButtons & BTN_JOY_PRESS) && (domeButtons & BTN_JOY_PRESS)) {
-            return "R_JOY+L_JOY";
-        }
-        if ((driveButtons & BTN_MODE) && (domeButtons & BTN_MODE)) {
-            return "R_MODE+L_MODE";
-        }
-        
-        // Check DriveRing (RIGHT) combinations
-        if ((driveButtons & BTN_TRIGGER) && (driveButtons & BTN_A)) {
-            return "R_TRIG+R_BTNA";
-        }
-        if ((driveButtons & BTN_TRIGGER) && (driveButtons & BTN_B)) {
-            return "R_TRIG+R_BTNB";
-        }
-        if ((driveButtons & BTN_TRIGGER) && (driveButtons & BTN_C)) {
-            return "R_TRIG+R_BTNC";
-        }
-        if ((driveButtons & BTN_TRIGGER) && (driveButtons & BTN_D)) {
-            return "R_TRIG+R_BTND";
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_A) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_RIGHT)) {
+            return "LA_Rright";
         }
         
-        // Check DomeRing (LEFT) combinations
-        if ((domeButtons & BTN_TRIGGER) && (domeButtons & BTN_A)) {
-            return "L_TRIG+L_BTNA";
+        // LB_R* combinations (Left B + Right directions)
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_B) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_UP)) {
+            return "LB_Rup";
         }
-        if ((domeButtons & BTN_TRIGGER) && (domeButtons & BTN_B)) {
-            return "L_TRIG+L_BTNB";
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_B) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_DOWN)) {
+            return "LB_Rdown";
         }
-        if ((domeButtons & BTN_TRIGGER) && (domeButtons & BTN_C)) {
-            return "L_TRIG+L_BTNC";
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_B) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_LEFT)) {
+            return "LB_Rleft";
         }
-        if ((domeButtons & BTN_TRIGGER) && (domeButtons & BTN_D)) {
-            return "L_TRIG+L_BTND";
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_B) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_RIGHT)) {
+            return "LB_Rright";
         }
         
-        // Single button presses (DriveRing)
-        if (driveButtons & BTN_TRIGGER) return "R_TRIG";
-        if (driveButtons & BTN_A) return "R_BTNA";
-        if (driveButtons & BTN_B) return "R_BTNB";
-        if (driveButtons & BTN_C) return "R_BTNC";
-        if (driveButtons & BTN_D) return "R_BTND";
-        if (driveButtons & BTN_JOY_PRESS) return "R_JOY";
-        if (driveButtons & BTN_MODE) return "R_MODE";
+        // LC_R* combinations (Left C + Right directions)
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_C) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_UP)) {
+            return "LC_Rup";
+        }
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_C) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_DOWN)) {
+            return "LC_Rdown";
+        }
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_C) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_LEFT)) {
+            return "LC_Rleft";
+        }
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_C) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_RIGHT)) {
+            return "LC_Rright";
+        }
         
-        // Single button presses (DomeRing)
-        if (domeButtons & BTN_TRIGGER) return "L_TRIG";
-        if (domeButtons & BTN_A) return "L_BTNA";
-        if (domeButtons & BTN_B) return "L_BTNB";
-        if (domeButtons & BTN_C) return "L_BTNC";
-        if (domeButtons & BTN_D) return "L_BTND";
-        if (domeButtons & BTN_JOY_PRESS) return "L_JOY";
-        if (domeButtons & BTN_MODE) return "L_MODE";
+        // LD_R* combinations (Left D + Right directions)
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_D) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_UP)) {
+            return "LD_Rup";
+        }
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_D) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_DOWN)) {
+            return "LD_Rdown";
+        }
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_D) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_LEFT)) {
+            return "LD_Rleft";
+        }
+        if (!(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_D) && 
+            !(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_RIGHT)) {
+            return "LD_Rright";
+        }
         
-        return "";  // No buttons pressed
+        // Right button (A/B/C/D) + Left direction (Up/Down/Left/Right)
+        // Pattern: Right trigger NOT pressed, Right button pressed, Left trigger NOT pressed, Left direction pressed
+        
+        // RA_L* combinations (Right A + Left directions)
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_A) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_UP)) {
+            return "RA_Lup";
+        }
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_A) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_DOWN)) {
+            return "RA_Ldown";
+        }
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_A) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_LEFT)) {
+            return "RA_Lleft";
+        }
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_A) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_RIGHT)) {
+            return "RA_Lright";
+        }
+        
+        // RB_L* combinations (Right B + Left directions)
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_B) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_UP)) {
+            return "RB_Lup";
+        }
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_B) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_DOWN)) {
+            return "RB_Ldown";
+        }
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_B) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_LEFT)) {
+            return "RB_Lleft";
+        }
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_B) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_RIGHT)) {
+            return "RB_Lright";
+        }
+        
+        // RC_L* combinations (Right C + Left directions)
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_C) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_UP)) {
+            return "RC_Lup";
+        }
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_C) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_DOWN)) {
+            return "RC_Ldown";
+        }
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_C) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_LEFT)) {
+            return "RC_Lleft";
+        }
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_C) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_RIGHT)) {
+            return "RC_Lright";
+        }
+        
+        // RD_L* combinations (Right D + Left directions)
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_D) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_UP)) {
+            return "RD_Lup";
+        }
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_D) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_DOWN)) {
+            return "RD_Ldown";
+        }
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_D) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_LEFT)) {
+            return "RD_Lleft";
+        }
+        if (!(driveButtons & BTN_TRIGGER) && (driveButtons & BTN_D) && 
+            !(domeButtons & BTN_TRIGGER) && (domeButtons & BTN_RIGHT)) {
+            return "RD_Lright";
+        }
+        
+        return "";  // No trigger pattern matched
     }
 }

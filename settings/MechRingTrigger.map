@@ -14,47 +14,61 @@
  *   R_ prefix = DriveRing (RIGHT joystick)
  *   L_ prefix = DomeRing (LEFT joystick)
  * 
- * Button identifiers (v2.0 protocol):
- *   BTNA-D  = Push buttons A-D (bits 0-3)
- *   TRIG    = Trigger button (bit 8)
- *   JOY     = Joystick press button (bit 9)
- *   MODE    = Mode button (bit 10)
+ * Trigger pattern (v3.0):
+ *   LA_Rdir = Left A button + Right direction (up/down/left/right)
+ *   LB_Rdir = Left B button + Right direction
+ *   LC_Rdir = Left C button + Right direction
+ *   LD_Rdir = Left D button + Right direction
+ *   RA_Ldir = Right A button + Left direction
+ *   RB_Ldir = Right B button + Left direction
+ *   RC_Ldir = Right C button + Left direction
+ *   RD_Ldir = Right D button + Left direction
  */
 
-// ===== DriveRing (RIGHT joystick) - Single Buttons =====
-triggerMap["R_TRIG"]    = "VolumeUp";
-triggerMap["R_BTNA"]    = "Happy";
-triggerMap["R_BTNB"]    = "Sad";
-triggerMap["R_BTNC"]    = "DomePAllToggle";
-triggerMap["R_BTND"]    = "BodyPAllToggle";
-triggerMap["R_JOY"]     = "StickToggle";
-triggerMap["R_MODE"]    = "QuietMode";
+// ===== LEFT A + RIGHT DIRECTIONS (Dome Panel Control) =====
+triggerMap["LA_Rup"]    = "DomeP1Open";
+triggerMap["LA_Rdown"]  = "DomeP1Close";
+triggerMap["LA_Rleft"]  = "DomeP2Open";
+triggerMap["LA_Rright"] = "DomeP2Close";
 
-// ===== DomeRing (LEFT joystick) - Single Buttons =====
-triggerMap["L_TRIG"]    = "VolumeDown";
-triggerMap["L_BTNA"]    = "Scream";
-triggerMap["L_BTNB"]    = "Wave";
-triggerMap["L_BTNC"]    = "HoloLightsTogl";
-triggerMap["L_BTND"]    = "MusingsToggle";
-triggerMap["L_JOY"]     = "DomeAutoToggle";
-triggerMap["L_MODE"]    = "FullAwake";
+// ===== LEFT B + RIGHT DIRECTIONS (More Dome Panels) =====
+triggerMap["LB_Rup"]    = "DomeP3Open";
+triggerMap["LB_Rdown"]  = "DomeP3Close";
+triggerMap["LB_Rleft"]  = "DomeP4Open";
+triggerMap["LB_Rright"] = "DomeP4Close";
 
-// ===== DriveRing (RIGHT) - Combinations =====
-triggerMap["R_TRIG+R_BTNA"] = "CantinaDance";
-triggerMap["R_TRIG+R_BTNB"] = "Disco";
-triggerMap["R_TRIG+R_BTNC"] = "LeiaShortMsg";
-triggerMap["R_TRIG+R_BTND"] = "BeepCantina";
+// ===== LEFT C + RIGHT DIRECTIONS (Body Panel Control) =====
+triggerMap["LC_Rup"]    = "BodyP1Open";
+triggerMap["LC_Rdown"]  = "BodyP1Close";
+triggerMap["LC_Rleft"]  = "BodyP2Open";
+triggerMap["LC_Rright"] = "BodyP2Close";
 
-// ===== DomeRing (LEFT) - Combinations =====
-triggerMap["L_TRIG+L_BTNA"] = "ShortCircuit";
-triggerMap["L_TRIG+L_BTNB"] = "Wave2";
-triggerMap["L_TRIG+L_BTNC"] = "MarchingAnts";
-triggerMap["L_TRIG+L_BTND"] = "WolfWhistle";
+// ===== LEFT D + RIGHT DIRECTIONS (More Body Panels) =====
+triggerMap["LD_Rup"]    = "BodyP3Open";
+triggerMap["LD_Rdown"]  = "BodyP3Close";
+triggerMap["LD_Rleft"]  = "BodyP4Open";
+triggerMap["LD_Rright"] = "BodyP4Close";
 
-// ===== Both Rings - Combinations =====
-triggerMap["R_TRIG+L_TRIG"]     = "LeiaFullMsg";
-triggerMap["R_BTNA+L_BTNA"]     = "FastSmirk";
-triggerMap["R_BTNB+L_BTNB"]     = "Anger";
-triggerMap["R_BTNC+L_BTNC"]     = "Fear";
-triggerMap["R_JOY+L_JOY"]       = "SpeedChange";
-triggerMap["R_MODE+L_MODE"]     = "FactoryReset";
+// ===== RIGHT A + LEFT DIRECTIONS (Holo Control) =====
+triggerMap["RA_Lup"]    = "HoloUp";
+triggerMap["RA_Ldown"]  = "HoloDown";
+triggerMap["RA_Lleft"]  = "HoloLeft";
+triggerMap["RA_Lright"] = "HoloRight";
+
+// ===== RIGHT B + LEFT DIRECTIONS (Sound/Volume Control) =====
+triggerMap["RB_Lup"]    = "VolumeUp";
+triggerMap["RB_Ldown"]  = "VolumeDown";
+triggerMap["RB_Lleft"]  = "VolumeMid";
+triggerMap["RB_Lright"] = "VolumeMax";
+
+// ===== RIGHT C + LEFT DIRECTIONS (Emotions & Actions) =====
+triggerMap["RC_Lup"]    = "Happy";
+triggerMap["RC_Ldown"]  = "Sad";
+triggerMap["RC_Lleft"]  = "Fear";
+triggerMap["RC_Lright"] = "Anger";
+
+// ===== RIGHT D + LEFT DIRECTIONS (Complex Actions) =====
+triggerMap["RD_Lup"]    = "Wave";
+triggerMap["RD_Ldown"]  = "Scream";
+triggerMap["RD_Lleft"]  = "FastSmirk";
+triggerMap["RD_Lright"] = "Wave2";
