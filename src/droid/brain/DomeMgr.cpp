@@ -142,7 +142,7 @@ namespace droid::brain {
             joyX = 0;
         }
         joyX = scale(joyX, -speed, speed);
-        controller->setCritical(abs(joyX) > 0);
+        droidState->domeMotion = abs(joyX) > 0;
 
         if (joyX != 0) {
             domeMotor->setMotorSpeed(0, joyX);

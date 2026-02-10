@@ -78,7 +78,7 @@ namespace droid::brain {
             joyX = scale(joyX, -normalSpeed, normalSpeed);
         }
         joyY = scale(joyY, -turnSpeed, turnSpeed);
-        controller->setCritical((abs(joyX) > 0) || (abs(joyY) > 0));
+        droidState->driveMotion = (abs(joyX) > 0) || (abs(joyY) > 0);
         driveMotor->arcadeDrive(joyX, joyY);
     }
 

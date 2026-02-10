@@ -15,6 +15,12 @@ namespace droid::services {
         bool stickEnable = 1;
         bool turboSpeed = 0;
         bool autoDomeEnable = 1;
+
+        // Updated each loop by DomeMgr/DriveMgr to indicate motion is being commanded.
+        // Brain uses these to set Controller::setCritical() once per loop.
+        bool driveMotion = 0;
+        bool domeMotion = 0;
+
         bool domePanelsOpen = 0;
         bool bodyPanelsOpen = 0;
         bool holosActive = 0;

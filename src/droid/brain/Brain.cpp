@@ -333,6 +333,12 @@ namespace droid::brain {
             }
         }
 
+        // Treat "critical" as "any motion" across subsystems.
+        // This is used by controllers that implement motion-sensitive watchdog timeouts.
+        if (controller) {
+            controller->setCritical(droidState->driveMotion || droidState->domeMotion);
+        }
+
         if (logger->getMaxLevel() >= ERROR) {
             failsafe();
             logger->clear();

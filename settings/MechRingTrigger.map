@@ -72,3 +72,15 @@ triggerMap["RD_Lup"]    = "Wave";
 triggerMap["RD_Ldown"]  = "Scream";
 triggerMap["RD_Lleft"]  = "FastSmirk";
 triggerMap["RD_Lright"] = "Wave2";
+
+// ===== LEFT L1 + LEFT ABCD =====
+triggerMap["LA_LL1"]    = "DomeP1Open";
+triggerMap["LB_LL1"]    = "DomeP1Close";
+triggerMap["LC_LL1"]    = "DomeP2Open";
+triggerMap["LD_LL1"]    = "DomeP2Close";
+
+// ===== RIGHT L1 + RIGHT ABCD =====
+triggerMap["RA_RL1"]    = "BodyP1Open";
+triggerMap["RB_RL1"]    = "BodyP1Close";
+triggerMap["RC_RL1"]    = "BodyP2Open";
+triggerMap["RD_RL1"]    = "BodyP2Close";
