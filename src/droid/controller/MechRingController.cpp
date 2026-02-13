@@ -84,8 +84,9 @@ namespace droid::controller {
         // Initialize ring states
         memset(&driveRing, 0, sizeof(RingState));
         memset(&domeRing, 0, sizeof(RingState));
-        driveRing.lastMsgTime = millis();
-        domeRing.lastMsgTime = millis();
+        // lastMsgTime == 0 means "never seen" (no messages received yet)
+        driveRing.lastMsgTime = 0;
+        domeRing.lastMsgTime = 0;
         
         faultState = false;
         isCritical = false;
@@ -151,11 +152,33 @@ namespace droid::controller {
     }
 
     int8_t MechRingController::getJoystickPosition(Joystick stick, Axis axis) {
-        // Select ring based on joystick
-        RingState& ring = (stick == RIGHT) ? driveRing : domeRing;
+        bool driveSeen = driveRing.lastMsgTime != 0;
+        bool domeSeen = domeRing.lastMsgTime != 0;
+
+        // Select ring based on joystick.
+        // Normal mapping: RIGHT=DriveRing, LEFT=DomeRing.
+        // Single-ring fallback: if DriveRing has never been seen but DomeRing has,
+        // allow DomeRing to drive (RIGHT stick). LEFT stick is disabled in this mode
+        // to avoid dome motion being coupled to driving.
+        RingState* ring = nullptr;
+        if (stick == RIGHT) {
+            if (driveSeen) {
+                ring = &driveRing;
+            } else if (domeSeen) {
+                ring = &domeRing;
+            } else {
+                return 0;
+            }
+        } else {
+            if (domeSeen && driveSeen) {
+                ring = &domeRing;
+            } else {
+                return 0;
+            }
+        }
         
         // Get raw value
-        int8_t rawValue = (axis == X) ? ring.joystick_x : ring.joystick_y;
+        int8_t rawValue = (axis == X) ? ring->joystick_x : ring->joystick_y;
         
         // Apply deadband
         int8_t deadband = (axis == X) ? deadbandX : deadbandY;
@@ -243,9 +266,12 @@ namespace droid::controller {
     void MechRingController::faultCheck() {
         uint32_t timeout = isCritical ? activeTimeout : inactiveTimeout;
         unsigned long now = millis();
+
+        bool driveSeen = driveRing.lastMsgTime != 0;
+        bool domeSeen = domeRing.lastMsgTime != 0;
         
         // Check DriveRing timeout
-        if ((now - driveRing.lastMsgTime) > timeout) {
+        if (driveSeen && ((now - driveRing.lastMsgTime) > timeout)) {
             if (!faultState) {
                 faultState = true;
                 droidState->stickEnable = false;
@@ -255,7 +281,7 @@ namespace droid::controller {
         }
         
         // Check DomeRing timeout
-        if ((now - domeRing.lastMsgTime) > timeout) {
+        if (domeSeen && ((now - domeRing.lastMsgTime) > timeout)) {
             if (!faultState) {
                 faultState = true;
                 droidState->stickEnable = false;
@@ -264,8 +290,9 @@ namespace droid::controller {
             return;
         }
         
-        // Both rings OK - clear fault state if recovering
-        if (faultState && driveRing.isConnected && domeRing.isConnected) {
+        // No ring timeouts detected - clear fault state if recovering.
+        // (Do not require both rings; allow recovery when operating with a single ring.)
+        if (faultState) {
             faultState = false;
             logger->log(name, INFO, "Ring controllers reconnected\n");
             // User must manually re-enable stick control for safety
@@ -273,8 +300,19 @@ namespace droid::controller {
     }
 
     String MechRingController::getTrigger() {
+        bool driveSeen = driveRing.lastMsgTime != 0;
+        bool domeSeen = domeRing.lastMsgTime != 0;
+
         uint16_t driveButtons = driveRing.buttonState;
         uint16_t domeButtons = domeRing.buttonState;
+
+        // Single-ring fallback: if only one ring has ever been seen, treat its buttons as both sides
+        // so the existing dual-ring trigger patterns can still resolve.
+        if (driveSeen && !domeSeen) {
+            domeButtons = driveButtons;
+        } else if (!driveSeen && domeSeen) {
+            driveButtons = domeButtons;
+        }
         
         // Left button (A/B/C/D) + Right direction (Up/Down/Left/Right)
         // Pattern: Left trigger NOT pressed, Left button pressed, Right trigger NOT pressed, Right direction pressed
