@@ -64,7 +64,7 @@ namespace droid::brain {
         void handleMechNetProvision();
         void handleMechNetStart();
         void handleMechNetStop();
-        void handleMechNetSend(const char* args, bool requiresAck);
+        void handleMechNetSend(const char* args);
         
         // Wizard state machine
         enum class WizardState {

@@ -160,9 +160,10 @@ namespace droid::network {
         return true;
     }
     
-    bool MechNetNode::sendCommand(const char* nodeName, const char* command, bool requiresAck) {
+    bool MechNetNode::sendCommand(const char* nodeName, const char* command) {
         if (!mechNetMaster) return false;
-        return mechNetMaster->sendTo(nodeName, command, requiresAck);
+        MechNet::SendOptions sendOptions;
+        return mechNetMaster->sendTo(nodeName, command, sendOptions);
     }
 
     void MechNetNode::findAllNodesByPrefix(const char* prefix, std::function<void(const char*)> callback) {
@@ -200,7 +201,17 @@ namespace droid::network {
 
     String MechNetNode::nextMessage() {
         if (!mechNetMaster) return "";
-        return mechNetMaster->nextMessage();
+        MechNet::ReceivedMessage msg;
+        bool success = mechNetMaster->nextMessage(msg);
+        if (success) {
+            String out;
+            out.reserve(msg.payloadLen);
+            for (int i = 0; i < msg.payloadLen; i++) {
+                out += static_cast<char>(msg.payload[i]);
+            }
+            return out;
+        }
+        return "";
     }
 
     String MechNetNode::lastSender() {

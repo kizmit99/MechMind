@@ -169,10 +169,7 @@ namespace droid::brain {
             handleMechNetStop();
         }
         else if (strcmp(cmdBuf, "mechnet-send") == 0) {
-            handleMechNetSend(argsBuf, false);
-        }
-        else if (strcmp(cmdBuf, "mechnet-send-ack") == 0) {
-            handleMechNetSend(argsBuf, true);
+            handleMechNetSend(argsBuf);
         }
         else {
             _console.println("Unknown command: %s (type 'help' for list)", cmdBuf);
@@ -641,7 +638,7 @@ namespace droid::brain {
         _console.wizardComplete();
     }
 
-    void ConsoleHandler::handleMechNetSend(const char* args, bool requiresAck) {
+    void ConsoleHandler::handleMechNetSend(const char* args) {
         auto* mechNet = _brain->getMechNetMaster();
         
         // Check if MechNet is initialized
@@ -657,8 +654,8 @@ namespace droid::brain {
         // Find first space to split nodeName and message
         const char* spacePtr = strchr(args, ' ');
         if (!spacePtr) {
-            _console.println("Usage: mechnet-send%s <nodeName> <message>", requiresAck ? "-ack" : "");
-            _console.println("Example: mechnet-send%s DataPort-6168 @v1 status", requiresAck ? "-ack" : "");
+            _console.println("Usage: mechnet-send <nodeName> <message>");
+            _console.println("Example: mechnet-send DataPort-6168 @v1 status");
             return;
         }
         
@@ -700,7 +697,7 @@ namespace droid::brain {
         }
         
         // Send message (only report failures)
-        if (!mechNet->sendCommand(nodeName, message, requiresAck)) {
+        if (!mechNet->sendCommand(nodeName, message)) {
             _console.println("! Failed to send to %s", nodeName);
         }
     }
